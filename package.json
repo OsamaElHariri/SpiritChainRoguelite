@@ -1,0 +1,33 @@
+{
+    "name": "spirit_chain_roguelite",
+    "version": "1.0.0",
+    "description": "Awesome roguelite written in TypeScript using Phaser",
+    "main": "index.html",
+    "scripts": {
+        "test": "mocha -r ts-node/register tests/**/*.test.ts",
+        "testWithCoverage": "nyc -r lcov -e .ts -x \"*.test.ts\" mocha -r ts-node/register tests/**/*.test.ts && nyc report",
+        "dev": "parcel index.html",
+        "build": "parcel build index.html --out-dir build",
+        "copyAssets": "cpx \"src/Assets/**\" \"dist/Assets\"",
+        "copyAssetsBuild": "cpx \"src/Assets/**\" \"build/Assets\""
+    },
+    "author": "Osama El Hariri",
+    "license": "ISC",
+    "dependencies": {
+        "dat.gui": "^0.7.6",
+        "phaser": "^3.19.0"
+    },
+    "devDependencies": {
+        "@types/dat.gui": "^0.7.2",
+        "@types/chai": "^4.1.7",
+        "@types/mocha": "^5.2.6",
+        "chai": "^4.2.0",
+        "cpx": "^1.5.0",
+        "cssnano": "^4.1.10",
+        "mocha": "^6.0.2",
+        "nyc": "^13.3.0",
+        "ts-mockito": "^2.3.1",
+        "ts-node": "^8.0.2",
+        "typescript": "^3.6.2"
+    }
+}
