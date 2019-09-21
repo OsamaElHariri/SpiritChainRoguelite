@@ -1,5 +1,5 @@
 import "phaser";
-import { MainScene } from './scenes/main_scene';
+import { MainScene } from './scenes/MainScene';
 
 const config = {
   width: 800,

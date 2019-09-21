@@ -1,5 +1,5 @@
-import { KeyGroup } from './keyGroup';
-import { Direction } from "./direction";
+import { KeyGroup } from './KeyGroup';
+import { Direction } from "./Direction";
 
 export class InputKeys {
     isDisabled: boolean = false;
