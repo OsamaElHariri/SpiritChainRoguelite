@@ -6,7 +6,13 @@ import { Scene } from "./Scene";
 export class MainScene extends Scene {
     private inputKeys: InputKeys;
     private circle: any;
-    private projectile: SpiritWeapon;
+
+    preload() {
+        this.load.image('chainLinks', '../assets/sprites/chain/chain_links.png');
+        this.load.image('chainSpirit1', '../assets/sprites/chain/chain_spirit1.png');
+        this.load.image('chainSpirit2', '../assets/sprites/chain/chain_spirit2.png');
+    }
+
     create(): void {
         InputKeys.setKeyboard(this.input.keyboard);
         this.circle = this.add.circle(100, 100, 10, 0xff44ee);
@@ -18,7 +24,7 @@ export class MainScene extends Scene {
             const xTouch = pointer.x;
             const yTouch = pointer.y;
             const clickPoint = new Phaser.Geom.Point(xTouch, yTouch);
-            this.projectile = new SpiritWeapon(this, this.circle, clickPoint);
+            new SpiritWeapon(this, this.circle, clickPoint);
         });
     }
 

@@ -1,5 +1,6 @@
 import { Scene } from "../scenes/Scene";
 import { Interval } from "../utils/interval";
+import { SpiritChain } from "./SpiritChain";
 
 export class SpiritWeapon extends Phaser.GameObjects.Ellipse {
     private id: number;
@@ -13,6 +14,7 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse {
     private projectileSpeed: number = 15;
     private isHolding: boolean = false;
     private holdTime: number = 400;
+    private chain: SpiritChain;
 
     private reachedTargetCount: number = 0;
 
@@ -23,6 +25,7 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse {
         this.originalTarget = target;
         this.source = source;
         this.target = target;
+        this.chain = new SpiritChain(scene, source);
         this.updateRadius();
     }
 
@@ -34,9 +37,11 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse {
 
     update() {
         if (!this.source || !this.target || this.reachedTargetCount > 1) {
+            this.chain.destroy();
             this.scene.removeObject(this.id);
             return;
         }
+        this.chain.update(this);
 
         if (this.isHolding) return;
 

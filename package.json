@@ -8,8 +8,8 @@
         "testWithCoverage": "nyc -r lcov -e .ts -x \"*.test.ts\" mocha -r ts-node/register tests/**/*.test.ts && nyc report",
         "dev": "parcel index.html",
         "build": "parcel build index.html --out-dir build",
-        "copyAssets": "cpx \"src/Assets/**\" \"dist/Assets\"",
-        "copyAssetsBuild": "cpx \"src/Assets/**\" \"build/Assets\""
+        "copyAssets": "cpx \"src/assets/**\" \"dist/assets\"",
+        "copyAssetsBuild": "cpx \"src/assets/**\" \"build/assets\""
     },
     "author": "Osama El Hariri",
     "license": "ISC",
