@@ -1,6 +1,7 @@
 import { InputKeys } from "../inputs/InputKeys";
 import { SpiritWeapon } from "../spirit_weapon/SpiritWeapon";
 import { Scene } from "./Scene";
+import { CameraUtils } from "../utils/CameraUtils";
 
 
 export class MainScene extends Scene {
@@ -25,6 +26,16 @@ export class MainScene extends Scene {
             const yTouch = pointer.y;
             const clickPoint = new Phaser.Geom.Point(xTouch, yTouch);
             new SpiritWeapon(this, this.circle, clickPoint);
+            CameraUtils.chainZoom(this.cameras.main, [
+                {
+                    zoom: 1.04,
+                    duration: 60,
+                },
+                {
+                    zoom: 1,
+                    duration: 100,
+                },
+            ]);
         });
     }
 
