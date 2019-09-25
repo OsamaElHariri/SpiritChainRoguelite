@@ -14,12 +14,15 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse {
     private projectileSpeed: number = 15;
     private isHolding: boolean = false;
     private holdTime: number = 400;
+    private weaponRadius: number = 15;
     private chain: SpiritChain;
 
     private reachedTargetCount: number = 0;
 
     constructor(scene: Scene, source: { x: number, y: number }, target: { x: number, y: number }) {
-        super(scene, source.x, source.y, 20, 20, 0x45aec0);
+        super(scene, source.x, source.y, 30, 30, 0x45aec0);
+        this.width = this.weaponRadius * 2;
+        this.height = this.weaponRadius * 2;
         this.id = scene.addObject(this);
         this.originalSource = source;
         this.originalTarget = target;
@@ -27,6 +30,9 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse {
         this.target = target;
         this.chain = new SpiritChain(scene, source);
         this.updateRadius();
+        scene.physics.world.enable(this);
+        (this.body as any).setAllowGravity(false);
+        (this.body as any).isCircle = true;
     }
 
     private updateRadius() {
@@ -59,8 +65,8 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse {
         const yDif = this.source.y - this.target.y;
         const clickPointToCircle = new Phaser.Math.Vector2(xDif, yDif);
         const theta = clickPointToCircle.angle();
-        this.x = this.target.x + Math.cos(theta) * this.radius;
-        this.y = this.target.y + Math.sin(theta) * this.radius;
+        (this.body as any).x = this.target.x + Math.cos(theta) * this.radius - this.weaponRadius;
+        (this.body as any).y = this.target.y + Math.sin(theta) * this.radius - this.weaponRadius;
         this.radius -= this.projectileSpeed;
     }
 
