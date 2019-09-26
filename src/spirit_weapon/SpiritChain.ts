@@ -7,9 +7,7 @@ export class SpiritChain extends Phaser.GameObjects.Container {
     private chainSpirit1: Phaser.GameObjects.TileSprite;
     private chainSpirit2: Phaser.GameObjects.TileSprite;
 
-    private source: { x: number, y: number };
-
-    constructor(scene: Scene, source: { x: number, y: number }) {
+    constructor(public scene: Scene, private source: { x: number, y: number }) {
         super(scene, source.x, source.y);
         scene.add.existing(this);
         this.source = source;

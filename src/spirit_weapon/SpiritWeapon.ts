@@ -3,13 +3,12 @@ import { Interval } from "../utils/interval";
 import { SpiritChain } from "./SpiritChain";
 
 export class SpiritWeapon extends Phaser.GameObjects.Ellipse {
+    body: Phaser.Physics.Arcade.Body;
+
     private id: number;
-    scene: Scene;
 
     private originalSource: { x: number, y: number };
     private originalTarget: { x: number, y: number };
-    private source: { x: number, y: number };
-    private target: { x: number, y: number };
     private radius: number = 0;
     private projectileSpeed: number = 15;
     private isHolding: boolean = false;
@@ -19,7 +18,7 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse {
 
     private reachedTargetCount: number = 0;
 
-    constructor(scene: Scene, source: { x: number, y: number }, target: { x: number, y: number }) {
+    constructor(public scene: Scene, public source: { x: number, y: number }, public target: { x: number, y: number }) {
         super(scene, source.x, source.y, 30, 30, 0x45aec0);
         this.width = this.weaponRadius * 2;
         this.height = this.weaponRadius * 2;
@@ -31,8 +30,8 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse {
         this.chain = new SpiritChain(scene, source);
         this.updateRadius();
         scene.physics.world.enable(this);
-        (this.body as any).setAllowGravity(false);
-        (this.body as any).isCircle = true;
+        this.body.setAllowGravity(false);
+        this.body.isCircle = true;
     }
 
     private updateRadius() {
@@ -65,8 +64,8 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse {
         const yDif = this.source.y - this.target.y;
         const clickPointToCircle = new Phaser.Math.Vector2(xDif, yDif);
         const theta = clickPointToCircle.angle();
-        (this.body as any).x = this.target.x + Math.cos(theta) * this.radius - this.weaponRadius;
-        (this.body as any).y = this.target.y + Math.sin(theta) * this.radius - this.weaponRadius;
+        this.body.x = this.target.x + Math.cos(theta) * this.radius - this.weaponRadius;
+        this.body.y = this.target.y + Math.sin(theta) * this.radius - this.weaponRadius;
         this.radius -= this.projectileSpeed;
     }
 

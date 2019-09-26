@@ -12,7 +12,7 @@ export class Scene extends Phaser.Scene {
         for (const id in this.objects) {
             if (this.objects.hasOwnProperty(id)) {
                 const gameObject = this.objects[id];
-                gameObject.update(time, delta);
+                gameObject.update(time, delta / 1000);
             }
         }
     }

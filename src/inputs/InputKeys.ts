@@ -20,7 +20,7 @@ export class InputKeys {
         return this.singleton;
     }
 
-    private constructor(keyboard: Phaser.Input.Keyboard.KeyboardPlugin) {
+    protected constructor(keyboard: Phaser.Input.Keyboard.KeyboardPlugin) {
         this.keyboard = keyboard;
         this.clear();
         this.addUpKeys(
