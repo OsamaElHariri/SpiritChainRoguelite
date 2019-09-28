@@ -17,11 +17,6 @@ export class Scene extends Phaser.Scene {
         }
     }
 
-    removeObject(id: number) {
-        this.objects[id].destroy();
-        this.stopUpdating(id);
-    }
-
     stopUpdating(id: number) {
         delete this.objects[id];
     }

@@ -1,4 +1,4 @@
-import { Scene } from "../scenes/Scene";
+import { Scene } from "../../scenes/Scene";
 
 export class SpiritChain extends Phaser.GameObjects.Container {
 
@@ -45,6 +45,4 @@ export class SpiritChain extends Phaser.GameObjects.Container {
         this.manipulateTileSprites((sprite) => sprite.destroy());
         super.destroy();
     }
-
-
 }

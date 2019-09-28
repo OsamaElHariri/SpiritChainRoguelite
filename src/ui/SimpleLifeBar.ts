@@ -26,6 +26,11 @@ export class SimpleLifeBar extends Phaser.GameObjects.Container {
         this.valueIndicator.width = value * this.valueIndicatorWidth;
     }
 
+    destroy() {
+        this.valueIndicator.destroy();
+        this.background.destroy();
+        super.destroy();
+    }
 
 
 }
