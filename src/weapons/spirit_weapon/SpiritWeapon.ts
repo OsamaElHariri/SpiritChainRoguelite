@@ -5,26 +5,32 @@ import { Actor } from "../../actors/Actor";
 import { Weapon } from "../Weapon";
 
 export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
-    strength = 60;
     body: Phaser.Physics.Arcade.Body;
+    directionChangeCount: number = 0;
+
+    strength = 60;
+    distanceFromTarget: number = 0;
+    projectileSpeed: number = 15;
+    holdTime: number = 400;
+    maxDirectionChangeCount: number = 1;
+    radius: number = 15;
+
+    onHoldStart: ((weapon: SpiritWeapon) => void)[] = [];
+    onHoldEnd: ((weapon: SpiritWeapon) => void)[] = [];
+    onOtherHit: ((weapon: SpiritWeapon, enemy: Actor) => void)[] = [];
 
     private id: number;
-
     private originalSource: Actor;
     private originalTarget: { x: number, y: number };
-    private distanceFromTarget: number = 0;
-    private projectileSpeed: number = 15;
+    private source: { x: number, y: number };
     private isHolding: boolean = false;
-    private holdTime: number = 400;
-    private weaponRadius: number = 15;
     private chain: SpiritChain;
 
-    private reachedTargetCount: number = 0;
-
-    constructor(public world: World, public source: Actor, public target: { x: number, y: number }) {
+    constructor(public world: World, source: Actor, public target: { x: number, y: number }) {
         super(world.scene, source.x, source.y, 30, 30, 0x45aec0);
-        this.width = this.weaponRadius * 2;
-        this.height = this.weaponRadius * 2;
+        this.source = source;
+        this.width = this.radius * 2;
+        this.height = this.radius * 2;
         this.id = world.scene.addObject(this);
         this.originalSource = source;
         this.originalTarget = target;
@@ -44,29 +50,44 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
     }
 
     update() {
-        if (!this.source || !this.target || this.reachedTargetCount > 1) {
+        if (!this.source || !this.target || this.directionChangeCount > this.maxDirectionChangeCount) {
             this.destroy();
             return;
         }
+
         this.chain.update(this);
-
-        let currentSource: { x: number, y: number } = this.source;
-        let currentTarget: { x: number, y: number } = this.target;
-
-        if (this.reachedTargetCount > 0) {
-            currentTarget = this.source;
-            currentSource = this.target;
-        }
+        if (this.isHolding) return;
 
         if (this.distanceFromTarget <= 0) {
-            this.reachedTargetCount += 1;
-            this.updateRadius(currentSource, currentTarget);
+            this.directionChangeCount += 1;
+            this.updateRadius(this.source, this.target);
             this.hold(this.holdTime);
         }
 
-        if (this.isHolding) return;
-        this.moveBody(currentSource, currentTarget);
+        this.moveBody(this.source, this.target);
         this.collideWithEnemies();
+
+    }
+
+    private async hold(delay: number) {
+        if (this.isHolding) return;
+        this.isHolding = true;
+        this.defaultOnHoldStart();
+        this.onHoldStart.forEach((onStart) => onStart(this));
+        await Interval.milliseconds(delay);
+        this.isHolding = false;
+        this.defaultOnHoldEnd();
+        this.onHoldEnd.forEach((onEnd) => onEnd(this));
+    }
+
+    defaultOnHoldStart() {
+        const temp = this.source;
+        this.source = this.target;
+        this.target = temp;
+    }
+
+    defaultOnHoldEnd() {
+        this.updateRadius(this.source, this.target);
     }
 
     private moveBody(source: { x: number, y: number }, target: { x: number, y: number }) {
@@ -74,24 +95,18 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
         const yDif = source.y - target.y;
         const clickPointToCircle = new Phaser.Math.Vector2(xDif, yDif);
         const theta = clickPointToCircle.angle();
-        this.body.x = target.x + Math.cos(theta) * this.distanceFromTarget - this.weaponRadius;
-        this.body.y = target.y + Math.sin(theta) * this.distanceFromTarget - this.weaponRadius;
-        this.distanceFromTarget -= this.projectileSpeed;
+        this.body.x = target.x + Math.cos(theta) * this.distanceFromTarget - this.radius;
+        this.body.y = target.y + Math.sin(theta) * this.distanceFromTarget - this.radius;
+        this.distanceFromTarget = Math.max(this.distanceFromTarget - this.projectileSpeed, 0);
     }
 
     private collideWithEnemies() {
         this.world.getCurrentRoom().actors.forEach((enemy: Actor) => {
             this.world.scene.physics.overlap(this, enemy, () => {
                 enemy.takeDamage(this.originalSource, this);
+                this.onOtherHit.forEach((onHit) => onHit(this, enemy));
             });
         });
-    }
-
-    private async hold(delay: number) {
-        if (this.isHolding) return;
-        this.isHolding = true;
-        await Interval.milliseconds(delay);
-        this.isHolding = false;
     }
 
     destroy() {

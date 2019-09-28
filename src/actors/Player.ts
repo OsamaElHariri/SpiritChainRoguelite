@@ -9,6 +9,7 @@ import { ActorType } from "./ActorType";
 export class Player extends Actor {
 
     private weapons: SpiritWeapon[] = [];
+    private maxNumberOfWeapons: number = 2;
 
     constructor(world: World, x: number, y: number) {
         super(world, x, y);
@@ -17,10 +18,21 @@ export class Player extends Actor {
         world.emit(Signals.PlayerSpawn);
         this.moveWith(InputsMoveEngine.getInstance());
         world.scene.input.on('pointerdown', (pointer) => {
+            this.removeInactiveWeapons();
+            if (this.weapons.length >= this.maxNumberOfWeapons) return;
             const xTouch = pointer.x;
             const yTouch = pointer.y;
             const clickPoint = new Phaser.Geom.Point(xTouch, yTouch);
-            this.weapons.push(new SpiritWeapon(world, this, clickPoint));
+            const weapon = new SpiritWeapon(world, this, clickPoint);
+            // weapon.strength *= 2;
+            // weapon.holdTime = 1;
+            // weapon.onHoldStart.push((weapon) => {
+            //     weapon.strength /= 2;
+            // });
+            // weapon.onHoldEnd.push((weapon) => {
+            //     weapon.strength *= 2;
+            // });
+            this.weapons.push(weapon);
             CameraUtils.chainZoom(world.scene.cameras.main, [
                 {
                     zoom: 1.04,
@@ -36,6 +48,10 @@ export class Player extends Actor {
 
     protected setupSprite() {
         return this.world.scene.add.ellipse(this.x, this.y, 20, 20, 0xe35d57)
+    }
+
+    private removeInactiveWeapons() {
+        this.weapons = this.weapons.filter((weapon) => weapon.active);
     }
 
     destroy() {
