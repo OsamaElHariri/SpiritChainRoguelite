@@ -5,10 +5,12 @@ import { CameraUtils } from "../utils/CameraUtils";
 import { InputsMoveEngine } from "../move_engines/InputsMoveEngine";
 import { Signals } from "../Signals";
 import { ActorType } from "./ActorType";
+import { PowerUp } from "../weapons/spirit_weapon/PowerUp";
 
 export class Player extends Actor {
 
     private weapons: SpiritWeapon[] = [];
+    private powerups: ((weapon: SpiritWeapon) => void)[] = [];
     private maxNumberOfWeapons: number = 2;
 
     constructor(world: World, x: number, y: number) {
@@ -24,18 +26,26 @@ export class Player extends Actor {
             const yTouch = pointer.y;
             const clickPoint = new Phaser.Geom.Point(xTouch, yTouch);
             const weapon = new SpiritWeapon(world, this, clickPoint);
-            weapon.onOtherHit.push((weapon, enemy) => {
-                enemy.stun(1000);
-            })
-            // weapon.shouldCollideWithTerrain = false;
-            // weapon.strength *= 2;
-            // weapon.holdTime = 1;
-            // weapon.onHoldStart.push((weapon) => {
-            //     weapon.strength /= 2;
-            // });
-            // weapon.onHoldEnd.push((weapon) => {
-            //     weapon.strength *= 2;
-            // });
+
+            this.powerups.forEach(powerup => powerup(weapon));
+            if (this.powerups.length > 6) {
+                // pass
+            } else if (this.powerups.length > 5) {
+                this.powerups.push(PowerUp.doubleRadius);
+            } else if (this.powerups.length > 4) {
+                this.powerups.push(PowerUp.doubleSpeed);
+            } else if (this.powerups.length > 3) {
+                this.powerups.push(PowerUp.goThroughWalls);
+            } else if (this.powerups.length > 2) {
+                this.powerups.push(PowerUp.doubleDamageWhenTraveling);
+            } else if (this.powerups.length > 1) {
+                this.powerups.push(PowerUp.stun);
+            } else {
+                this.powerups.push(PowerUp.halfHoldTime);
+            }
+
+            console.log(weapon.radius);
+
             this.weapons.push(weapon);
             CameraUtils.chainZoom(world.scene.cameras.main, [
                 {

@@ -28,11 +28,10 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
     private isHolding: boolean = false;
     private chain: SpiritChain;
 
+
     constructor(public world: World, source: Actor, public target: { x: number, y: number }) {
-        super(world.scene, source.x, source.y, 30, 30, 0x45aec0);
+        super(world.scene, source.x, source.y, 10, 10, 0x45aec0);
         this.source = source;
-        this.width = this.radius * 2;
-        this.height = this.radius * 2;
         this.id = world.scene.addObject(this);
         this.originalSource = source;
         this.originalTarget = target;
@@ -42,7 +41,13 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
         this.setDistanceFromTarget(source, target);
         world.scene.physics.world.enable(this);
         this.body.setAllowGravity(false);
-        this.body.isCircle = true;
+        this.setRadius(this.radius);
+    }
+
+    setRadius(r: number) {
+        this.radius = r;
+        this.setSize(r * 2, r * 2);
+        this.body.setSize(r * 2, r * 2, true);
     }
 
     private setDistanceFromTarget(source: { x: number, y: number }, target: { x: number, y: number }) {
@@ -133,6 +138,4 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
         this.world.scene.stopUpdating(this.id);
         super.destroy();
     }
-
-
 }
