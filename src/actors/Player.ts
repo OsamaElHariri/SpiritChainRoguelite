@@ -24,6 +24,10 @@ export class Player extends Actor {
             const yTouch = pointer.y;
             const clickPoint = new Phaser.Geom.Point(xTouch, yTouch);
             const weapon = new SpiritWeapon(world, this, clickPoint);
+            weapon.onOtherHit.push((weapon, enemy) => {
+                enemy.stun(1000);
+            })
+            // weapon.shouldCollideWithTerrain = false;
             // weapon.strength *= 2;
             // weapon.holdTime = 1;
             // weapon.onHoldStart.push((weapon) => {

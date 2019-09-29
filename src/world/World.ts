@@ -18,10 +18,11 @@ export class World extends Phaser.GameObjects.Container {
     }
 
     destroy() {
-        this.scene.removeObject(this.id);
+        this.scene.stopUpdating(this.id);
+        super.destroy();
     }
 
-    getCurrentRoom() {
+    getCurrentRoom(): Room {
         return this.currentRoom;
     }
 

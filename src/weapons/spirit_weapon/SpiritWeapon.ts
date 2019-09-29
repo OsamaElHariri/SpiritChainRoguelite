@@ -3,6 +3,7 @@ import { SpiritChain } from "./SpiritChain";
 import { World } from "../../world/World";
 import { Actor } from "../../actors/Actor";
 import { Weapon } from "../Weapon";
+import { Wall } from "../../world/terrain/Wall";
 
 export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
     body: Phaser.Physics.Arcade.Body;
@@ -14,6 +15,7 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
     holdTime: number = 400;
     maxDirectionChangeCount: number = 1;
     radius: number = 15;
+    shouldCollideWithTerrain: boolean = true;
 
     onHoldStart: ((weapon: SpiritWeapon) => void)[] = [];
     onHoldEnd: ((weapon: SpiritWeapon) => void)[] = [];
@@ -37,13 +39,13 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
         this.source = source;
         this.target = target;
         this.chain = new SpiritChain(world.scene, source);
-        this.updateRadius(source, target);
+        this.setDistanceFromTarget(source, target);
         world.scene.physics.world.enable(this);
         this.body.setAllowGravity(false);
         this.body.isCircle = true;
     }
 
-    private updateRadius(source: { x: number, y: number }, target: { x: number, y: number }) {
+    private setDistanceFromTarget(source: { x: number, y: number }, target: { x: number, y: number }) {
         const xDif = target.x - source.x;
         const yDif = target.y - source.y;
         this.distanceFromTarget = new Phaser.Math.Vector2(xDif, yDif).length();
@@ -58,13 +60,21 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
         this.chain.update(this);
         if (this.isHolding) return;
 
+        if (this.shouldCollideWithTerrain && this.isMovingAwayFromSource()) {
+            this.world.getCurrentRoom().terrain.forEach(terrain => {
+                this.world.scene.physics.collide(this, terrain, (weapon, terrain: Wall) => {
+                    this.target = { x: this.x, y: this.y };
+                    this.distanceFromTarget = 0;
+                })
+            });
+        }
+
         if (this.distanceFromTarget <= 0) {
             this.directionChangeCount += 1;
-            this.updateRadius(this.source, this.target);
             this.hold(this.holdTime);
         }
 
-        this.moveBody(this.source, this.target);
+        this.moveBody();
         this.collideWithEnemies();
 
     }
@@ -81,16 +91,21 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
     }
 
     defaultOnHoldStart() {
-        const temp = this.source;
-        this.source = this.target;
-        this.target = temp;
+        this.setDistanceFromTarget(this.source, this.target);
     }
 
     defaultOnHoldEnd() {
-        this.updateRadius(this.source, this.target);
+        this.setDistanceFromTarget(this.source, this.target);
     }
 
-    private moveBody(source: { x: number, y: number }, target: { x: number, y: number }) {
+    private moveBody() {
+        let source: { x: number, y: number } = this.source;
+        let target: { x: number, y: number } = this.target;
+        if (!this.isMovingAwayFromSource()) {
+            source = this.target;
+            target = this.source;
+        }
+
         const xDif = source.x - target.x;
         const yDif = source.y - target.y;
         const clickPointToCircle = new Phaser.Math.Vector2(xDif, yDif);
@@ -107,6 +122,10 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
                 this.onOtherHit.forEach((onHit) => onHit(this, enemy));
             });
         });
+    }
+
+    private isMovingAwayFromSource() {
+        return this.directionChangeCount % 2 == 0;
     }
 
     destroy() {
