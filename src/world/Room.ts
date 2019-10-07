@@ -15,12 +15,17 @@ export class Room extends Phaser.GameObjects.Container {
         super(world.scene, x, y);
         this.scene = world.scene;
         this.actors.push(new Actor(world, 300, 200).moveWith(new BackForthMoveEngine()));
-        this.terrain.push(new Wall(this, 400, 200));
-        this.terrain.push(new Wall(this, 528, 200));
-        // this.grid = new Grid(3, 3);
-        // this.grid.nodes[1][0].traversable = false;
-        // this.grid.nodes[1][2].traversable = false;
-        // console.log(this.grid.nodes[0][0].pathTo(this.grid.nodes[2][2]));
-        // console.log(this.grid.toString());
+        this.grid = new Grid(50, 50, 8, 8);
+        this.grid.forEach((node) => {
+            if (node.x % 2 == 0 && node.y % 2 == 0) node.traversable = false;
+        });
+        this.constructGrid();
+    }
+
+    private constructGrid() {
+        this.grid.forEach((node) => {
+            if (!node.traversable)
+                this.terrain.push(new Wall(this, node.xWorld, node.yWorld, this.grid.tileWidth));
+        });
     }
 }

@@ -3,7 +3,18 @@ import { GridNode } from "./GridNode";
 export class Grid {
     nodes: GridNode[][] = [];
 
-    constructor(public width: number, public height: number) {
+
+    private xLocalMax;
+    private yLocalMax;
+    private xWorldMax;
+    private yWorldMax;
+
+    constructor(public xWorld: number, public yWorld: number, public width: number, public height: number, public tileWidth: number = 64) {
+        this.xLocalMax = width * tileWidth;
+        this.yLocalMax = height * tileWidth;
+        this.xWorldMax = xWorld + width * tileWidth;
+        this.yWorldMax = yWorld + height * tileWidth;
+
         for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
                 if (!this.nodes[x]) this.nodes.push([]);
@@ -14,6 +25,29 @@ export class Grid {
 
     at(x: number, y: number) {
         return this.nodes[x][y];
+    }
+
+    forEach(callback: (node: GridNode) => void) {
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++) {
+                callback(this.at(x, y));
+            }
+        }
+    }
+
+    cellAtWorldCoord(x: number, y: number) {
+        const xGridIndex = Math.min(Math.max(x / this.tileWidth, 0), this.width);
+        const yGridIndex = Math.min(Math.max(y / this.tileWidth, 0), this.height);
+        return this.at(Math.floor(xGridIndex), Math.floor(yGridIndex));
+    }
+
+    gridNodeToWorldCoord(node: GridNode, config?: { centerOfNode?: boolean }) {
+        config = config || {};
+        const offset = config.centerOfNode ? this.tileWidth / 2 : 0;
+        return {
+            x: node.x * this.tileWidth + this.xWorld + offset,
+            y: node.y * this.tileWidth + this.yWorld + offset,
+        };
     }
 
     aStar(start: GridNode, goal: GridNode) {
@@ -66,12 +100,11 @@ export class Grid {
 
     toString() {
         let grid = '';
-        for (let y = 0; y < this.height; y++) {
-            for (let x = 0; x < this.width; x++) {
-                grid += this.at(x, y).toString() + '\t\t';
-            }
-            grid += '\n';
-        }
+        this.forEach((node) => {
+            grid += node.toString();
+            if (node.x < this.width - 1) grid += '\t\t';
+            else grid += '\n';
+        });
         return grid;
     }
 }

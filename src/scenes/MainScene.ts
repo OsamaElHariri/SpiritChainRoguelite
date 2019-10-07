@@ -20,16 +20,6 @@ export class MainScene extends Scene {
 
     update(time: number, delta: number): void {
         super.update(time, delta);
-        // this.weapons = this.weapons.filter((weapon) => weapon.active);
-        // this.weapons.forEach(weapon => {
-        //     this.physics.overlap(weapon, this.enemy, (weapon, enemy) => {
-        //         console.log('COLLIDED!');
-
-        //         this.enemyHealthBar.setValue(this.enemyHealthBar.value - 0.01);
-        //     });
-        // });
-        // this.circle.body.setVelocityX(160 * this.inputKeys.getHorizontalAxis());
-        // this.circle.body.setVelocityY(160 * this.inputKeys.getVerticalAxis());
     }
 
 }
