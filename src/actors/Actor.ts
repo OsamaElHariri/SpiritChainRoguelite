@@ -4,7 +4,6 @@ import { EmptyMoveEngine } from "../move_engines/EmptyMoveEngine";
 import { ActorType } from "./ActorType";
 import { Weapon } from "../weapons/Weapon";
 import { SimpleLifeBar } from "../ui/SimpleLifeBar"
-import { Interval } from "../utils/interval";
 
 export class Actor extends Phaser.GameObjects.Ellipse {
     actorType: ActorType = ActorType.Enemy;

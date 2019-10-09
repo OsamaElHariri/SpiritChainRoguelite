@@ -4,6 +4,7 @@ import { BackForthMoveEngine } from "../move_engines/BackForthMoveEngine";
 import { Scene } from "../scenes/Scene";
 import { Wall } from "./terrain/Wall";
 import { Grid } from "../grid/Grid";
+import { Enemy } from "../actors/Enemy";
 
 export class Room extends Phaser.GameObjects.Container {
     scene: Scene;
@@ -14,10 +15,10 @@ export class Room extends Phaser.GameObjects.Container {
     constructor(public world: World, public x: number, public y: number, public width: number, public height: number) {
         super(world.scene, x, y);
         this.scene = world.scene;
-        this.actors.push(new Actor(world, 300, 200).moveWith(new BackForthMoveEngine()));
-        this.grid = new Grid(50, 50, 8, 8);
+        this.actors.push(new Enemy(world, 300, 200));
+        this.grid = new Grid(50, 50, 10, 9);
         this.grid.forEach((node) => {
-            if (node.x % 2 == 0 && node.y % 2 == 0) node.traversable = false;
+            if (node.x % 3 == 0 && node.y % 3 == 0) node.traversable = false;
         });
         this.constructGrid();
     }

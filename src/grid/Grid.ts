@@ -35,7 +35,7 @@ export class Grid {
         }
     }
 
-    cellAtWorldCoord(x: number, y: number) {
+    nodeAtWorldCoord(x: number, y: number) {
         const xGridIndex = Math.min(Math.max(x / this.tileWidth, 0), this.width);
         const yGridIndex = Math.min(Math.max(y / this.tileWidth, 0), this.height);
         return this.at(Math.floor(xGridIndex), Math.floor(yGridIndex));
@@ -55,6 +55,8 @@ export class Grid {
         const closed: { [id: string]: GraphNode } = {};
         const graphStart: GraphNode = new GraphNode(this, start.x, start.y, goal);
         open[graphStart.id] = graphStart;
+
+        if (start.x === goal.x && start.y === goal.y) return [start];
 
         while (Object.keys(open).length) {
             const idOfClosest = this.getNodeWithShortestDist(open);
@@ -82,6 +84,7 @@ export class Grid {
 
             closed[closestNode.id] = closestNode;
         }
+        return [];
     }
 
     private getNodeWithShortestDist(open: { [id: string]: GraphNode }): string {
