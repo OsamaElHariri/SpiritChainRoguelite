@@ -66,8 +66,9 @@ export class Actor extends Phaser.GameObjects.Ellipse {
     }
 
     protected move() {
-        this.body.setVelocityX(this.speed * this.moveEngine.getHorizontalAxis());
-        this.body.setVelocityY(this.speed * this.moveEngine.getVerticalAxis());
+        const moveVector = new Phaser.Math.Vector2(this.moveEngine.getHorizontalAxis(), this.moveEngine.getVerticalAxis()).normalize();
+        this.body.setVelocityX(this.speed * moveVector.x);
+        this.body.setVelocityY(this.speed * moveVector.y);
     }
 
     private collideWithTerrain() {
