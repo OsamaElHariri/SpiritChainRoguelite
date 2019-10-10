@@ -36,6 +36,8 @@ export class Grid {
     }
 
     nodeAtWorldCoord(x: number, y: number) {
+        x -= this.xWorld;
+        y -= this.yWorld;
         const xGridIndex = Math.min(Math.max(x / this.tileWidth, 0), this.width);
         const yGridIndex = Math.min(Math.max(y / this.tileWidth, 0), this.height);
         return this.at(Math.floor(xGridIndex), Math.floor(yGridIndex));

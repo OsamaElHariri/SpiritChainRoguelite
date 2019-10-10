@@ -23,7 +23,7 @@ export class PlayerFollowMoveEngine implements MoveEngine {
 
     private setDirections() {
         const grid = this.world.getCurrentRoom().grid;
-        const actorNode = grid.nodeAtWorldCoord(this.actor.body.x, this.actor.body.y);
+        const actorNode = grid.nodeAtWorldCoord(this.actor.x, this.actor.y);
         const playerNode = grid.nodeAtWorldCoord(this.world.player.x, this.world.player.y);
         if (actorNode === this.actorNode && playerNode === this.playerNode) return;
 
@@ -38,8 +38,8 @@ export class PlayerFollowMoveEngine implements MoveEngine {
             xDiff = xTarget - actorNode.xCenterWorld;
             yDiff = yTarget - actorNode.yCenterWorld;
         } else {
-            xDiff = this.world.player.x - this.actor.body.x;
-            yDiff = this.world.player.y - this.actor.body.y;
+            xDiff = this.world.player.x - this.actor.x;
+            yDiff = this.world.player.y - this.actor.y;
         }
         this.horizontalDirection = xDiff ? xDiff / Math.abs(xDiff) : 0;
         this.verticalDirection = yDiff ? yDiff / Math.abs(yDiff) : 0;
