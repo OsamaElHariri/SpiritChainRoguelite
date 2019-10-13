@@ -4,11 +4,19 @@ import { GridNode } from "../../grid/GridNode";
 export class NodePattern {
 
     static vertical(walker: GridWalker) {
-        return this.concat(this.up(walker), this.down(walker));
+        const node = walker.gridNode;
+        const firstDir = NodePattern.concat(NodePattern.up(walker));
+        walker.gridNode = node;
+        const secondDir = NodePattern.concat(NodePattern.down(walker));
+        return NodePattern.concat(firstDir, secondDir);
     }
 
     static horizontal(walker: GridWalker) {
-        return this.concat(this.right(walker), this.left(walker));
+        const node = walker.gridNode;
+        const firstDir = NodePattern.concat(NodePattern.left(walker));
+        walker.gridNode = node;
+        const secondDir = NodePattern.concat(NodePattern.right(walker));
+        return NodePattern.concat(firstDir, secondDir);
     }
 
     static up(walker: GridWalker) {
@@ -52,8 +60,8 @@ export class NodePattern {
     }
 
     private static concat(...nodes: GridNode[][]) {
-        const allNodes = [];
-        nodes.forEach(nodes => allNodes.concat(nodes));
+        let allNodes = [];
+        nodes.forEach(nodes => allNodes = allNodes.concat(nodes));
         return allNodes;
     }
 }
