@@ -78,7 +78,7 @@ export class Actor extends Phaser.GameObjects.Ellipse {
         else this.body.setVelocity(0);
 
         this.container.setPosition(this.body.x, this.body.y);
-        
+
         this.topLeftOverlapChecker.setPosition(this.body.x + this.width / 2 - this.width, this.body.y + this.height / 2 - this.height);
         this.topRightOverlapChecker.setPosition(this.body.x + this.width / 2 + this.width, this.body.y + this.height / 2 - this.height);
         this.bottomLeftOverlapChecker.setPosition(this.body.x + this.width / 2 - this.width, this.body.y + this.height / 2 + this.height);
@@ -158,6 +158,10 @@ export class Actor extends Phaser.GameObjects.Ellipse {
         this.healthBar.destroy();
         this.container.destroy();
         this.world.scene.stopUpdating(this.id);
+        this.topLeftOverlapChecker.destroy();
+        this.topRightOverlapChecker.destroy();
+        this.bottomLeftOverlapChecker.destroy();
+        this.bottomRightOverlapChecker.destroy();
         super.destroy();
     }
 

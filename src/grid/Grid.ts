@@ -24,6 +24,8 @@ export class Grid {
     }
 
     at(x: number, y: number) {
+        x = Math.min(Math.max(x, 0), this.width - 1);
+        y = Math.min(Math.max(y, 0), this.height - 1);
         return this.nodes[x][y];
     }
 
@@ -38,9 +40,7 @@ export class Grid {
     nodeAtWorldCoord(x: number, y: number) {
         x -= this.xWorld;
         y -= this.yWorld;
-        const xGridIndex = Math.min(Math.max(x / this.tileWidth, 0), this.width);
-        const yGridIndex = Math.min(Math.max(y / this.tileWidth, 0), this.height);
-        return this.at(Math.floor(xGridIndex), Math.floor(yGridIndex));
+        return this.at(Math.floor(x / this.tileWidth), Math.floor(y / this.tileWidth));
     }
 
     gridNodeToWorldCoord(node: GridNode, config?: { centerOfNode?: boolean }) {
