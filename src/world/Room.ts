@@ -1,10 +1,10 @@
 import { World } from "./World";
 import { Actor } from "../actors/Actor";
-import { BackForthMoveEngine } from "../move_engines/BackForthMoveEngine";
 import { Scene } from "../scenes/Scene";
 import { Wall } from "./terrain/Wall";
 import { Grid } from "../grid/Grid";
 import { Enemy } from "../actors/Enemy";
+import { RoomPartitioner } from "./room_generation/RoomPartitioner";
 
 export class Room extends Phaser.GameObjects.Container {
     scene: Scene;
@@ -19,10 +19,8 @@ export class Room extends Phaser.GameObjects.Container {
         this.actors.push(new Enemy(world, 70, 70));
         this.actors.push(new Enemy(world, 500, 500));
         this.actors.push(new Enemy(world, 70, 600));
-        this.grid = new Grid(50, 50, 10, 9);
-        this.grid.forEach((node) => {
-            if (node.x % 3 == 0 && node.y % 3 == 0) node.traversable = false;
-        });
+        this.grid = new Grid(0, 0, 11, 9);
+        new RoomPartitioner(this);
         this.constructGrid();
     }
 

@@ -8,7 +8,7 @@ export class World extends Phaser.GameObjects.Container {
     player: Actor;
 
     private id: number;
-    private currentRoom;
+    private currentRoom: Room;
 
     constructor(public scene: Scene) {
         super(scene);

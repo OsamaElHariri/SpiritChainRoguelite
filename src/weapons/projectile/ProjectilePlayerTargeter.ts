@@ -4,7 +4,7 @@ import { Projectile } from "./Projectile";
 
 export class ProjectilePlayerTargeter {
     initialDelay: number = 1500;
-    interval: number = 1000;
+    interval: number = 5000;
 
     private indicator = 0;
     private isActive = false;
