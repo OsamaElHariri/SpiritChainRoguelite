@@ -9,6 +9,7 @@ import { PowerUp } from "../weapons/spirit_weapon/PowerUp";
 
 export class Player extends Actor {
 
+    private onClickListener:Phaser.Events.EventEmitter;
     private weapons: SpiritWeapon[] = [];
     private powerups: ((weapon: SpiritWeapon) => void)[] = [];
     private maxNumberOfWeapons: number = 2;
@@ -19,7 +20,7 @@ export class Player extends Actor {
         this.actorType = ActorType.Friendly;
         world.emit(Signals.PlayerSpawn);
         this.moveWith(InputsMoveEngine.getInstance());
-        world.scene.input.on('pointerdown', (pointer) => {
+        this.onClickListener = world.scene.input.on('pointerdown', (pointer) => {
             this.removeInactiveWeapons();
             if (this.weapons.length >= this.maxNumberOfWeapons) return;
             const xTouch = pointer.x;
@@ -28,23 +29,22 @@ export class Player extends Actor {
             const weapon = new SpiritWeapon(world, this, clickPoint);
 
             this.powerups.forEach(powerup => powerup(weapon));
-            if (this.powerups.length > 6) {
-                // pass
-            } else if (this.powerups.length > 5) {
-                this.powerups.push(PowerUp.doubleRadius);
-            } else if (this.powerups.length > 4) {
-                this.powerups.push(PowerUp.doubleSpeed);
-            } else if (this.powerups.length > 3) {
-                this.powerups.push(PowerUp.goThroughWalls);
-            } else if (this.powerups.length > 2) {
-                this.powerups.push(PowerUp.doubleDamageWhenTraveling);
-            } else if (this.powerups.length > 1) {
-                this.powerups.push(PowerUp.stun);
-            } else {
-                this.powerups.push(PowerUp.halfHoldTime);
-            }
-
-            console.log(weapon.radius);
+            // if (this.powerups.length > 6) {
+            //     // pass
+            // } else if (this.powerups.length > 5) {
+            //     this.powerups.push(PowerUp.doubleRadius);
+            // } else if (this.powerups.length > 4) {
+            //     this.powerups.push(PowerUp.doubleSpeed);
+            // } else if (this.powerups.length > 3) {
+            //     this.powerups.push(PowerUp.goThroughWalls);
+            // } else if (this.powerups.length > 2) {
+            //     this.powerups.push(PowerUp.doubleDamageWhenTraveling);
+            // } else if (this.powerups.length > 1) {
+            //     this.speed *= 2;
+            //     this.powerups.push(PowerUp.stun);
+            // } else {
+            //     this.powerups.push(PowerUp.halfHoldTime);
+            // }
 
             this.weapons.push(weapon);
             CameraUtils.chainZoom(world.scene.cameras.main, [
@@ -69,6 +69,7 @@ export class Player extends Actor {
     }
 
     destroy() {
+        this.onClickListener.removeListener('pointerdown');
         this.world.emit(Signals.PlayerDeath);
         super.destroy();
     }
