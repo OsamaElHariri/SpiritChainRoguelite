@@ -15,12 +15,10 @@ export class Room extends Phaser.GameObjects.Container {
     constructor(public world: World, public x: number, public y: number, public width: number, public height: number) {
         super(world.scene, x, y);
         this.scene = world.scene;
-        this.actors.push(new Enemy(world, 300, 200));
-        this.actors.push(new Enemy(world, 70, 70));
-        this.actors.push(new Enemy(world, 500, 500));
-        this.actors.push(new Enemy(world, 70, 600));
         this.grid = new Grid(0, 0, 11, 9);
-        new RoomPartitioner(this);
+        const partitioner = new RoomPartitioner(this);
+        partitioner.getSpawnPointsCorners(4, 3)
+            .forEach((node) => this.actors.push(new Enemy(world, node.xCenterWorld, node.yCenterWorld)));
         this.constructGrid();
     }
 

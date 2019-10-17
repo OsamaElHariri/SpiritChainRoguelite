@@ -11,6 +11,15 @@ export class GridShape {
     static plus(startingNode: GridNode) {
         GridShapePainter.occupy(startingNode)
             .occupy(NodePattern.horizontal, NodePattern.vertical);
+    }
 
+    static flower(startingNode: GridNode) {
+        GridShapePainter.occupy(startingNode)
+            .occupy(NodePattern.horizontal, NodePattern.vertical)
+            .occupy(NodePattern.horizontal, NodePattern.vertical);
+    }
+
+    static single(startingNode: GridNode) {
+        GridShapePainter.occupy(startingNode);
     }
 }
