@@ -1,6 +1,36 @@
 export class Scene extends Phaser.Scene {
+    pauseAnimationTime = 500;
+    paused = false;
+
+    private lastPauseToggleTime = 0;
+    private emitter: Phaser.GameObjects.GameObject;
+
     private objectCount = 0;
     private objects: { [id: number]: Phaser.GameObjects.GameObject } = {};
+
+    getEmitter() {
+        if (!this.emitter) {
+            this.emitter = new Phaser.GameObjects.Ellipse(this);
+
+
+            this.input.keyboard.on('keydown-P', event => {
+                const currentTimeStamp = new Date().getTime();
+                if (this.paused || currentTimeStamp - this.lastPauseToggleTime < this.pauseAnimationTime) return;
+                this.lastPauseToggleTime = currentTimeStamp;
+                this.paused = true;
+                this.emitter.emit('pause');
+            });
+
+            this.input.keyboard.on('keydown-P', event => {
+                const currentTimeStamp = new Date().getTime();
+                if (!this.paused || currentTimeStamp - this.lastPauseToggleTime < this.pauseAnimationTime) return;
+                this.lastPauseToggleTime = currentTimeStamp;
+                this.paused = false;
+                this.emitter.emit('resume');
+            });
+        }
+        return this.emitter;
+    }
 
     addObject(object: Phaser.GameObjects.GameObject) {
         this.add.existing(object);

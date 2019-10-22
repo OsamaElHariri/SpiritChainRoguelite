@@ -8,8 +8,10 @@ import { ActorType } from "./ActorType";
 import { PowerUp } from "../weapons/spirit_weapon/PowerUp";
 
 export class Player extends Actor {
+    cameraFollowPoint: Phaser.GameObjects.Ellipse;
+    handsContainer: Phaser.GameObjects.Container;
 
-    private onClickListener:Phaser.Events.EventEmitter;
+    private onClickListener: Phaser.Events.EventEmitter;
     private weapons: SpiritWeapon[] = [];
     private powerups: ((weapon: SpiritWeapon) => void)[] = [];
     private maxNumberOfWeapons: number = 2;
@@ -20,6 +22,12 @@ export class Player extends Actor {
         this.actorType = ActorType.Friendly;
         world.emit(Signals.PlayerSpawn);
         this.moveWith(InputsMoveEngine.getInstance());
+        const holdingPhone = world.scene.add.sprite(0, 0, 'holdingphone').setOrigin(0.5, 1).setScale(0.015);
+        this.cameraFollowPoint = world.scene.add.ellipse(-0.05, -19.6, 1, 1);
+        this.handsContainer = new Phaser.GameObjects.Container(world.scene);
+        this.handsContainer.add(holdingPhone);
+        this.handsContainer.add(this.cameraFollowPoint);
+        this.container.add(this.handsContainer);
         this.onClickListener = world.scene.input.on('pointerdown', (pointer) => {
             this.removeInactiveWeapons();
             if (this.weapons.length >= this.maxNumberOfWeapons) return;
@@ -58,6 +66,15 @@ export class Player extends Actor {
                 },
             ]);
         });
+    }
+
+    update(time: number, delta: number) {
+        super.update(time, delta);
+        const velocity = this.body.velocity.clone().normalize();
+        if (velocity.length()) {
+            const radians = Math.atan2(velocity.y, velocity.x) + Math.PI / 2;
+            this.handsContainer.setRotation(radians);
+        }
     }
 
     protected setupSprite() {

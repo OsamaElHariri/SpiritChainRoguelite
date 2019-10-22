@@ -1,5 +1,6 @@
 import "phaser";
 import { MainScene } from './scenes/MainScene';
+import { MenuScene } from "./scenes/MenuScene";
 
 const config = {
   width: 800,
@@ -7,11 +8,11 @@ const config = {
   type: Phaser.AUTO,
   parent: "game",
   backgroundColor: '#303a59',
-  scene: [MainScene],
+  scene: [MainScene, MenuScene],
   physics: {
     default: "arcade",
     arcade: {
-      // debug: true,
+      debug: true,
       gravity: { y: 600 }
     }
   }

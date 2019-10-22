@@ -13,7 +13,7 @@ export class Actor extends Phaser.GameObjects.Ellipse {
 
     healthPoints: number = 1000;
     speed: number = 160;
-
+    
     private id: number;
     private moveEngine: MoveEngine = new EmptyMoveEngine();
     private maxHealthPoints: number = 1000;
@@ -52,7 +52,7 @@ export class Actor extends Phaser.GameObjects.Ellipse {
     }
 
     protected constructHealthBar() {
-        return new SimpleLifeBar(this.world.scene, 12, 25, 40, 5);
+        return new SimpleLifeBar(this.world.scene, 0, 25, 40, 5);
     }
 
     setSpeed(speed: number) {
@@ -77,7 +77,7 @@ export class Actor extends Phaser.GameObjects.Ellipse {
         }
         else this.body.setVelocity(0);
 
-        this.container.setPosition(this.body.x, this.body.y);
+        this.container.setPosition(this.x, this.y);
 
         this.topLeftOverlapChecker.setPosition(this.body.x + this.width / 2 - this.width, this.body.y + this.height / 2 - this.height);
         this.topRightOverlapChecker.setPosition(this.body.x + this.width / 2 + this.width, this.body.y + this.height / 2 - this.height);
