@@ -15,6 +15,8 @@ export class Player extends Actor {
     private weapons: SpiritWeapon[] = [];
     private powerups: ((weapon: SpiritWeapon) => void)[] = [];
     private maxNumberOfWeapons: number = 2;
+    private phoneAndHands: Phaser.GameObjects.Sprite;
+    private phoneAndHandsOriginalScale: number;
 
     constructor(world: World, x: number, y: number) {
         super(world, x, y);
@@ -22,19 +24,49 @@ export class Player extends Actor {
         this.actorType = ActorType.Friendly;
         world.emit(Signals.PlayerSpawn);
         this.moveWith(InputsMoveEngine.getInstance());
-        const holdingPhone = world.scene.add.sprite(0, 0, 'holdingphone').setOrigin(0.5, 1).setScale(0.015);
+        this.phoneAndHands = world.scene.add.sprite(0, 0, 'holdingphone').setOrigin(0.5, 1).setScale(0.015);
         this.cameraFollowPoint = world.scene.add.ellipse(-0.05, -19.6, 1, 1);
         this.handsContainer = new Phaser.GameObjects.Container(world.scene);
-        this.handsContainer.add(holdingPhone);
+        this.handsContainer.add(this.phoneAndHands);
         this.handsContainer.add(this.cameraFollowPoint);
         this.container.add(this.handsContainer);
-        this.onClickListener = world.scene.input.on('pointerdown', (pointer) => {
+        this.phoneAndHandsOriginalScale = this.phoneAndHands.scaleY;
+        this.phoneAndHands.scaleY = 0;
+
+        this.setupOnClickListener();
+
+        this.world.scene.getEmitter().on('pause', () => {
+            this.scene.add.tween({
+                targets: [this.phoneAndHands],
+                duration: this.world.scene.pauseAnimationTime * 0.8,
+                scaleY: {
+                    getStart: () => 0,
+                    getEnd: () => this.phoneAndHandsOriginalScale,
+                }
+            });
+        });
+
+        this.world.scene.getEmitter().on('resume', () => {
+            this.scene.add.tween({
+                targets: [this.phoneAndHands],
+                delay: this.world.scene.pauseAnimationTime / 2,
+                duration: this.world.scene.pauseAnimationTime / 2,
+                scaleY: {
+                    getStart: () => this.phoneAndHandsOriginalScale,
+                    getEnd: () => 0,
+                }
+            });
+        });
+    }
+
+    setupOnClickListener() {
+        this.onClickListener = this.world.scene.input.on('pointerdown', (pointer) => {
             this.removeInactiveWeapons();
             if (this.weapons.length >= this.maxNumberOfWeapons) return;
             const xTouch = pointer.x;
             const yTouch = pointer.y;
             const clickPoint = new Phaser.Geom.Point(xTouch, yTouch);
-            const weapon = new SpiritWeapon(world, this, clickPoint);
+            const weapon = new SpiritWeapon(this.world, this, clickPoint);
 
             this.powerups.forEach(powerup => powerup(weapon));
             // if (this.powerups.length > 6) {
@@ -55,7 +87,7 @@ export class Player extends Actor {
             // }
 
             this.weapons.push(weapon);
-            CameraUtils.chainZoom(world.scene.cameras.main, [
+            CameraUtils.chainZoom(this.world.scene.cameras.main, [
                 {
                     zoom: 1.04,
                     duration: 60,
