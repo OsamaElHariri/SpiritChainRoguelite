@@ -17,6 +17,11 @@ export class MainScene extends Scene {
         this.load.image('chainSpirit2', '../assets/sprites/chain/chain_spirit2.png');
         this.load.image('holdingphone', '../assets/sprites/phone/holdingphone.png');
         this.load.image('phonescreen', '../assets/sprites/phone/phonescreen.png');
+        this.load.image('phonebackground', '../assets/sprites/phone/phonebackground.png');
+        this.load.image('settingsicon', '../assets/sprites/phone/settingsicon.png');
+        this.load.image('videoicon', '../assets/sprites/phone/videoicon.png');
+        this.load.image('chaticon', '../assets/sprites/phone/chaticon.png');
+        this.load.image('snakesicon', '../assets/sprites/phone/snakesicon.png');
     }
 
     create(): void {
