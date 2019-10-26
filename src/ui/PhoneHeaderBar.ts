@@ -9,7 +9,7 @@ export class PhoneHeaderBar extends Phaser.GameObjects.Container {
         super(scene, x, y);
         this.id = scene.addObject(this);
         this.header = this.scene.add.sprite(0, 0, 'phoneinfoheader').setOrigin(0);
-        this.time = this.scene.add.text(400, 25, 'time', { fontSize: '22px', color: '#4e4e4e', fontWeight: 'bold' }).setOrigin(0.5);
+        this.time = this.scene.add.text(400, 25, 'time', { fontSize: '22px', color: '#fefefe', fontWeight: 'bold' }).setOrigin(0.5);
         this.add(this.header);
         this.add(this.time);
     }
