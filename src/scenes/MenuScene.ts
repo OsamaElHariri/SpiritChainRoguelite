@@ -1,9 +1,11 @@
 import { Scene } from "./Scene";
 import { Interval } from "../utils/interval";
 import { PhoneAppIcon } from "../ui/PhoneAppIcon";
+import { PhoneHeaderBar } from "../ui/PhoneHeaderBar";
 
 export class MenuScene extends Scene {
     private lockscreen: Phaser.GameObjects.Sprite;
+    private headerBar: PhoneHeaderBar;
     private apps: PhoneAppIcon[] = [];
 
     constructor() {
@@ -13,6 +15,7 @@ export class MenuScene extends Scene {
     create(): void {
         this.add.sprite(0, 0, 'phonebackground').setOrigin(0);
         this.constructIcons();
+        this.headerBar = new PhoneHeaderBar(this, 0, 0);
         this.lockscreen = this.add.sprite(0, 0, 'phonescreen').setOrigin(0);
         this.swipeAway();
     }
@@ -53,8 +56,5 @@ export class MenuScene extends Scene {
                 console.log("DONE");
             },
         });
-    }
-
-    update(time: number, delta: number): void {
     }
 }

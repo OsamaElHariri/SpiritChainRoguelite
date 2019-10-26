@@ -1,0 +1,28 @@
+import { Scene } from "../scenes/Scene";
+
+export class PhoneHeaderBar extends Phaser.GameObjects.Container {
+    private id: number;
+    private header: Phaser.GameObjects.Sprite;
+    private time: Phaser.GameObjects.Text;
+
+    constructor(public scene: Scene, x: number, y: number) {
+        super(scene, x, y);
+        this.id = scene.addObject(this);
+        this.header = this.scene.add.sprite(0, 0, 'phoneinfoheader').setOrigin(0);
+        this.time = this.scene.add.text(400, 25, 'time', { fontSize: '22px', color: '#4e4e4e', fontWeight: 'bold' }).setOrigin(0.5);
+        this.add(this.header);
+        this.add(this.time);
+    }
+
+    update(time: number, delta: number) {
+        const date = new Date();
+        this.time.setText(date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }));
+    }
+
+    destroy() {
+        this.scene.stopUpdating(this.id);
+        this.header.destroy();
+        this.time.destroy();
+        super.destroy();
+    }
+}
