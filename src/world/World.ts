@@ -16,7 +16,7 @@ export class World extends Phaser.GameObjects.Container {
         super(scene);
         this.id = scene.addObject(this);
         this.registerListeners();
-        this.currentRoom = new Room(this, 0, 0);
+        this.currentRoom = new Room(this, 0, 0, {xTop: 4, yLeft: 2, xBottom: 6});
         new Player(this, 200, 200);
 
     }

@@ -11,7 +11,7 @@ export class RoomPartitioner {
         this.grid = room.grid;
     }
 
-    edgesExcept(...nodeExceptions: GridNode[]) {
+    edgesExcept(nodeExceptions: GridNode[]) {
         const xEdge = this.grid.width - 1;
         const yEdge = this.grid.height - 1;
 
