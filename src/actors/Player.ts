@@ -29,7 +29,7 @@ export class Player extends Actor {
         super(world, x, y);
         this.fillColor = 0x12f035;
         this.actorType = ActorType.Friendly;
-        world.emit(Signals.PlayerSpawn);
+        world.scene.getEmitter().emit(Signals.PlayerSpawn, this);
         this.moveWith(InputsMoveEngine.getInstance());
         this.phoneAndHands = world.scene.add.sprite(0, 0, 'holdingphone').setOrigin(0.5, 1).setScale(0.015);
         this.cameraFollowPoint = world.scene.add.ellipse(-0.05, -19.6, 1, 1);
@@ -80,8 +80,8 @@ export class Player extends Actor {
         this.onClickListener = this.world.scene.input.on('pointerdown', (pointer) => {
             this.removeInactiveWeapons();
             if (this.weapons.length >= this.maxNumberOfWeapons) return;
-            const xTouch = pointer.x;
-            const yTouch = pointer.y;
+            const xTouch = pointer.worldX;
+            const yTouch = pointer.worldY;
             const clickPoint = new Phaser.Geom.Point(xTouch, yTouch);
             const weapon = new SpiritWeapon(this.world, this, clickPoint);
 
@@ -120,7 +120,7 @@ export class Player extends Actor {
 
     destroy() {
         this.onClickListener.removeListener('pointerdown');
-        this.world.emit(Signals.PlayerDeath);
+        this.world.scene.getEmitter().emit(Signals.PlayerDeath);
         super.destroy();
     }
 }
