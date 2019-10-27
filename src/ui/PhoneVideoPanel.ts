@@ -1,5 +1,6 @@
 import { Scene } from "../scenes/Scene";
 import { UpgradeRequest } from "../actors/Player";
+import { Signals } from "../Signals";
 
 export class PhoneVideoPanel extends Phaser.GameObjects.Container {
 
@@ -20,7 +21,7 @@ export class PhoneVideoPanel extends Phaser.GameObjects.Container {
 
         const clickZone = scene.add.zone(0, 0, 800, 160).setOrigin(0).setInteractive();
         clickZone.on('pointerdown', () => {
-            scene.events.emit('upgrade_player', upgradeRequest);
+            scene.events.emit(Signals.UpgradePlayer, upgradeRequest);
         });
         this.add(clickZone);
     }

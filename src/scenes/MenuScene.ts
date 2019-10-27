@@ -2,6 +2,7 @@ import { Scene } from "./Scene";
 import { Interval } from "../utils/interval";
 import { PhoneAppIcon } from "../ui/PhoneAppIcon";
 import { PhoneHeaderBar } from "../ui/PhoneHeaderBar";
+import { Signals } from "../Signals";
 
 export class MenuScene extends Scene {
     private lockscreen: Phaser.GameObjects.Sprite;
@@ -20,7 +21,7 @@ export class MenuScene extends Scene {
         this.swipeAway();
 
         this.input.keyboard.on('keydown-P', event => {
-            this.events.emit("close_menu");
+            this.events.emit(Signals.CloseMenu);
         });
     }
 

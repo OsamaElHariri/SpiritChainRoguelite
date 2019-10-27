@@ -1,3 +1,5 @@
+import { Signals } from "../Signals";
+
 export class Scene extends Phaser.Scene {
     pauseAnimationTime = 500;
     paused = false;
@@ -18,7 +20,7 @@ export class Scene extends Phaser.Scene {
                 if (this.paused || currentTimeStamp - this.lastPauseToggleTime < this.pauseAnimationTime) return;
                 this.lastPauseToggleTime = currentTimeStamp;
                 this.paused = true;
-                this.emitter.emit('pause');
+                this.emitter.emit(Signals.Pause);
             });
 
             this.input.keyboard.on('keydown-P', event => {
@@ -33,7 +35,7 @@ export class Scene extends Phaser.Scene {
         if (!this.paused || currentTimeStamp - this.lastPauseToggleTime < this.pauseAnimationTime) return;
         this.lastPauseToggleTime = currentTimeStamp;
         this.paused = false;
-        this.emitter.emit('resume');
+        this.emitter.emit(Signals.Resume);
     }
 
     addObject(object: Phaser.GameObjects.GameObject) {

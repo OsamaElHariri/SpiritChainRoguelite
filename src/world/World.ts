@@ -1,6 +1,7 @@
 import { Room } from "./Room";
 import { Scene } from "../scenes/Scene";
 import { Player } from "../actors/Player";
+import { Signals } from "../Signals";
 
 export class World extends Phaser.GameObjects.Container {
 
@@ -14,17 +15,17 @@ export class World extends Phaser.GameObjects.Container {
         super(scene);
         this.id = scene.addObject(this);
         this.player = new Player(this, 200, 200);
-        this.currentRoom = new Room(this, 0, 0, 600, 600);
+        this.currentRoom = new Room(this, 0, 0);
 
-        scene.getEmitter().on('pause', () => {
+        scene.getEmitter().on(Signals.Pause, () => {
             this.onScenePause();
         });
 
-        scene.getEmitter().on('resume', () => {
+        scene.getEmitter().on(Signals.Resume, () => {
             this.onSceneResume();
         });
 
-        scene.scene.get("MenuScene").events.on("close_menu", () => {
+        scene.scene.get("MenuScene").events.on(Signals.CloseMenu, () => {
             scene.unpause();
         });
     }
@@ -85,6 +86,4 @@ export class World extends Phaser.GameObjects.Container {
     getCurrentRoom(): Room {
         return this.currentRoom;
     }
-
-
 }

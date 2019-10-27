@@ -21,6 +21,7 @@ export class Player extends Actor {
     private onClickListener: Phaser.Events.EventEmitter;
     private weapons: SpiritWeapon[] = [];
     private powerups: ((weapon: SpiritWeapon) => void)[] = [];
+    private upgradesHistory: UpgradeRequest[] = [];
     private phoneAndHands: Phaser.GameObjects.Sprite;
     private phoneAndHandsOriginalScale: number;
 
@@ -41,7 +42,7 @@ export class Player extends Actor {
 
         this.setupOnClickListener();
 
-        this.world.scene.getEmitter().on('pause', () => {
+        this.world.scene.getEmitter().on(Signals.Pause, () => {
             this.scene.add.tween({
                 targets: [this.phoneAndHands],
                 duration: this.world.scene.pauseAnimationTime * 0.8,
@@ -52,7 +53,7 @@ export class Player extends Actor {
             });
         });
 
-        this.world.scene.getEmitter().on('resume', () => {
+        this.world.scene.getEmitter().on(Signals.Resume, () => {
             this.scene.add.tween({
                 targets: [this.phoneAndHands],
                 delay: this.world.scene.pauseAnimationTime / 2,
@@ -64,10 +65,15 @@ export class Player extends Actor {
             });
         });
 
-        this.scene.scene.get('VideosScene').events.on("upgrade_player", (upgrades: UpgradeRequest) => {
-            if (upgrades.weaponUpgrade) this.powerups.push(upgrades.weaponUpgrade);
-            if (upgrades.playerUpgrade) upgrades.playerUpgrade(this);
+        this.scene.scene.get('VideosScene').events.on(Signals.UpgradePlayer, (upgrades: UpgradeRequest) => {
+            this.handleUpgradeRequest(upgrades);
         });
+    }
+
+    handleUpgradeRequest(upgrades: UpgradeRequest) {
+        if (upgrades.weaponUpgrade) this.powerups.push(upgrades.weaponUpgrade);
+        if (upgrades.playerUpgrade) upgrades.playerUpgrade(this);
+        this.upgradesHistory.push(upgrades);
     }
 
     setupOnClickListener() {
@@ -96,6 +102,7 @@ export class Player extends Actor {
 
     update(time: number, delta: number) {
         super.update(time, delta);
+        if (!this.body) return;
         const velocity = this.body.velocity.clone().normalize();
         if (velocity.length()) {
             const radians = Math.atan2(velocity.y, velocity.x) + Math.PI / 2;
