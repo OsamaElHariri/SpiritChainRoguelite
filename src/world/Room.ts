@@ -5,6 +5,7 @@ import { Wall } from "./terrain/Wall";
 import { Grid } from "../grid/Grid";
 import { Enemy } from "../actors/Enemy";
 import { RoomPartitioner } from "./room_generation/RoomPartitioner";
+import { GridNode } from "../grid/GridNode";
 
 export class Room extends Phaser.GameObjects.Container {
     scene: Scene;
@@ -16,7 +17,7 @@ export class Room extends Phaser.GameObjects.Container {
     roomWidth: number;
     roomHeight: number;
 
-    constructor(public world: World, public x: number, public y: number) {
+    constructor(public world: World, public x: number, public y: number, public doors: GridNode[] = []) {
         super(world.scene, x, y);
         this.scene = world.scene;
         this.grid = new Grid(x, y, 11, 9);
@@ -25,6 +26,9 @@ export class Room extends Phaser.GameObjects.Container {
         this.scene.add.tileSprite(x, y, this.roomWidth, this.roomHeight, 'grasstile').setOrigin(0);
         this.addDecorations();
         const partitioner = new RoomPartitioner(this);
+        partitioner.edgesExcept(this.grid.at(0, 5));
+        partitioner.centerPlus();
+
         // partitioner.getSpawnPointsCorners(4, 3)
         //     .forEach((node) => this.actors.push(new Enemy(world, node.xCenterWorld, node.yCenterWorld)));
         this.constructGrid();

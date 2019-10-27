@@ -9,7 +9,17 @@ export class RoomPartitioner {
     private grid: Grid;
     constructor(room: Room) {
         this.grid = room.grid;
-        this.centerPlus();
+    }
+
+    edgesExcept(...nodeExceptions: GridNode[]) {
+        const xEdge = this.grid.width - 1;
+        const yEdge = this.grid.height - 1;
+
+        this.grid.forEach(node => {
+            if (node.x === 0 || node.x === xEdge || node.y === 0 || node.y === yEdge) {
+                if (nodeExceptions.indexOf(node) < 0) GridShape.single(node);
+            }
+        });
     }
 
     concaveCorners() {
