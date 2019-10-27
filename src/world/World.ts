@@ -10,6 +10,7 @@ export class World extends Phaser.GameObjects.Container {
     private id: number;
     private currentRoom: Room;
     private menuScene: Phaser.Scenes.ScenePlugin;
+    private zoomOutCameraPosition: { x: number, y: number };
 
     constructor(public scene: Scene) {
         super(scene);
@@ -40,6 +41,9 @@ export class World extends Phaser.GameObjects.Container {
     }
 
     onScenePause() {
+        this.scene.cameras.main.useBounds = false;
+        this.scene.cameras.main.stopFollow();
+        this.zoomOutCameraPosition = { x: this.scene.cameras.main.scrollX, y: this.scene.cameras.main.scrollY }
         const animationTime = this.scene.pauseAnimationTime;
 
         const radians = this.player.handsContainer.rotation;
@@ -66,6 +70,9 @@ export class World extends Phaser.GameObjects.Container {
     }
 
     onSceneResume() {
+        this.scene.cameras.main.useBounds = true;
+        this.scene.cameras.main.startFollow(this.player);
+
         this.scene.scene.resume("MainScene");
         if (this.menuScene) {
             this.menuScene.stop('MenuScene');
@@ -75,7 +82,7 @@ export class World extends Phaser.GameObjects.Container {
 
         const initialRadians = (this.scene.cameras.main as any).rotation;
 
-        this.scene.cameras.main.pan(400, 300, animationTime, Phaser.Math.Easing.Expo.In);
+        this.scene.cameras.main.pan(this.zoomOutCameraPosition.x, this.zoomOutCameraPosition.y, animationTime, Phaser.Math.Easing.Expo.In);
         this.scene.cameras.main.zoomTo(1, animationTime, Phaser.Math.Easing.Expo.Out, true);
         this.scene.add.tween({
             targets: [this.scene.cameras.main],
