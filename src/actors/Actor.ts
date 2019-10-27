@@ -11,13 +11,13 @@ export class Actor extends Phaser.GameObjects.Ellipse {
     container: Phaser.GameObjects.Container;
     healthBar: SimpleLifeBar
 
+    maxHealthPoints: number = 1000;
     healthPoints: number = 1000;
     speed: number = 160;
-    
+    stunRemoveTime: number = 0;
+
     private id: number;
     private moveEngine: MoveEngine = new EmptyMoveEngine();
-    private maxHealthPoints: number = 1000;
-    private stunRemoveTime: number = 0;
 
     private collisionSlideAddition: number = 0.75;
     private topLeftOverlapChecker: Phaser.GameObjects.Rectangle;

@@ -5,16 +5,22 @@ import { CameraUtils } from "../utils/CameraUtils";
 import { InputsMoveEngine } from "../move_engines/InputsMoveEngine";
 import { Signals } from "../Signals";
 import { ActorType } from "./ActorType";
-import { PowerUp } from "../weapons/spirit_weapon/PowerUp";
+import { Weapon } from "../weapons/Weapon";
+
+export type UpgradeRequest = {
+    weaponUpgrade?: (weapon: Weapon) => void,
+    playerUpgrade?: (player: Player) => void,
+};
 
 export class Player extends Actor {
     cameraFollowPoint: Phaser.GameObjects.Ellipse;
     handsContainer: Phaser.GameObjects.Container;
 
+    maxNumberOfWeapons: number = 2;
+
     private onClickListener: Phaser.Events.EventEmitter;
     private weapons: SpiritWeapon[] = [];
     private powerups: ((weapon: SpiritWeapon) => void)[] = [];
-    private maxNumberOfWeapons: number = 2;
     private phoneAndHands: Phaser.GameObjects.Sprite;
     private phoneAndHandsOriginalScale: number;
 
@@ -58,8 +64,9 @@ export class Player extends Actor {
             });
         });
 
-        this.scene.scene.get('VideosScene').events.on("video_clicked", (data) => {
-            console.log(data);
+        this.scene.scene.get('VideosScene').events.on("upgrade_player", (upgrades: UpgradeRequest) => {
+            if (upgrades.weaponUpgrade) this.powerups.push(upgrades.weaponUpgrade);
+            if (upgrades.playerUpgrade) upgrades.playerUpgrade(this);
         });
     }
 
@@ -73,23 +80,6 @@ export class Player extends Actor {
             const weapon = new SpiritWeapon(this.world, this, clickPoint);
 
             this.powerups.forEach(powerup => powerup(weapon));
-            // if (this.powerups.length > 6) {
-            //     // pass
-            // } else if (this.powerups.length > 5) {
-            //     this.powerups.push(PowerUp.doubleRadius);
-            // } else if (this.powerups.length > 4) {
-            //     this.powerups.push(PowerUp.doubleSpeed);
-            // } else if (this.powerups.length > 3) {
-            //     this.powerups.push(PowerUp.goThroughWalls);
-            // } else if (this.powerups.length > 2) {
-            //     this.powerups.push(PowerUp.doubleDamageWhenTraveling);
-            // } else if (this.powerups.length > 1) {
-            //     this.speed *= 2;
-            //     this.powerups.push(PowerUp.stun);
-            // } else {
-            //     this.powerups.push(PowerUp.halfHoldTime);
-            // }
-
             this.weapons.push(weapon);
             CameraUtils.chainZoom(this.world.scene.cameras.main, [
                 {
