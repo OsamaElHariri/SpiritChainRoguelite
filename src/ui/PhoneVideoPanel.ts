@@ -15,5 +15,11 @@ export class PhoneVideoPanel extends Phaser.GameObjects.Container {
 
         this.add(scene.add.text(230, 20, 'Top 10 tricks to becoming...', { color: '#4e4e4e', fontSize: '30px' }).setOrigin(0));
         this.add(scene.add.text(230, 60, "Increase your spirit weapon's range", { color: '#4e4e4e', wordWrap: { width: 520, useAdvancedWrap: true } }).setOrigin(0));
+
+        const clickZone = scene.add.zone(0, 0, 800, 160).setOrigin(0).setInteractive();
+        clickZone.on('pointerdown', () => {
+            scene.events.emit('video_clicked', 'this is some video');
+        });
+        this.add(clickZone);
     }
 }

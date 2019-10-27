@@ -57,6 +57,10 @@ export class Player extends Actor {
                 }
             });
         });
+
+        this.scene.scene.get('VideosScene').events.on("video_clicked", (data) => {
+            console.log(data);
+        });
     }
 
     setupOnClickListener() {
