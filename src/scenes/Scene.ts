@@ -22,14 +22,18 @@ export class Scene extends Phaser.Scene {
             });
 
             this.input.keyboard.on('keydown-P', event => {
-                const currentTimeStamp = new Date().getTime();
-                if (!this.paused || currentTimeStamp - this.lastPauseToggleTime < this.pauseAnimationTime) return;
-                this.lastPauseToggleTime = currentTimeStamp;
-                this.paused = false;
-                this.emitter.emit('resume');
+                this.unpause();
             });
         }
         return this.emitter;
+    }
+
+    unpause() {
+        const currentTimeStamp = new Date().getTime();
+        if (!this.paused || currentTimeStamp - this.lastPauseToggleTime < this.pauseAnimationTime) return;
+        this.lastPauseToggleTime = currentTimeStamp;
+        this.paused = false;
+        this.emitter.emit('resume');
     }
 
     addObject(object: Phaser.GameObjects.GameObject) {

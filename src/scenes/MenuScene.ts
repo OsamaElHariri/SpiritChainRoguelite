@@ -18,6 +18,10 @@ export class MenuScene extends Scene {
         this.headerBar = new PhoneHeaderBar(this, 0, 0);
         this.lockscreen = this.add.sprite(0, 0, 'phonescreen').setOrigin(0);
         this.swipeAway();
+
+        this.input.keyboard.on('keydown-P', event => {
+            this.events.emit("close_menu");
+        });
     }
 
     constructIcons() {

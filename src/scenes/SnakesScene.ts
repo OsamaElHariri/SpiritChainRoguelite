@@ -45,7 +45,7 @@ export class SnakesScene extends Scene {
     onSceneExit() {
         this.gameOver();
         this.endGameText.setText('');
-        this.scene.stop('SnakesScene')
+        this.scene.stop('SnakesScene');
     }
 
     startGame() {

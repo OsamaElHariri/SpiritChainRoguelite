@@ -23,6 +23,10 @@ export class World extends Phaser.GameObjects.Container {
         scene.getEmitter().on('resume', () => {
             this.onSceneResume();
         });
+
+        scene.scene.get("MenuScene").events.on("close_menu", () => {
+            scene.unpause();
+        });
     }
 
     onScenePause() {
@@ -46,11 +50,13 @@ export class World extends Phaser.GameObjects.Container {
             },
             onComplete: () => {
                 this.menuScene = this.scene.scene.launch('MenuScene');
+                this.scene.scene.pause("MainScene");
             },
         });
     }
 
     onSceneResume() {
+        this.scene.scene.resume("MainScene");
         if (this.menuScene) {
             this.menuScene.stop('MenuScene');
             this.menuScene = null;

@@ -10,6 +10,9 @@ export class VideosScene extends Scene {
     }
 
     create(): void {
+        this.input.keyboard.on('keydown-P', event => this.scene.stop('VideosScene'));
+
+
         this.add.rectangle(0, 0, 800, 600, 0xa4a4a4).setOrigin(0);
         this.add.rectangle(0, 0, 800, 100, 0xffffff).setOrigin(0);
         this.add.sprite(36.5, 64, 'phonebackicon').setOrigin(0, 0.5).setInteractive().on('pointerdown', () => {
