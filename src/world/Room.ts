@@ -10,16 +10,48 @@ export class Room extends Phaser.GameObjects.Container {
     scene: Scene;
     actors: Actor[] = [];
     terrain: Wall[] = [];
+    decorations: Phaser.GameObjects.Sprite[] = [];
     grid: Grid;
 
-    constructor(public world: World, public x: number, public y: number, public width: number, public height: number) {
+    roomWidth: number;
+    roomHeight: number;
+
+    constructor(public world: World, public x: number, public y: number) {
         super(world.scene, x, y);
         this.scene = world.scene;
-        this.grid = new Grid(0, 0, 11, 9);
+        this.grid = new Grid(x, y, 11, 9);
+        this.roomWidth = this.grid.xLocalMax;
+        this.roomHeight = this.grid.yLocalMax;
+        this.scene.add.tileSprite(x, y, this.roomWidth, this.roomHeight, 'grasstile').setOrigin(0);
+        this.addDecorations();
         const partitioner = new RoomPartitioner(this);
-        partitioner.getSpawnPointsCorners(4, 3)
-            .forEach((node) => this.actors.push(new Enemy(world, node.xCenterWorld, node.yCenterWorld)));
+        // partitioner.getSpawnPointsCorners(4, 3)
+        //     .forEach((node) => this.actors.push(new Enemy(world, node.xCenterWorld, node.yCenterWorld)));
         this.constructGrid();
+
+        world.scene.cameras.main.setBounds(x, y, this.roomWidth, this.roomHeight);
+    }
+
+    private addDecorations() {
+        let i = this.x;
+        let j = this.y;
+
+        const groundDecorations = ['grass1', 'grass2', 'grass3', 'grass4'];
+
+        for (; i < this.grid.xWorldMax; i += 32) {
+            for (; j < this.grid.yWorldMax; j += 32) {
+                const shouldSpawnGrass = Math.random() < 0.05;
+                if (shouldSpawnGrass) {
+                    const index = Math.floor(Math.random() * groundDecorations.length);
+                    const x = i + 15 * Math.random();
+                    const y = j + 15 * Math.random();
+                    this.decorations.push(this.scene.add.sprite(x, y, groundDecorations[index])
+                        .setOrigin(0)
+                        .setScale(Math.random() < 0.5 ? -1 : 1, 1));
+                }
+            }
+            j = this.y;
+        }
     }
 
     private constructGrid() {
@@ -39,5 +71,12 @@ export class Room extends Phaser.GameObjects.Container {
         this.terrain.forEach(terrain => {
             this.world.scene.physics.overlap(item, terrain, onOverlap);
         });
+    }
+
+    destroy() {
+        this.terrain.forEach((terrain => terrain.destroy()));
+        this.actors.forEach((actor => actor.destroy()));
+        this.decorations.forEach((decoration => decoration.destroy()));
+        super.destroy();
     }
 }

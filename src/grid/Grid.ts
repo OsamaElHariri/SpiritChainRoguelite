@@ -3,11 +3,10 @@ import { GridNode } from "./GridNode";
 export class Grid {
     nodes: GridNode[][] = [];
 
-
-    private xLocalMax;
-    private yLocalMax;
-    private xWorldMax;
-    private yWorldMax;
+    xLocalMax: number;
+    yLocalMax: number;
+    xWorldMax: number;
+    yWorldMax: number;
 
     constructor(public xWorld: number, public yWorld: number, public width: number, public height: number, public tileWidth: number = 64) {
         this.xLocalMax = width * tileWidth;

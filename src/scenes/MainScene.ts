@@ -28,6 +28,11 @@ export class MainScene extends Scene {
         this.load.image('videobackground1', '../assets/sprites/phone/videobackground1.png');
         this.load.image('videobackground2', '../assets/sprites/phone/videobackground2.png');
         this.load.image('phonebackicon', '../assets/sprites/phone/phonebackicon.png');
+        this.load.image('grasstile', '../assets/sprites/environment/grasstile.png');
+        this.load.image('grass1', '../assets/sprites/environment/grass1.png');
+        this.load.image('grass2', '../assets/sprites/environment/grass2.png');
+        this.load.image('grass3', '../assets/sprites/environment/grass3.png');
+        this.load.image('grass4', '../assets/sprites/environment/grass4.png');
     }
 
     create(): void {

@@ -14,19 +14,28 @@ export class World extends Phaser.GameObjects.Container {
     constructor(public scene: Scene) {
         super(scene);
         this.id = scene.addObject(this);
-        this.player = new Player(this, 200, 200);
+        this.registerListeners();
         this.currentRoom = new Room(this, 0, 0);
+        new Player(this, 200, 200);
 
-        scene.getEmitter().on(Signals.Pause, () => {
+    }
+
+    registerListeners() {
+        this.scene.getEmitter().on(Signals.Pause, () => {
             this.onScenePause();
         });
 
-        scene.getEmitter().on(Signals.Resume, () => {
+        this.scene.getEmitter().on(Signals.Resume, () => {
             this.onSceneResume();
         });
 
-        scene.scene.get("MenuScene").events.on(Signals.CloseMenu, () => {
-            scene.unpause();
+        this.scene.scene.get("MenuScene").events.on(Signals.CloseMenu, () => {
+            this.scene.unpause();
+        });
+
+        this.scene.getEmitter().on(Signals.PlayerSpawn, (player: Player) => {
+            this.player = player;
+            this.scene.cameras.main.startFollow(player, true, 0.1);
         });
     }
 
