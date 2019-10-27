@@ -2,6 +2,7 @@ import "phaser";
 import { MainScene } from './scenes/MainScene';
 import { MenuScene } from "./scenes/MenuScene";
 import { SnakesScene } from "./scenes/SnakesScene";
+import { VideosScene } from "./scenes/VideosScene";
 
 const config = {
   width: 800,
@@ -9,7 +10,7 @@ const config = {
   type: Phaser.AUTO,
   parent: "game",
   backgroundColor: '#303a59',
-  scene: [MainScene, MenuScene, SnakesScene],
+  scene: [MainScene, MenuScene, SnakesScene, VideosScene],
   physics: {
     default: "arcade",
     arcade: {

@@ -23,6 +23,11 @@ export class MainScene extends Scene {
         this.load.image('chaticon', '../assets/sprites/phone/chaticon.png');
         this.load.image('snakesicon', '../assets/sprites/phone/snakesicon.png');
         this.load.image('phoneinfoheader', '../assets/sprites/phone/infoheader.png');
+        this.load.image('trendingvideosicon', '../assets/sprites/phone/trendingvideosicon.png');
+        this.load.image('playvideoicon', '../assets/sprites/phone/playvideoicon.png');
+        this.load.image('videobackground1', '../assets/sprites/phone/videobackground1.png');
+        this.load.image('videobackground2', '../assets/sprites/phone/videobackground2.png');
+        this.load.image('phonebackicon', '../assets/sprites/phone/phonebackicon.png');
     }
 
     create(): void {

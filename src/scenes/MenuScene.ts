@@ -28,7 +28,7 @@ export class MenuScene extends Scene {
         const yMin = 50;
         const yStep = 200;
         const apps = [{ name: 'Settings', icon: 'settingsicon', scene: 'SnakesScene' },
-        { name: 'Videos', icon: 'videoicon', scene: 'SnakesScene' },
+        { name: 'Videos', icon: 'videoicon', scene: 'VideosScene' },
         { name: 'Chat', icon: 'chaticon', scene: 'SnakesScene' },
         { name: 'Snakes', icon: 'snakesicon', scene: 'SnakesScene' }];
         let x = xMin;
@@ -51,9 +51,6 @@ export class MenuScene extends Scene {
             x: {
                 getStart: () => 0,
                 getEnd: () => -800,
-            },
-            onComplete: () => {
-                console.log("DONE");
             },
         });
     }
