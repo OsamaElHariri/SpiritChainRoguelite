@@ -5,4 +5,8 @@ export enum Signals {
     Resume = 'resum',
     UpgradePlayer = 'upgrade_player',
     CloseMenu = 'close_menu',
+    RoomConstruct = 'room_construct',
+    RoomStart = 'room_start',
+    RoomComplete = 'room_complete',
+    RoomDestroy = 'room_destroy',
 }

@@ -2,6 +2,7 @@ import { Room } from "./Room";
 import { Scene } from "../scenes/Scene";
 import { Player } from "../actors/Player";
 import { Signals } from "../Signals";
+import { Interval } from "../utils/interval";
 
 export class World extends Phaser.GameObjects.Container {
 
@@ -16,17 +17,18 @@ export class World extends Phaser.GameObjects.Container {
         super(scene);
         this.id = scene.addObject(this);
         this.registerListeners();
-        this.currentRoom = new Room(this, 0, 0, {xTop: 4, yLeft: 2, xBottom: 6});
+        this.createRoom();
         new Player(this, 200, 200);
-
     }
 
     registerListeners() {
-        this.scene.getEmitter().on(Signals.Pause, () => {
+        const emitter = this.scene.getEmitter();
+
+        emitter.on(Signals.Pause, () => {
             this.onScenePause();
         });
 
-        this.scene.getEmitter().on(Signals.Resume, () => {
+        emitter.on(Signals.Resume, () => {
             this.onSceneResume();
         });
 
@@ -34,10 +36,34 @@ export class World extends Phaser.GameObjects.Container {
             this.scene.unpause();
         });
 
-        this.scene.getEmitter().on(Signals.PlayerSpawn, (player: Player) => {
+        emitter.on(Signals.PlayerSpawn, (player: Player) => {
             this.player = player;
             this.scene.cameras.main.startFollow(player, true, 0.1);
         });
+
+        emitter.on(Signals.RoomComplete, () => {
+            this.scene.cameras.main.fadeOut(250, 0, 0, 0, (cam, progress: number) => {
+                if (progress === 1) this.goToNextRoom();
+            });
+        });
+
+        emitter.on(Signals.RoomConstruct, async (room: Room) => {
+            this.currentRoom = room;
+            await Interval.milliseconds(300);
+            this.currentRoom.startRoom();
+        });
+    }
+
+    async goToNextRoom() {
+        if (this.currentRoom) this.currentRoom.destroy();
+        this.player.cloneAndDestroy(200, 200);
+        await Interval.milliseconds(100);
+        this.createRoom();
+        this.scene.cameras.main.fadeIn(150, 0, 0, 0);
+    }
+
+    createRoom() {
+        new Room(this, 0, 0, { xTop: 4, yLeft: 2, xBottom: 6 });
     }
 
     onScenePause() {

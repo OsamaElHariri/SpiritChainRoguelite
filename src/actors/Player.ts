@@ -110,6 +110,11 @@ export class Player extends Actor {
         }
     }
 
+    onNegativeHealth() {
+        this.world.scene.getEmitter().emit(Signals.PlayerDeath);
+        super.onNegativeHealth();
+    }
+
     protected setupSprite() {
         return this.world.scene.add.ellipse(this.x, this.y, 20, 20, 0xe35d57)
     }
@@ -118,9 +123,15 @@ export class Player extends Actor {
         this.weapons = this.weapons.filter((weapon) => weapon.active);
     }
 
+    cloneAndDestroy(x: number, y: number) {
+        this.destroy();
+        const newPlayer = new Player(this.world, x, y);
+        this.upgradesHistory.forEach(upgrade => newPlayer.handleUpgradeRequest(upgrade));
+    }
+
     destroy() {
         this.onClickListener.removeListener('pointerdown');
-        this.world.scene.getEmitter().emit(Signals.PlayerDeath);
+        this.weapons.forEach((weapon) => weapon.destroy());
         super.destroy();
     }
 }

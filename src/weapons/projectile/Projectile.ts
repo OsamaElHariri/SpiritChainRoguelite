@@ -2,6 +2,7 @@ import { Room } from "../../world/Room";
 import { Actor } from "../../actors/Actor";
 import { Wall } from "../../world/terrain/Wall";
 import { Weapon } from "../Weapon";
+import { Signals } from "../../Signals";
 
 export class Projectile extends Phaser.GameObjects.Ellipse implements Weapon {
     body: Phaser.Physics.Arcade.Body;
@@ -22,6 +23,9 @@ export class Projectile extends Phaser.GameObjects.Ellipse implements Weapon {
         this.direction = direction.normalize();
         this.direction.x *= this.speed;
         this.direction.y *= this.speed;
+
+        source.world.scene.getEmitter().on(Signals.RoomComplete, () => this.destroy());
+        source.world.scene.getEmitter().on(Signals.RoomDestroy, () => this.destroy());
     }
 
     update(time, delta) {
@@ -33,7 +37,6 @@ export class Projectile extends Phaser.GameObjects.Ellipse implements Weapon {
 
         this.room.overlapWithWalls(this, (projectile: Projectile, wall: Wall) => {
             shouldDestory = true;
-
         });
 
         if (shouldDestory) {
@@ -46,9 +49,8 @@ export class Projectile extends Phaser.GameObjects.Ellipse implements Weapon {
 
 
     destroy() {
+        if (!this.active) return;
         this.room.scene.stopUpdating(this.id);
         super.destroy();
     }
-
-
 }

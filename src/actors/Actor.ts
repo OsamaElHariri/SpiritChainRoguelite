@@ -67,7 +67,7 @@ export class Actor extends Phaser.GameObjects.Ellipse {
 
     update(time, delta: number) {
         if (this.healthPoints <= 0) {
-            this.destroy();
+            this.onNegativeHealth();
             return;
         }
 
@@ -83,6 +83,10 @@ export class Actor extends Phaser.GameObjects.Ellipse {
         this.topRightOverlapChecker.setPosition(this.body.x + this.width / 2 + this.width, this.body.y + this.height / 2 - this.height);
         this.bottomLeftOverlapChecker.setPosition(this.body.x + this.width / 2 - this.width, this.body.y + this.height / 2 + this.height);
         this.bottomRightOverlapChecker.setPosition(this.body.x + this.width / 2 + this.width, this.body.y + this.height / 2 + this.height);
+    }
+
+    onNegativeHealth() {
+        this.destroy();
     }
 
     protected canMove() {

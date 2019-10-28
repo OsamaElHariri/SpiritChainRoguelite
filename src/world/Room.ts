@@ -6,6 +6,7 @@ import { Grid } from "../grid/Grid";
 import { Enemy } from "../actors/Enemy";
 import { RoomPartitioner } from "./room_generation/RoomPartitioner";
 import { GridNode } from "../grid/GridNode";
+import { Signals } from "../Signals";
 
 export type DoorLocations = {
     xTop?: number,
@@ -19,6 +20,7 @@ export class Room extends Phaser.GameObjects.Container {
     actors: Actor[] = [];
     terrain: Wall[] = [];
     decorations: Phaser.GameObjects.Sprite[] = [];
+    floor: Phaser.GameObjects.TileSprite;
     grid: Grid;
     doors: GridNode[] = [];
 
@@ -28,6 +30,7 @@ export class Room extends Phaser.GameObjects.Container {
 
     private id: number;
     private doorColliders: Phaser.GameObjects.Rectangle[] = [];
+    private partitioner: RoomPartitioner;
 
     constructor(public world: World, public x: number, public y: number, doorLocations: DoorLocations = {}) {
         super(world.scene, x, y);
@@ -37,18 +40,23 @@ export class Room extends Phaser.GameObjects.Container {
 
         this.roomWidth = this.grid.xLocalMax;
         this.roomHeight = this.grid.yLocalMax;
-        this.scene.add.tileSprite(x, y, this.roomWidth, this.roomHeight, 'grasstile').setOrigin(0);
-        this.addDecorations();
+        this.floor = this.scene.add.tileSprite(x, y, this.roomWidth, this.roomHeight, 'grasstile').setOrigin(0);
+        this.decorateGround();
         this.setupDoors(doorLocations);
-        const partitioner = new RoomPartitioner(this);
-        partitioner.edgesExcept(this.doors);
-        partitioner.centerPlus();
-
-        // partitioner.getSpawnPointsCorners(4, 3)
-        //     .forEach((node) => this.actors.push(new Enemy(world, node.xCenterWorld, node.yCenterWorld)));
-        this.constructGrid();
+        this.partitioner = new RoomPartitioner(this);
+        this.partitioner.edgesExcept(this.doors);
+        this.partitioner.centerPlus();
+        this.decorateGrid();
 
         world.scene.cameras.main.setBounds(x, y, this.roomWidth, this.roomHeight);
+        this.scene.getEmitter().emit(Signals.RoomConstruct, this);
+    }
+
+    startRoom() {
+        this.partitioner.getSpawnPointsCorners(4, 3)
+            .forEach((node) => this.actors.push(new Enemy(this.world, node.xCenterWorld, node.yCenterWorld)));
+
+        this.scene.getEmitter().emit(Signals.RoomStart, this);
     }
 
     private setupDoors(doorLocations: DoorLocations) {
@@ -66,7 +74,7 @@ export class Room extends Phaser.GameObjects.Container {
         });
     }
 
-    private addDecorations() {
+    private decorateGround() {
         let i = this.x;
         let j = this.y;
 
@@ -88,7 +96,7 @@ export class Room extends Phaser.GameObjects.Container {
         }
     }
 
-    private constructGrid() {
+    private decorateGrid() {
         this.grid.forEach((node) => {
             if (!node.traversable)
                 this.terrain.push(new Wall(this, node.xWorld, node.yWorld, this.grid.tileWidth));
@@ -110,19 +118,26 @@ export class Room extends Phaser.GameObjects.Container {
     update(time: number, delta: number) {
         if (!this.roomCleared && this.world.player) {
             this.doorColliders.forEach(door => {
-                this.world.scene.physics.overlap(door, this.world.player, (nodeArea, player) => {
-                    console.log("Room Cleared!");
-                    this.roomCleared = true;
-                })
+                this.world.scene.physics.overlap(door, this.world.player,
+                    () => this.onRoomCleared());
             });
         }
     }
 
+    onRoomCleared() {
+        this.scene.getEmitter().emit(Signals.RoomComplete);
+        this.roomCleared = true;
+        this.scene.cameras.main.zoomTo(1, 100, 'Linear', true);
+    }
+
     destroy() {
+        this.scene.getEmitter().emit(Signals.RoomDestroy);
         this.world.scene.stopUpdating(this.id);
         this.terrain.forEach((terrain => terrain.destroy()));
         this.actors.forEach((actor => actor.destroy()));
         this.decorations.forEach((decoration => decoration.destroy()));
+        this.doorColliders.forEach((decoration => decoration.destroy()));
+        this.floor.destroy();
         super.destroy();
     }
 }

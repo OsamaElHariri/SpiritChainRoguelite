@@ -1,6 +1,7 @@
 import { Actor } from "../../actors/Actor";
 import { Interval } from "../../utils/interval";
 import { Projectile } from "./Projectile";
+import { Signals } from "../../Signals";
 
 export class ProjectilePlayerTargeter {
     initialDelay: number = 1500;
@@ -9,7 +10,9 @@ export class ProjectilePlayerTargeter {
     private indicator = 0;
     private isActive = false;
 
-    constructor(public source: Actor, public player: Actor, ) { }
+    constructor(public source: Actor, public player: Actor, ) {
+        source.world.scene.getEmitter().on(Signals.RoomComplete, () => this.stopShooting());
+    }
 
     startShooting() {
         this.isActive = true;

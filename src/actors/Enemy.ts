@@ -16,4 +16,9 @@ export class Enemy extends Actor {
         this.weapon = new ProjectilePlayerTargeter(this, world.player);
         this.weapon.startShooting();
     }
+
+    destroy() {
+        this.weapon.stopShooting();
+        super.destroy();
+    }
 }
