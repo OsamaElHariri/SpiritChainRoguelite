@@ -4,6 +4,7 @@ import { World } from "../../world/World";
 import { Actor } from "../../actors/Actor";
 import { Weapon } from "../Weapon";
 import { Wall } from "../../world/terrain/Wall";
+import { SpriritWeaponEffect } from "./SpiritWeaponEffect";
 
 export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
     body: Phaser.Physics.Arcade.Body;
@@ -27,10 +28,12 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
     private source: { x: number, y: number };
     private isHolding: boolean = false;
     private chain: SpiritChain;
+    private weaponSprite: SpriritWeaponEffect;
+    private terrainCollider: Phaser.GameObjects.Rectangle;
 
 
     constructor(public world: World, source: Actor, public target: { x: number, y: number }) {
-        super(world.scene, source.x, source.y, 10, 10, 0x45aec0);
+        super(world.scene, source.x, source.y, 10, 10);
         this.source = source;
         this.id = world.scene.addObject(this);
         this.originalSource = source;
@@ -41,13 +44,20 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
         this.setDistanceFromTarget(source, target);
         world.scene.physics.world.enable(this);
         this.body.setAllowGravity(false);
+        this.weaponSprite = new SpriritWeaponEffect(world.scene, source.x, source.y, this.radius);
+        this.weaponSprite.setDepth(10);
+        this.terrainCollider = this.scene.add.rectangle(source.x, source.y, 18, 18);
+        world.scene.physics.world.enable(this.terrainCollider);
+        (this.terrainCollider.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
         this.setRadius(this.radius);
     }
 
     setRadius(r: number) {
         this.radius = r;
-        this.setSize(r * 2, r * 2);
-        this.body.setSize(r * 2, r * 2, true);
+        const diameter = r * 2;
+        this.setSize(diameter, diameter);
+        this.body.setSize(diameter, diameter);
+        this.weaponSprite.resize(diameter);
     }
 
     private setDistanceFromTarget(source: { x: number, y: number }, target: { x: number, y: number }) {
@@ -65,14 +75,9 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
         this.chain.update(this);
         if (this.isHolding) return;
 
-        if (this.shouldCollideWithTerrain && this.isMovingAwayFromSource()) {
-            this.world.getCurrentRoom().terrain.forEach(terrain => {
-                this.world.scene.physics.collide(this, terrain, (weapon, terrain: Wall) => {
-                    this.target = { x: this.x, y: this.y };
-                    this.distanceFromTarget = 0;
-                })
-            });
-        }
+        if (this.shouldCollideWithTerrain && this.isMovingAwayFromSource())
+            this.collideWithTerrain();
+
 
         if (this.distanceFromTarget <= 0) {
             this.directionChangeCount += 1;
@@ -82,6 +87,15 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
         this.moveBody();
         this.collideWithEnemies();
 
+    }
+
+    private collideWithTerrain() {
+        this.world.getCurrentRoom().terrain.forEach(terrain => {
+            this.world.scene.physics.collide(this.terrainCollider, terrain, (weapon, terrain: Wall) => {
+                this.target = { x: this.x, y: this.y };
+                this.distanceFromTarget = 0;
+            })
+        });
     }
 
     private async hold(delay: number) {
@@ -117,6 +131,8 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
         const theta = clickPointToCircle.angle();
         this.body.x = target.x + Math.cos(theta) * this.distanceFromTarget - this.radius;
         this.body.y = target.y + Math.sin(theta) * this.distanceFromTarget - this.radius;
+        this.weaponSprite.setPosition(this.body.x + this.radius, this.body.y + this.radius);
+        this.terrainCollider.setPosition(this.body.x + this.radius, this.body.y + this.radius);
         this.distanceFromTarget = Math.max(this.distanceFromTarget - this.projectileSpeed, 0);
     }
 
@@ -134,7 +150,9 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
     }
 
     destroy() {
+        this.terrainCollider.destroy();
         this.chain.destroy();
+        this.weaponSprite.destroy();
         this.world.scene.stopUpdating(this.id);
         super.destroy();
     }

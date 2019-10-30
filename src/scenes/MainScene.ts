@@ -33,6 +33,10 @@ export class MainScene extends Scene {
         this.load.image('grass2', '../assets/sprites/environment/grass2.png');
         this.load.image('grass3', '../assets/sprites/environment/grass3.png');
         this.load.image('grass4', '../assets/sprites/environment/grass4.png');
+        this.load.image('spiritweapon', '../assets/sprites/weapon/spiritweapon.png');
+        this.load.image('weaponeffect', '../assets/sprites/weapon/weaponeffect.png');
+        this.load.image('weaponeffectmini', '../assets/sprites/weapon/weaponeffectmini.png');
+        this.load.image('weaponshadow', '../assets/sprites/weapon/weaponshadow.png');
     }
 
     create(): void {
