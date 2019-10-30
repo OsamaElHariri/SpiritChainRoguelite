@@ -12,9 +12,9 @@ export class MainScene extends Scene {
     }
 
     preload() {
-        this.load.image('chainLinks', '../assets/sprites/chain/chain_links.png');
-        this.load.image('chainSpirit1', '../assets/sprites/chain/chain_spirit1.png');
-        this.load.image('chainSpirit2', '../assets/sprites/chain/chain_spirit2.png');
+        this.load.image('chainLinks', '../assets/sprites/weapon/chain_links.png');
+        this.load.image('chainSpirit1', '../assets/sprites/weapon/chain_spirit1.png');
+        this.load.image('chainSpirit2', '../assets/sprites/weapon/chain_spirit2.png');
         this.load.image('holdingphone', '../assets/sprites/phone/holdingphone.png');
         this.load.image('phonescreen', '../assets/sprites/phone/phonescreen.png');
         this.load.image('phonebackground', '../assets/sprites/phone/phonebackground.png');
