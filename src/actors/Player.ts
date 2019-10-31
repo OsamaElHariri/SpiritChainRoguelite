@@ -26,14 +26,13 @@ export class Player extends Actor {
     private phoneAndHandsOriginalScale: number;
 
     constructor(world: World, x: number, y: number) {
-        super(world, x, y);
-        this.fillColor = 0x12f035;
+        super(world, x, y, 'topdownplayer');
         this.actorType = ActorType.Friendly;
         world.scene.getEmitter().emit(Signals.PlayerSpawn, this);
         this.moveWith(InputsMoveEngine.getInstance());
         this.phoneAndHands = world.scene.add.sprite(0, 0, 'holdingphone').setOrigin(0.5, 1).setScale(0.015);
         this.cameraFollowPoint = world.scene.add.ellipse(-0.05, -19.6, 1, 1);
-        this.handsContainer = new Phaser.GameObjects.Container(world.scene);
+        this.handsContainer = new Phaser.GameObjects.Container(world.scene).setDepth(9);
         this.handsContainer.add(this.phoneAndHands);
         this.handsContainer.add(this.cameraFollowPoint);
         this.container.add(this.handsContainer);
@@ -100,14 +99,9 @@ export class Player extends Actor {
         });
     }
 
-    update(time: number, delta: number) {
-        super.update(time, delta);
-        if (!this.body) return;
-        const velocity = this.body.velocity.clone().normalize();
-        if (velocity.length()) {
-            const radians = Math.atan2(velocity.y, velocity.x) + Math.PI / 2;
-            this.handsContainer.setRotation(radians);
-        }
+    protected faceMoveDirection(rotation: number) {
+        super.faceMoveDirection(rotation);
+        this.handsContainer.setRotation(rotation);
     }
 
     onNegativeHealth() {

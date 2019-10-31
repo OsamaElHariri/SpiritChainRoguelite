@@ -19,6 +19,7 @@ export class Actor extends Phaser.GameObjects.Ellipse {
     private id: number;
     private moveEngine: MoveEngine = new EmptyMoveEngine();
 
+    private mainSprite: Phaser.GameObjects.Sprite;
     private collisionSlideAddition: number = 0.75;
     private topLeftOverlapChecker: Phaser.GameObjects.Rectangle;
     private topRightOverlapChecker: Phaser.GameObjects.Rectangle;
@@ -29,8 +30,10 @@ export class Actor extends Phaser.GameObjects.Ellipse {
     private canSlideBottomLeft: boolean = false;
     private canSlideBottomRight: boolean = false;
 
-    constructor(public world: World, public x: number, public y: number) {
-        super(world.scene, x, y, 20, 20, 0xef5160);
+
+
+    constructor(public world: World, public x: number, public y: number, spriteKey: string) {
+        super(world.scene, x, y, 20, 20);
         this.id = world.scene.addObject(this);
         world.scene.physics.world.enable(this);
         this.body.setAllowGravity(false);
@@ -43,6 +46,8 @@ export class Actor extends Phaser.GameObjects.Ellipse {
         this.topRightOverlapChecker = this.constructOverlapChecker();
         this.bottomLeftOverlapChecker = this.constructOverlapChecker();
         this.bottomRightOverlapChecker = this.constructOverlapChecker();
+
+        this.mainSprite = this.scene.add.sprite(this.x, this.y, spriteKey).setScale(0.25).setDepth(11);
     }
 
     private constructOverlapChecker() {
@@ -79,11 +84,22 @@ export class Actor extends Phaser.GameObjects.Ellipse {
         else this.body.setVelocity(0);
 
         this.container.setPosition(this.x, this.y);
+        this.mainSprite.setPosition(this.x, this.y);
+
+        const velocity = this.body.velocity.clone().normalize();
+        if (velocity.length()) {
+            const radians = Math.atan2(velocity.y, velocity.x) + Math.PI / 2;
+            this.faceMoveDirection(radians);
+        }
 
         this.topLeftOverlapChecker.setPosition(this.body.x + this.width / 2 - this.width, this.body.y + this.height / 2 - this.height);
         this.topRightOverlapChecker.setPosition(this.body.x + this.width / 2 + this.width, this.body.y + this.height / 2 - this.height);
         this.bottomLeftOverlapChecker.setPosition(this.body.x + this.width / 2 - this.width, this.body.y + this.height / 2 + this.height);
         this.bottomRightOverlapChecker.setPosition(this.body.x + this.width / 2 + this.width, this.body.y + this.height / 2 + this.height);
+    }
+
+    protected faceMoveDirection(rotation: number) {
+        this.mainSprite.setRotation(rotation);
     }
 
     onNegativeHealth() {
@@ -160,6 +176,7 @@ export class Actor extends Phaser.GameObjects.Ellipse {
     }
 
     destroy() {
+        this.mainSprite.destroy();
         this.healthBar.destroy();
         this.container.destroy();
         this.world.scene.stopUpdating(this.id);

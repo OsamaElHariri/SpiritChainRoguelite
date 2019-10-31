@@ -37,6 +37,8 @@ export class MainScene extends Scene {
         this.load.image('weaponeffect', '../assets/sprites/weapon/weaponeffect.png');
         this.load.image('weaponeffectmini', '../assets/sprites/weapon/weaponeffectmini.png');
         this.load.image('weaponshadow', '../assets/sprites/weapon/weaponshadow.png');
+        this.load.image('topdownplayer', '../assets/sprites/actor/topdownplayer.png');
+        this.load.image('topdownenemy', '../assets/sprites/actor/topdownenemy.png');
     }
 
     create(): void {

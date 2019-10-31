@@ -8,9 +8,8 @@ export class Enemy extends Actor {
     weapon: ProjectilePlayerTargeter;
 
     constructor(world: World, x: number, y: number) {
-        super(world, x, y);
+        super(world, x, y, 'topdownenemy');
         this.speed = 40;
-        this.fillColor = 0xf25035;
         this.actorType = ActorType.Enemy;
         this.moveWith(new PlayerFollowMoveEngine(world, this));
         this.weapon = new ProjectilePlayerTargeter(this, world.player);
