@@ -33,7 +33,7 @@ export class Actor extends Phaser.GameObjects.Ellipse {
 
 
     constructor(public world: World, public x: number, public y: number, spriteKey: string) {
-        super(world.scene, x, y, 20, 20);
+        super(world.scene, x, y, 40, 40);
         this.id = world.scene.addObject(this);
         world.scene.physics.world.enable(this);
         this.body.setAllowGravity(false);
@@ -47,7 +47,7 @@ export class Actor extends Phaser.GameObjects.Ellipse {
         this.bottomLeftOverlapChecker = this.constructOverlapChecker();
         this.bottomRightOverlapChecker = this.constructOverlapChecker();
 
-        this.mainSprite = this.scene.add.sprite(this.x, this.y, spriteKey).setScale(0.25).setDepth(11);
+        this.mainSprite = this.scene.add.sprite(this.x, this.y, spriteKey).setScale(0.5).setDepth(11);
     }
 
     private constructOverlapChecker() {
@@ -92,10 +92,14 @@ export class Actor extends Phaser.GameObjects.Ellipse {
             this.faceMoveDirection(radians);
         }
 
-        this.topLeftOverlapChecker.setPosition(this.body.x + this.width / 2 - this.width, this.body.y + this.height / 2 - this.height);
-        this.topRightOverlapChecker.setPosition(this.body.x + this.width / 2 + this.width, this.body.y + this.height / 2 - this.height);
-        this.bottomLeftOverlapChecker.setPosition(this.body.x + this.width / 2 - this.width, this.body.y + this.height / 2 + this.height);
-        this.bottomRightOverlapChecker.setPosition(this.body.x + this.width / 2 + this.width, this.body.y + this.height / 2 + this.height);
+        const xPos = this.body.x + this.width / 2;
+        const yPos = this.body.y + this.height / 2;
+        const xOffset = this.width * 0.65;
+        const yOffset = this.height * 0.65;
+        this.topLeftOverlapChecker.setPosition(xPos - xOffset, yPos - yOffset);
+        this.topRightOverlapChecker.setPosition(xPos + xOffset, yPos - yOffset);
+        this.bottomLeftOverlapChecker.setPosition(xPos - xOffset, yPos + yOffset);
+        this.bottomRightOverlapChecker.setPosition(xPos + xOffset, yPos + yOffset);
     }
 
     protected faceMoveDirection(rotation: number) {

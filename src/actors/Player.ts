@@ -30,8 +30,8 @@ export class Player extends Actor {
         this.actorType = ActorType.Friendly;
         world.scene.getEmitter().emit(Signals.PlayerSpawn, this);
         this.moveWith(InputsMoveEngine.getInstance());
-        this.phoneAndHands = world.scene.add.sprite(0, 0, 'holdingphone').setOrigin(0.5, 1).setScale(0.015);
-        this.cameraFollowPoint = world.scene.add.ellipse(-0.05, -19.6, 1, 1);
+        this.phoneAndHands = world.scene.add.sprite(0, 0, 'holdingphone').setOrigin(0.5, 1).setScale(0.03);
+        this.cameraFollowPoint = world.scene.add.ellipse(-0.1, -39.2, 1, 1);
         this.handsContainer = new Phaser.GameObjects.Container(world.scene).setDepth(9);
         this.handsContainer.add(this.phoneAndHands);
         this.handsContainer.add(this.cameraFollowPoint);

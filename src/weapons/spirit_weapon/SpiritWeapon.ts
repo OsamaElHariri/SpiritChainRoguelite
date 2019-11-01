@@ -15,7 +15,7 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
     projectileSpeed: number = 15;
     holdTime: number = 400;
     maxDirectionChangeCount: number = 1;
-    radius: number = 15;
+    radius: number = 20;
     shouldCollideWithTerrain: boolean = true;
 
     onHoldStart: ((weapon: SpiritWeapon) => void)[] = [];
