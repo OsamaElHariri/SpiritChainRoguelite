@@ -19,7 +19,7 @@ export class PhoneVideoPanel extends Phaser.GameObjects.Container {
         this.add(scene.add.text(230, 20, this.getRandomVideoTitle(), { color: '#4e4e4e', fontSize: '30px' }).setOrigin(0));
         this.add(scene.add.text(230, 60, upgradeDescription, { color: '#4e4e4e', wordWrap: { width: 520, useAdvancedWrap: true } }).setOrigin(0));
 
-        const clickZone = scene.add.zone(0, 0, 800, 160).setOrigin(0).setInteractive();
+        const clickZone = scene.add.zone(0, 0, 800, 160).setOrigin(0).setInteractive({ cursor: 'pointer' });
         clickZone.on('pointerdown', () => {
             scene.events.emit(Signals.UpgradePlayer, upgradeRequest);
         });

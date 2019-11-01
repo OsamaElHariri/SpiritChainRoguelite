@@ -17,7 +17,7 @@ export class VideosScene extends Scene {
 
         this.add.rectangle(0, 0, 800, 600, 0xa4a4a4).setOrigin(0);
         this.add.rectangle(0, 0, 800, 100, 0xffffff).setOrigin(0);
-        this.add.sprite(36.5, 64, 'phonebackicon').setOrigin(0, 0.5).setInteractive().on('pointerdown', () => {
+        this.add.sprite(36.5, 64, 'phonebackicon').setOrigin(0, 0.5).setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
             this.scene.stop('VideosScene');
         });
         this.add.sprite(100, 64, 'trendingvideosicon').setOrigin(0, 0.5);
