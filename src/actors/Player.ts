@@ -24,6 +24,7 @@ export class Player extends Actor {
     private upgradesHistory: UpgradeRequest[] = [];
     private phoneAndHands: Phaser.GameObjects.Sprite;
     private phoneAndHandsOriginalScale: number;
+    private toCancel: { cancel: Function }[] = [];
 
     constructor(world: World, x: number, y: number) {
         super(world, x, y, 'topdownplayer');
@@ -32,7 +33,7 @@ export class Player extends Actor {
         this.moveWith(InputsMoveEngine.getInstance());
         this.phoneAndHands = world.scene.add.sprite(0, 0, 'holdingphone').setOrigin(0.5, 1).setScale(0.03);
         this.cameraFollowPoint = world.scene.add.ellipse(-0.1, -39.2, 1, 1);
-        this.handsContainer = new Phaser.GameObjects.Container(world.scene).setDepth(9);
+        this.handsContainer = new Phaser.GameObjects.Container(world.scene);
         this.handsContainer.add(this.phoneAndHands);
         this.handsContainer.add(this.cameraFollowPoint);
         this.container.add(this.handsContainer);
@@ -40,32 +41,34 @@ export class Player extends Actor {
         this.phoneAndHands.scaleY = 0;
 
         this.setupOnClickListener();
-
-        this.world.scene.getEmitter().on(Signals.Pause, () => {
-            this.scene.add.tween({
-                targets: [this.phoneAndHands],
-                duration: this.world.scene.pauseAnimationTime * 0.8,
-                scaleY: {
-                    getStart: () => 0,
-                    getEnd: () => this.phoneAndHandsOriginalScale,
-                }
-            });
-        });
-
-        this.world.scene.getEmitter().on(Signals.Resume, () => {
-            this.scene.add.tween({
-                targets: [this.phoneAndHands],
-                delay: this.world.scene.pauseAnimationTime / 2,
-                duration: this.world.scene.pauseAnimationTime / 2,
-                scaleY: {
-                    getStart: () => this.phoneAndHandsOriginalScale,
-                    getEnd: () => 0,
-                }
-            });
-        });
+        this.toCancel.push(this.world.scene.getEmitter().onSignal(Signals.Pause, this.onPause, this));
+        this.toCancel.push(this.world.scene.getEmitter().onSignal(Signals.Resume, this.onResume, this));
 
         this.scene.scene.get('VideosScene').events.on(Signals.UpgradePlayer, (upgrades: UpgradeRequest) => {
             this.handleUpgradeRequest(upgrades);
+        });
+    }
+
+    private onPause() {
+        this.scene.add.tween({
+            targets: [this.phoneAndHands],
+            duration: this.world.scene.pauseAnimationTime * 0.8,
+            scaleY: {
+                getStart: () => 0,
+                getEnd: () => this.phoneAndHandsOriginalScale,
+            }
+        });
+    }
+
+    private onResume() {
+        this.scene.add.tween({
+            targets: [this.phoneAndHands],
+            delay: this.world.scene.pauseAnimationTime / 2,
+            duration: this.world.scene.pauseAnimationTime / 2,
+            scaleY: {
+                getStart: () => this.phoneAndHandsOriginalScale,
+                getEnd: () => 0,
+            }
         });
     }
 
@@ -125,6 +128,8 @@ export class Player extends Actor {
 
     destroy() {
         this.onClickListener.removeListener('pointerdown');
+        this.phoneAndHands.destroy();
+        this.toCancel.forEach((c => c.cancel()));
         this.weapons.forEach((weapon) => weapon.destroy());
         super.destroy();
     }

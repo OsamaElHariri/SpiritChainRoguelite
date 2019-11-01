@@ -40,7 +40,7 @@ export class Room extends Phaser.GameObjects.Container {
 
         this.roomWidth = this.grid.xLocalMax;
         this.roomHeight = this.grid.yLocalMax;
-        this.floor = this.scene.add.tileSprite(x, y, this.roomWidth, this.roomHeight, 'grasstile').setOrigin(0);
+        this.floor = this.scene.add.tileSprite(x, y, this.roomWidth, this.roomHeight, 'grasstile').setOrigin(0).setDepth(-10);
         this.decorateGround();
         this.setupDoors(doorLocations);
         this.partitioner = new RoomPartitioner(this);

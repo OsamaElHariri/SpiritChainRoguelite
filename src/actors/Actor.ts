@@ -38,7 +38,7 @@ export class Actor extends Phaser.GameObjects.Ellipse {
         world.scene.physics.world.enable(this);
         this.body.setAllowGravity(false);
         this.depth = 10;
-        this.container = world.scene.add.container(x, y);
+        this.container = world.scene.add.container(x, y).setDepth(5);
         this.healthBar = this.constructHealthBar();
         this.container.add(this.healthBar);
 
