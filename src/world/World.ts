@@ -3,6 +3,8 @@ import { Scene } from "../scenes/Scene";
 import { Player } from "../actors/Player";
 import { Signals } from "../Signals";
 import { Interval } from "../utils/interval";
+import { Dungeon } from "./dungeaon_generation/Dungeon";
+import { Minimap } from "../ui/Minimap";
 
 export class World extends Phaser.GameObjects.Container {
 
@@ -10,6 +12,7 @@ export class World extends Phaser.GameObjects.Container {
 
     private id: number;
     private currentRoom: Room;
+    private dungeon: Dungeon;
     private menuScene: Phaser.Scenes.ScenePlugin;
     private zoomOutCameraPosition: { x: number, y: number };
 
@@ -19,6 +22,8 @@ export class World extends Phaser.GameObjects.Container {
         this.registerListeners();
         this.createRoom();
         new Player(this, 200, 200);
+        // new Minimap(this);
+        this.createDungeon();
     }
 
     registerListeners() {
@@ -127,5 +132,14 @@ export class World extends Phaser.GameObjects.Container {
 
     getCurrentRoom(): Room {
         return this.currentRoom;
+    }
+
+    createDungeon() {
+        this.dungeon = new Dungeon();
+        this.scene.getEmitter().emit(Signals.DungeonConstruct, this.dungeon);
+    }
+
+    getCurrentDungeon(): Dungeon {
+        return this.dungeon;
     }
 }
