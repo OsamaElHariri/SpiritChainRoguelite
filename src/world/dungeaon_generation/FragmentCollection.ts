@@ -10,7 +10,8 @@ export class FragmentCollection {
     height: number;
 
     private maxNumberOfExpansions = 3;
-    private expansionChanceThreshold = 0.01;
+    private expansionChance = 0.25;
+
 
     constructor(public dungeon: Dungeon, public initial: RoomFragment) {
         this.x = initial.x;
@@ -42,17 +43,14 @@ export class FragmentCollection {
             },
         ];
         let numberOfExpansions = 1;
-        let expansionChance = 0.2;
-        while (numberOfExpansions < this.maxNumberOfExpansions && expansionChance > this.expansionChanceThreshold) {
-            const shouldExpand = Math.random() < expansionChance;
+        while (numberOfExpansions < this.maxNumberOfExpansions) {
+            const shouldExpand = Math.random() < this.expansionChance;
             if (!shouldExpand) break;
             const index = Math.floor(Math.random() * actions.length);
             const action = actions[index];
             const fragments = action.getFragments();
             if (fragments) action.addFragments(fragments);
-
             numberOfExpansions++;
-            expansionChance *= Math.random();
         }
     }
 
@@ -93,7 +91,7 @@ export class FragmentCollection {
             if (!fragment) return null;
             emptyFragmentSlots.push(fragment);
         }
-        return emptyFragmentSlots;
+        return emptyFragmentSlots.length ? emptyFragmentSlots : null;
     }
 
     getEmptyRight() {
@@ -107,7 +105,7 @@ export class FragmentCollection {
             if (!fragment) return null;
             emptyFragmentSlots.push(fragment);
         }
-        return emptyFragmentSlots;
+        return emptyFragmentSlots.length ? emptyFragmentSlots : null;
     }
 
     getEmptyUp() {
@@ -121,7 +119,7 @@ export class FragmentCollection {
             if (!fragment) return null;
             emptyFragmentSlots.push(fragment);
         }
-        return emptyFragmentSlots;
+        return emptyFragmentSlots.length ? emptyFragmentSlots : null;
     }
 
     getEmptyDown() {
@@ -135,7 +133,7 @@ export class FragmentCollection {
             if (!fragment) return null;
             emptyFragmentSlots.push(fragment);
         }
-        return emptyFragmentSlots;
+        return emptyFragmentSlots.length ? emptyFragmentSlots : null;
     }
 
 
