@@ -1,6 +1,7 @@
 import { Scene } from "./Scene";
 import { Interval } from "../utils/interval";
 import { NumberUtils } from "../utils/NumberUtils";
+import { ArrayUtils } from "../utils/ArrayUtils";
 
 export class SnakesScene extends Scene {
 
@@ -85,8 +86,7 @@ export class SnakesScene extends Scene {
                 if (!this.isOnSnake(x, y)) possibleFoodLocations.push({ x, y });
             }
         }
-        const randomIndex = Math.floor(Math.random() * possibleFoodLocations.length);
-        return possibleFoodLocations[randomIndex];
+        return ArrayUtils.random(possibleFoodLocations);
     }
 
     randomNumber() {

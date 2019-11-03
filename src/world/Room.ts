@@ -7,6 +7,7 @@ import { Enemy } from "../actors/Enemy";
 import { RoomPartitioner } from "./room_generation/RoomPartitioner";
 import { GridNode } from "../grid/GridNode";
 import { Signals } from "../Signals";
+import { ArrayUtils } from "../utils/ArrayUtils";
 
 export type DoorLocations = {
     xTop?: number,
@@ -84,10 +85,9 @@ export class Room extends Phaser.GameObjects.Container {
             for (; j < this.grid.yWorldMax; j += 32) {
                 const shouldSpawnGrass = Math.random() < 0.05;
                 if (shouldSpawnGrass) {
-                    const index = Math.floor(Math.random() * groundDecorations.length);
                     const x = i + 15 * Math.random();
                     const y = j + 15 * Math.random();
-                    this.decorations.push(this.scene.add.sprite(x, y, groundDecorations[index])
+                    this.decorations.push(this.scene.add.sprite(x, y, ArrayUtils.random(groundDecorations))
                         .setOrigin(0)
                         .setScale(Math.random() < 0.5 ? -1 : 1, 1));
                 }

@@ -1,5 +1,6 @@
 import { Dungeon } from "./Dungeon";
 import { RoomFragment } from "./RoomFragment";
+import { ArrayUtils } from "../../utils/ArrayUtils";
 
 export class FragmentCollection {
     fragments: { [id: string]: RoomFragment } = {};
@@ -46,8 +47,7 @@ export class FragmentCollection {
         while (numberOfExpansions < this.maxNumberOfExpansions) {
             const shouldExpand = Math.random() < this.expansionChance;
             if (!shouldExpand) break;
-            const index = Math.floor(Math.random() * actions.length);
-            const action = actions[index];
+            const action = ArrayUtils.random(actions);
             const fragments = action.getFragments();
             if (fragments) action.addFragments(fragments);
             numberOfExpansions++;

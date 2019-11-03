@@ -1,6 +1,7 @@
 import { Scene } from "../scenes/Scene";
 import { UpgradeRequest } from "../actors/Player";
 import { Signals } from "../Signals";
+import { ArrayUtils } from "../utils/ArrayUtils";
 
 export class PhoneVideoPanel extends Phaser.GameObjects.Container {
 
@@ -36,7 +37,6 @@ export class PhoneVideoPanel extends Phaser.GameObjects.Container {
             'This one trick helps me get...',
         ];
 
-        const index = Math.floor(Math.random() * videoTitles.length);
-        return videoTitles[index];
+        return ArrayUtils.random(videoTitles);
     }
 }
