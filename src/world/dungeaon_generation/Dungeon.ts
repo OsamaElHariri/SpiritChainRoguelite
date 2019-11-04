@@ -6,14 +6,13 @@ export class Dungeon {
     roomFragments: { [id: string]: RoomFragment } = {};
     fragmentCollections: FragmentCollection[] = [];
 
-    constructor() {
+    constructor(public minWidth: number = 11, public minHeight: number = 9) {
         const initialCollection = new FragmentCollection(this, new RoomFragment(this, 0, 0));
 
         this.registerFragmentCollection(initialCollection);
-        const collectionQueue = [initialCollection];
         const frontier = [initialCollection];
         while (this.fragmentCollections.length < 8) {
-            const collection = ArrayUtils.random(collectionQueue);
+            const collection = ArrayUtils.random(frontier);
 
             const initialFragments = [
                 collection.getEmptyLeft(),
@@ -27,14 +26,14 @@ export class Dungeon {
                 }).filter(fragment => fragment);
 
             if (!initialFragments.length) {
-                const index = collectionQueue.indexOf(collection);
-                collectionQueue.splice(index, 1);
+                const index = frontier.indexOf(collection);
+                frontier.splice(index, 1);
                 continue;
             }
 
             const newCollection = new FragmentCollection(this, ArrayUtils.random(initialFragments));
             this.registerFragmentCollection(newCollection);
-            collectionQueue.unshift(newCollection);
+            frontier.unshift(newCollection);
         }
     }
 

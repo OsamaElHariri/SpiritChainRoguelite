@@ -1,6 +1,7 @@
 import { Dungeon } from "./Dungeon";
 import { RoomFragment } from "./RoomFragment";
 import { ArrayUtils } from "../../utils/ArrayUtils";
+import { Door } from "./Door";
 
 export class FragmentCollection {
     fragments: { [id: string]: RoomFragment } = {};
@@ -21,6 +22,18 @@ export class FragmentCollection {
         this.height = 1;
 
         this.expand();
+        this.claimFragments();
+    }
+
+    private claimFragments() {
+        for (const id in this.fragments) {
+            if (this.fragments.hasOwnProperty(id)) {
+                const fragment = this.fragments[id];
+                fragment.fragmentCollection = this;
+                fragment.xLocal = fragment.x - this.x;
+                fragment.yLocal = fragment.y - this.y;
+            }
+        }
     }
 
     private expand() {
@@ -136,6 +149,41 @@ export class FragmentCollection {
         return emptyFragmentSlots.length ? emptyFragmentSlots : null;
     }
 
+    getDoors() {
+        const doors: Door[] = []
+        for (const id in this.fragments) {
+            if (this.fragments.hasOwnProperty(id)) {
+                const fragment = this.fragments[id];
 
+                const downFragment = fragment.getOccupiedDown();
+                if (downFragment && downFragment.fragmentCollection != this) {
+                    const downDoor = new Door(fragment, downFragment);
+                    if (!this.collectionsAlreadyConnected(doors, this)) doors.push(downDoor);
+                }
 
+                const upFragment = fragment.getOccupiedUp();
+                if (upFragment && upFragment.fragmentCollection != this) {
+                    const upDoor = new Door(fragment, upFragment);
+                    if (!this.collectionsAlreadyConnected(doors, this)) doors.push(upDoor);
+                }
+
+                const leftFragment = fragment.getOccupiedLeft();
+                if (leftFragment && leftFragment.fragmentCollection != this) {
+                    const leftDoor = new Door(fragment, leftFragment);
+                    if (!this.collectionsAlreadyConnected(doors, this)) doors.push(leftDoor);
+                }
+                const rightFragment = fragment.getOccupiedRight();
+                if (rightFragment && rightFragment.fragmentCollection != this) {
+                    const rightDoor = new Door(fragment, rightFragment);
+                    if (!this.collectionsAlreadyConnected(doors, this)) doors.push(rightDoor);
+                }
+            }
+        }
+    }
+
+    private collectionsAlreadyConnected(doors: Door[], otherCollection: FragmentCollection) {
+        for (let i = 0; i < doors.length; i++)
+            if (doors[i].getOtherCollection(this) == otherCollection) return false;
+        return true;
+    }
 }

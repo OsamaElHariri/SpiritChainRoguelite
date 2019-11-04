@@ -8,13 +8,7 @@ import { RoomPartitioner } from "./room_generation/RoomPartitioner";
 import { GridNode } from "../grid/GridNode";
 import { Signals } from "../Signals";
 import { ArrayUtils } from "../utils/ArrayUtils";
-
-export type DoorLocations = {
-    xTop?: number,
-    xBottom?: number,
-    yLeft?: number,
-    yRight?: number,
-};
+import { DoorLocations } from "./dungeaon_generation/Door";
 
 export class Room extends Phaser.GameObjects.Container {
     scene: Scene;
