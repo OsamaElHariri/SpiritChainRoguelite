@@ -35,7 +35,6 @@ export class RoomFragment {
     private getOccupiedAt(x: number, y: number) {
         const dungeonFragments = this.dungeon.roomFragments;
         const id = RoomFragment.getId(x, y);
-        const isEmpty = !dungeonFragments[id];
-        return isEmpty ? null : new RoomFragment(this.dungeon, x, y);
+        return dungeonFragments[id];
     }
 }

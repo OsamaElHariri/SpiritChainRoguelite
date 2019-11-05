@@ -5,6 +5,8 @@ import { Signals } from "../Signals";
 import { Interval } from "../utils/interval";
 import { Dungeon } from "./dungeaon_generation/Dungeon";
 import { Minimap } from "../ui/Minimap";
+import { FragmentCollection } from "./dungeaon_generation/FragmentCollection";
+import { ArrayUtils } from "../utils/ArrayUtils";
 
 export class World extends Phaser.GameObjects.Container {
 
@@ -20,10 +22,10 @@ export class World extends Phaser.GameObjects.Container {
         super(scene);
         this.id = scene.addObject(this);
         this.registerListeners();
-        this.createRoom();
+        this.createDungeon();
+        this.createRoom(ArrayUtils.random(this.dungeon.fragmentCollections));
         new Player(this, 200, 200);
         // new Minimap(this);
-        this.createDungeon();
     }
 
     registerListeners() {
@@ -46,9 +48,11 @@ export class World extends Phaser.GameObjects.Container {
             this.scene.cameras.main.startFollow(player, true, 0.1);
         });
 
-        emitter.on(Signals.RoomComplete, () => {
+        emitter.on(Signals.RoomComplete, (nextFragmentColection: FragmentCollection) => {
+            if (!nextFragmentColection) return;
+
             this.scene.cameras.main.fadeOut(250, 0, 0, 0, (cam, progress: number) => {
-                if (progress === 1) this.goToNextRoom();
+                if (progress === 1) this.goToNextRoom(nextFragmentColection);
             });
         });
 
@@ -59,16 +63,16 @@ export class World extends Phaser.GameObjects.Container {
         });
     }
 
-    async goToNextRoom() {
+    async goToNextRoom(fragmentCollection: FragmentCollection) {
         if (this.currentRoom) this.currentRoom.destroy();
         this.player.cloneAndDestroy(200, 200);
         await Interval.milliseconds(100);
-        this.createRoom();
+        this.createRoom(fragmentCollection);
         this.scene.cameras.main.fadeIn(150, 0, 0, 0);
     }
 
-    createRoom() {
-        new Room(this, 0, 0, { xTop: 4, yLeft: 2, xBottom: 6 });
+    createRoom(fragmentCollection: FragmentCollection) {
+        new Room(this, 0, 0, fragmentCollection);
     }
 
     onScenePause() {

@@ -179,11 +179,12 @@ export class FragmentCollection {
                 }
             }
         }
+        return doors;
     }
 
     private collectionsAlreadyConnected(doors: Door[], otherCollection: FragmentCollection) {
         for (let i = 0; i < doors.length; i++)
-            if (doors[i].getOtherCollection(this) == otherCollection) return false;
-        return true;
+            if (doors[i].getOtherCollection(this) == otherCollection) return true;
+        return false;
     }
 }
