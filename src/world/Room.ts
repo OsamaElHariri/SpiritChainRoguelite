@@ -24,6 +24,7 @@ export class Room extends Phaser.GameObjects.Container {
     roomHeight: number;
 
     private id: number;
+    private roomHasStarted = false;
     private partitioner: RoomPartitioner;
     private doors: { door: Door, node: GridNode, collider: Phaser.GameObjects.Rectangle }[] = [];
 
@@ -53,21 +54,14 @@ export class Room extends Phaser.GameObjects.Container {
         this.partitioner.getSpawnPointsCorners(4, 3)
             .forEach((node) => this.actors.push(new Enemy(this.world, node.xCenterWorld, node.yCenterWorld)));
 
+        this.roomHasStarted = true;
         this.scene.getEmitter().emit(Signals.RoomStart, this);
     }
 
     private setupDoors() {
         const doors = this.fragmentCollection.getDoors();
-        const xAxisValid = (x: number) => x !== null && x >= 0 && x < this.grid.width;
-        const yAxisValid = (y: number) => y !== null && y >= 0 && y < this.grid.height;
-
         doors.forEach((door: Door) => {
-            const doorLocation = door.getDoorFor(this.fragmentCollection);
-            let node: GridNode;
-            if (xAxisValid(doorLocation.xTop)) node = this.grid.at(doorLocation.xTop, 0);
-            if (xAxisValid(doorLocation.xBottom)) node = this.grid.at(doorLocation.xBottom, this.grid.height - 1);
-            if (yAxisValid(doorLocation.yLeft)) node = this.grid.at(0, doorLocation.yLeft);
-            if (yAxisValid(doorLocation.yRight)) node = this.grid.at(this.grid.width - 1, doorLocation.yRight);
+            let node: GridNode = this.doorToGridNode(door);
             if (!node) return;
 
             const doorCollider = this.scene.add.rectangle(node.xWorld, node.yWorld, this.grid.tileWidth, this.grid.tileWidth, 0xff3434).setOrigin(0);
@@ -118,7 +112,7 @@ export class Room extends Phaser.GameObjects.Container {
     }
 
     update(time: number, delta: number) {
-        if (!this.roomCleared && this.world.player) {
+        if (!this.roomCleared && this.roomHasStarted && this.world.player && this.allEnemiesDefeated()) {
             this.doors.forEach(({ door, collider }) => {
                 this.world.scene.physics.overlap(collider, this.world.player,
                     () => this.onRoomCleared(door));
@@ -126,10 +120,31 @@ export class Room extends Phaser.GameObjects.Container {
         }
     }
 
+    allEnemiesDefeated() {
+        for (let i = 0; i < this.actors.length; i++)
+            if (!this.actors[i].isDead) return false;
+        return true;
+    }
+
     onRoomCleared(door: Door) {
-        this.scene.getEmitter().emit(Signals.RoomComplete, door.getOtherCollection(this.fragmentCollection));
+        this.scene.getEmitter().emit(Signals.RoomComplete, this.fragmentCollection, door);
         this.roomCleared = true;
         this.scene.cameras.main.zoomTo(1, 100, 'Linear', true);
+    }
+
+    getPlayerStartingPosition(door: Door) {
+        return this.doorToGridNode(door);
+    }
+
+    private doorToGridNode(door: Door) {
+        const xAxisValid = (x: number) => x !== null && x >= 0 && x < this.grid.width;
+        const yAxisValid = (y: number) => y !== null && y >= 0 && y < this.grid.height;
+        const doorLocation = door.getDoorFor(this.fragmentCollection);
+        if (xAxisValid(doorLocation.xTop)) return this.grid.at(doorLocation.xTop, 0);
+        if (xAxisValid(doorLocation.xBottom)) return this.grid.at(doorLocation.xBottom, this.grid.height - 1);
+        if (yAxisValid(doorLocation.yLeft)) return this.grid.at(0, doorLocation.yLeft);
+        if (yAxisValid(doorLocation.yRight)) return this.grid.at(this.grid.width - 1, doorLocation.yRight);
+        return null;
     }
 
     destroy() {

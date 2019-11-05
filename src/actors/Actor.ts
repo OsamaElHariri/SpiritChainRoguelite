@@ -16,6 +16,8 @@ export class Actor extends Phaser.GameObjects.Ellipse {
     speed: number = 160;
     stunRemoveTime: number = 0;
 
+    isDead = false;
+
     private id: number;
     private moveEngine: MoveEngine = new EmptyMoveEngine();
 
@@ -107,6 +109,7 @@ export class Actor extends Phaser.GameObjects.Ellipse {
     }
 
     onNegativeHealth() {
+        this.isDead = true;
         this.destroy();
     }
 

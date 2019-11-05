@@ -7,6 +7,7 @@ import { Dungeon } from "./dungeaon_generation/Dungeon";
 import { Minimap } from "../ui/Minimap";
 import { FragmentCollection } from "./dungeaon_generation/FragmentCollection";
 import { ArrayUtils } from "../utils/ArrayUtils";
+import { Door } from "./dungeaon_generation/Door";
 
 export class World extends Phaser.GameObjects.Container {
 
@@ -48,11 +49,12 @@ export class World extends Phaser.GameObjects.Container {
             this.scene.cameras.main.startFollow(player, true, 0.1);
         });
 
-        emitter.on(Signals.RoomComplete, (nextFragmentColection: FragmentCollection) => {
-            if (!nextFragmentColection) return;
+        emitter.on(Signals.RoomComplete, (currentFragmentCollection: FragmentCollection, doorUsed: Door) => {
+            if (!currentFragmentCollection) return;
+            const nextFragmentColection = doorUsed.getOtherCollection(currentFragmentCollection)
 
             this.scene.cameras.main.fadeOut(250, 0, 0, 0, (cam, progress: number) => {
-                if (progress === 1) this.goToNextRoom(nextFragmentColection);
+                if (progress === 1) this.goToNextRoom(nextFragmentColection, doorUsed);
             });
         });
 
@@ -63,11 +65,12 @@ export class World extends Phaser.GameObjects.Container {
         });
     }
 
-    async goToNextRoom(fragmentCollection: FragmentCollection) {
+    async goToNextRoom(fragmentCollection: FragmentCollection, doorUsed: Door) {
         if (this.currentRoom) this.currentRoom.destroy();
-        this.player.cloneAndDestroy(200, 200);
         await Interval.milliseconds(100);
         this.createRoom(fragmentCollection);
+        const gridNode = this.currentRoom.getPlayerStartingPosition(doorUsed);
+        this.player.cloneAndDestroy(gridNode.xCenterWorld, gridNode.yCenterWorld);
         this.scene.cameras.main.fadeIn(150, 0, 0, 0);
     }
 
