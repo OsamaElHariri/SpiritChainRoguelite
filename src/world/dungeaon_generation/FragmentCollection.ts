@@ -158,24 +158,24 @@ export class FragmentCollection {
                 const downFragment = fragment.getOccupiedDown();
                 if (downFragment && downFragment.fragmentCollection != this) {
                     const downDoor = new Door(fragment, downFragment);
-                    if (!this.collectionsAlreadyConnected(doors, this)) doors.push(downDoor);
+                    if (!this.collectionsAlreadyConnected(doors, downFragment.fragmentCollection)) doors.push(downDoor);
                 }
 
                 const upFragment = fragment.getOccupiedUp();
                 if (upFragment && upFragment.fragmentCollection != this) {
                     const upDoor = new Door(fragment, upFragment);
-                    if (!this.collectionsAlreadyConnected(doors, this)) doors.push(upDoor);
+                    if (!this.collectionsAlreadyConnected(doors, upFragment.fragmentCollection)) doors.push(upDoor);
                 }
 
                 const leftFragment = fragment.getOccupiedLeft();
                 if (leftFragment && leftFragment.fragmentCollection != this) {
                     const leftDoor = new Door(fragment, leftFragment);
-                    if (!this.collectionsAlreadyConnected(doors, this)) doors.push(leftDoor);
+                    if (!this.collectionsAlreadyConnected(doors, leftFragment.fragmentCollection)) doors.push(leftDoor);
                 }
                 const rightFragment = fragment.getOccupiedRight();
                 if (rightFragment && rightFragment.fragmentCollection != this) {
                     const rightDoor = new Door(fragment, rightFragment);
-                    if (!this.collectionsAlreadyConnected(doors, this)) doors.push(rightDoor);
+                    if (!this.collectionsAlreadyConnected(doors, rightFragment.fragmentCollection)) doors.push(rightDoor);
                 }
             }
         }
@@ -183,6 +183,7 @@ export class FragmentCollection {
     }
 
     private collectionsAlreadyConnected(doors: Door[], otherCollection: FragmentCollection) {
+        return false;
         for (let i = 0; i < doors.length; i++)
             if (doors[i].getOtherCollection(this) == otherCollection) return true;
         return false;
