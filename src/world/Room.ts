@@ -28,7 +28,7 @@ export class Room extends Phaser.GameObjects.Container {
     private partitioner: RoomPartitioner;
     private doors: { door: Door, node: GridNode, collider: Phaser.GameObjects.Rectangle }[] = [];
 
-    constructor(public world: World, public x: number, public y: number, private fragmentCollection: FragmentCollection) {
+    constructor(public world: World, public x: number, public y: number, public fragmentCollection: FragmentCollection) {
         super(world.scene, x, y);
         this.id = world.scene.addObject(this);
         this.scene = world.scene;
