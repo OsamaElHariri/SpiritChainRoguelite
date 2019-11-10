@@ -6,6 +6,7 @@ import { InputsMoveEngine } from "../move_engines/InputsMoveEngine";
 import { Signals } from "../Signals";
 import { ActorType } from "./ActorType";
 import { Weapon } from "../weapons/Weapon";
+import { SpiritFist } from "../weapons/spirit_fist/SpiritFist";
 
 export type UpgradeRequest = {
     weaponUpgrade?: (weapon: Weapon) => void,
@@ -16,9 +17,10 @@ export class Player extends Actor {
     cameraFollowPoint: Phaser.GameObjects.Ellipse;
     handsContainer: Phaser.GameObjects.Container;
 
-    maxNumberOfWeapons: number = 2;
+    maxNumberOfWeapons: number = 1;
 
     private onClickListener: Phaser.Events.EventEmitter;
+    private spiritFist: SpiritFist;
     private weapons: SpiritWeapon[] = [];
     private powerups: ((weapon: SpiritWeapon) => void)[] = [];
     private upgradesHistory: UpgradeRequest[] = [];
@@ -81,25 +83,46 @@ export class Player extends Actor {
     setupOnClickListener() {
         this.onClickListener = this.world.scene.input.on('pointerdown', (pointer) => {
             this.removeInactiveWeapons();
-            if (this.weapons.length >= this.maxNumberOfWeapons) return;
-            const xTouch = pointer.worldX;
-            const yTouch = pointer.worldY;
-            const clickPoint = new Phaser.Geom.Point(xTouch, yTouch);
-            const weapon = new SpiritWeapon(this.world, this, clickPoint);
-
-            this.powerups.forEach(powerup => powerup(weapon));
-            this.weapons.push(weapon);
-            CameraUtils.chainZoom(this.world.scene.cameras.main, [
-                {
-                    zoom: 1.04,
-                    duration: 60,
-                },
-                {
-                    zoom: 1,
-                    duration: 100,
-                },
-            ]);
+            const isRightClick = pointer.button == 2;
+            const isLeftClick = pointer.button == 0;
+            if (isLeftClick && this.weapons.length < this.maxNumberOfWeapons) {
+                this.fireSpiritWeapon(pointer);
+            } else if (isRightClick && (!this.spiritFist || !this.spiritFist.active)) {
+                this.fireSpiritFist(pointer);
+            }
         });
+    }
+
+    private fireSpiritFist(pointer) {
+        const xTouch = pointer.worldX;
+        const yTouch = pointer.worldY;
+        const clickPoint = new Phaser.Geom.Point(xTouch, yTouch);
+        this.spiritFist = new SpiritFist(this.world, this, clickPoint);
+        this.cameraEffectOnFire();
+    }
+
+    private fireSpiritWeapon(pointer) {
+        const xTouch = pointer.worldX;
+        const yTouch = pointer.worldY;
+        const clickPoint = new Phaser.Geom.Point(xTouch, yTouch);
+        const weapon = new SpiritWeapon(this.world, this, clickPoint);
+
+        this.powerups.forEach(powerup => powerup(weapon));
+        this.weapons.push(weapon);
+        this.cameraEffectOnFire();
+    }
+
+    private cameraEffectOnFire() {
+        CameraUtils.chainZoom(this.world.scene.cameras.main, [
+            {
+                zoom: 1.04,
+                duration: 60,
+            },
+            {
+                zoom: 1,
+                duration: 100,
+            },
+        ]);
     }
 
     protected faceMoveDirection(rotation: number) {
@@ -127,6 +150,7 @@ export class Player extends Actor {
     }
 
     destroy() {
+        if (this.spiritFist && this.spiritFist.active) this.spiritFist.destroy();
         this.onClickListener.removeListener('pointerdown');
         this.phoneAndHands.destroy();
         this.toCancel.forEach((c => c.cancel()));

@@ -6,6 +6,7 @@ import { Weapon } from "../weapons/Weapon";
 import { SimpleLifeBar } from "../ui/SimpleLifeBar"
 
 export class Actor extends Phaser.GameObjects.Ellipse {
+    id: number;
     actorType: ActorType = ActorType.Enemy;
     body: Phaser.Physics.Arcade.Body;
     container: Phaser.GameObjects.Container;
@@ -18,7 +19,6 @@ export class Actor extends Phaser.GameObjects.Ellipse {
 
     isDead = false;
 
-    private id: number;
     private moveEngine: MoveEngine = new EmptyMoveEngine();
 
     private mainSprite: Phaser.GameObjects.Sprite;

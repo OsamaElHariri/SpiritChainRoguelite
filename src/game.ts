@@ -4,17 +4,18 @@ import { MenuScene } from "./scenes/MenuScene";
 import { SnakesScene } from "./scenes/SnakesScene";
 import { VideosScene } from "./scenes/VideosScene";
 
-const config = {
+const config: Phaser.Types.Core.GameConfig = {
   width: 800,
   height: 600,
   type: Phaser.AUTO,
   parent: "game",
+  disableContextMenu: true,
   backgroundColor: '#303a59',
   scene: [MainScene, MenuScene, SnakesScene, VideosScene],
   physics: {
     default: "arcade",
     arcade: {
-      debug: true,
+      // debug: true,
       gravity: { y: 600 }
     }
   }
