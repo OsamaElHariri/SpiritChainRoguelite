@@ -5,11 +5,11 @@ import { CameraUtils } from "../utils/CameraUtils";
 import { InputsMoveEngine } from "../move_engines/InputsMoveEngine";
 import { Signals } from "../Signals";
 import { ActorType } from "./ActorType";
-import { Weapon } from "../weapons/Weapon";
 import { SpiritFist } from "../weapons/spirit_fist/SpiritFist";
 
 export type UpgradeRequest = {
-    weaponUpgrade?: (weapon: Weapon) => void,
+    weaponUpgrade?: (weapon: SpiritWeapon) => void,
+    punchUpgrade?: (weapon: SpiritFist) => void,
     playerUpgrade?: (player: Player) => void,
 };
 
@@ -22,7 +22,6 @@ export class Player extends Actor {
     private onClickListener: Phaser.Events.EventEmitter;
     private spiritFist: SpiritFist;
     private weapons: SpiritWeapon[] = [];
-    private powerups: ((weapon: SpiritWeapon) => void)[] = [];
     private upgradesHistory: UpgradeRequest[] = [];
     private phoneAndHands: Phaser.GameObjects.Sprite;
     private phoneAndHandsOriginalScale: number;
@@ -75,7 +74,6 @@ export class Player extends Actor {
     }
 
     handleUpgradeRequest(upgrades: UpgradeRequest) {
-        if (upgrades.weaponUpgrade) this.powerups.push(upgrades.weaponUpgrade);
         if (upgrades.playerUpgrade) upgrades.playerUpgrade(this);
         this.upgradesHistory.push(upgrades);
     }
@@ -98,6 +96,9 @@ export class Player extends Actor {
         const yTouch = pointer.worldY;
         const clickPoint = new Phaser.Geom.Point(xTouch, yTouch);
         this.spiritFist = new SpiritFist(this.world, this, clickPoint);
+        this.upgradesHistory.forEach(powerup => {
+            if (powerup.punchUpgrade) powerup.punchUpgrade(this.spiritFist)
+        });
         this.cameraEffectOnFire();
     }
 
@@ -107,7 +108,9 @@ export class Player extends Actor {
         const clickPoint = new Phaser.Geom.Point(xTouch, yTouch);
         const weapon = new SpiritWeapon(this.world, this, clickPoint);
 
-        this.powerups.forEach(powerup => powerup(weapon));
+        this.upgradesHistory.forEach(powerup => {
+            if (powerup.weaponUpgrade) powerup.weaponUpgrade(weapon)
+        });
         this.weapons.push(weapon);
         this.cameraEffectOnFire();
     }
