@@ -16,6 +16,7 @@ export type UpgradeRequest = {
 export class Player extends Actor {
     cameraFollowPoint: Phaser.GameObjects.Ellipse;
     handsContainer: Phaser.GameObjects.Container;
+    canUpgrade = false;
 
     maxNumberOfWeapons: number = 1;
 
