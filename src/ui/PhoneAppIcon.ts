@@ -1,4 +1,4 @@
-import { Scene } from "../scenes/Scene";
+import { MenuScene } from "../scenes/MenuScene";
 
 export class PhoneAppIcon extends Phaser.GameObjects.Container {
     appIcon: Phaser.GameObjects.Sprite;
@@ -7,7 +7,7 @@ export class PhoneAppIcon extends Phaser.GameObjects.Container {
 
     private openScene: Phaser.Scenes.ScenePlugin;
 
-    constructor(public scene: Scene, x: number, y: number, public appName: string, public appImageKey: string, sceneToOpen: string) {
+    constructor(public scene: MenuScene, x: number, y: number, public appName: string, public appImageKey: string, sceneToOpen: string) {
         super(scene, x, y);
         this.scene.add.existing(this);
         this.appIcon = scene.add.sprite(0, 0, appImageKey).setOrigin(0.5, 0).setInteractive({ cursor: 'pointer' });
@@ -16,7 +16,7 @@ export class PhoneAppIcon extends Phaser.GameObjects.Container {
         this.add([this.appIcon, this.appText, this.appTextShadow]);
 
         this.appIcon.on('pointerdown', () => {
-            this.openScene = this.scene.scene.launch(sceneToOpen);
+            this.openScene = this.scene.scene.launch(sceneToOpen, scene.sceneData);
         });
     }
 }

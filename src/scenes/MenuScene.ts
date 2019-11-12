@@ -5,6 +5,8 @@ import { PhoneHeaderBar } from "../ui/PhoneHeaderBar";
 import { Signals } from "../Signals";
 
 export class MenuScene extends Scene {
+    sceneData: any = {};
+
     private lockscreen: Phaser.GameObjects.Sprite;
     private headerBar: PhoneHeaderBar;
     private apps: PhoneAppIcon[] = [];
@@ -13,7 +15,8 @@ export class MenuScene extends Scene {
         super('MenuScene');
     }
 
-    create(): void {
+    create(sceneData): void {
+        this.sceneData = sceneData;
         this.add.sprite(0, 0, 'phonebackground').setOrigin(0);
         this.constructIcons();
         this.headerBar = new PhoneHeaderBar(this, 0, 0);

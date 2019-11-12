@@ -101,7 +101,7 @@ export class World extends Phaser.GameObjects.Container {
                 getEnd: () => -radians,
             },
             onComplete: () => {
-                this.menuScene = this.scene.scene.launch('MenuScene');
+                this.menuScene = this.scene.scene.launch('MenuScene', { playerCanUpgrade: this.player.canUpgrade });
                 this.scene.scene.pause("MainScene");
             },
         });
