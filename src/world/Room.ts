@@ -10,6 +10,7 @@ import { Signals } from "../Signals";
 import { ArrayUtils } from "../utils/ArrayUtils";
 import { Door } from "./dungeaon_generation/Door";
 import { FragmentCollection } from "./dungeaon_generation/FragmentCollection";
+import { RestSpot } from "./terrain/RestSpot";
 
 export class Room extends Phaser.GameObjects.Container {
     scene: Scene;
@@ -25,6 +26,7 @@ export class Room extends Phaser.GameObjects.Container {
 
     private id: number;
     private roomHasStarted = false;
+    private playerHasLeftDoor = false;
     private partitioner: RoomPartitioner;
     private doors: { door: Door, node: GridNode, collider: Phaser.GameObjects.Rectangle }[] = [];
 
@@ -43,19 +45,23 @@ export class Room extends Phaser.GameObjects.Container {
         this.setupDoors();
         this.partitioner = new RoomPartitioner(this);
         this.partitioner.edgesExcept(this.doors.map(doorNode => doorNode.node));
-        this.partitioner.centerPlus();
+        // this.partitioner.centerPlus();
         this.decorateGrid();
+        this.spawnRestSpot();
 
         world.scene.cameras.main.setBounds(x, y, this.roomWidth, this.roomHeight);
         this.scene.getEmitter().emit(Signals.RoomConstruct, this);
     }
 
     startRoom() {
-        this.partitioner.getSpawnPointsCorners(4, 3)
-            .forEach((node) => this.actors.push(new Enemy(this.world, node.xCenterWorld, node.yCenterWorld)));
-
+        // this.partitioner.getSpawnPointsCorners(4, 3)
+        //     .forEach((node) => this.actors.push(new Enemy(this.world, node.xCenterWorld, node.yCenterWorld)));
         this.roomHasStarted = true;
         this.scene.getEmitter().emit(Signals.RoomStart, this);
+    }
+
+    private spawnRestSpot() {
+        new RestSpot(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2);
     }
 
     private setupDoors() {
@@ -113,10 +119,14 @@ export class Room extends Phaser.GameObjects.Container {
 
     update(time: number, delta: number) {
         if (!this.roomCleared && this.roomHasStarted && this.world.player && this.allEnemiesDefeated()) {
+            let isOverlapping = false;
             this.doors.forEach(({ door, collider }) => {
-                this.world.scene.physics.overlap(collider, this.world.player,
-                    () => this.onRoomCleared(door));
+                this.world.scene.physics.overlap(collider, this.world.player, () => {
+                    isOverlapping = true;
+                    if (this.playerHasLeftDoor) this.onRoomCleared(door)
+                });
             });
+            if (!isOverlapping) this.playerHasLeftDoor = true;
         }
     }
 

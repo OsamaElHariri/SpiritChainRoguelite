@@ -126,17 +126,17 @@ export class Actor extends Phaser.GameObjects.Ellipse {
 
     private addSlideToMoveVectorIfRammingWall(moveVector: Phaser.Math.Vector2) {
         if (this.body.touching.right) {
-            if (this.canSlideBottomRight && moveVector.y <= 1 - this.collisionSlideAddition && moveVector.y >= 0) moveVector.y += this.collisionSlideAddition;
-            else if (this.canSlideTopRight && moveVector.y >= -1 + this.collisionSlideAddition && moveVector.y <= 0) moveVector.y -= this.collisionSlideAddition;
+            if (this.canSlideBottomRight && moveVector.y <= 1 - this.collisionSlideAddition && moveVector.y > 0) moveVector.y += this.collisionSlideAddition;
+            else if (this.canSlideTopRight && moveVector.y >= -1 + this.collisionSlideAddition && moveVector.y < 0) moveVector.y -= this.collisionSlideAddition;
         } else if (this.body.touching.left) {
-            if (this.canSlideBottomLeft && moveVector.y <= 1 - this.collisionSlideAddition && moveVector.y >= 0) moveVector.y += this.collisionSlideAddition;
-            else if (this.canSlideTopLeft && moveVector.y >= -1 + this.collisionSlideAddition && moveVector.y <= 0) moveVector.y -= this.collisionSlideAddition;
+            if (this.canSlideBottomLeft && moveVector.y <= 1 - this.collisionSlideAddition && moveVector.y > 0) moveVector.y += this.collisionSlideAddition;
+            else if (this.canSlideTopLeft && moveVector.y >= -1 + this.collisionSlideAddition && moveVector.y < 0) moveVector.y -= this.collisionSlideAddition;
         } else if (this.body.touching.down) {
-            if (this.canSlideBottomRight && moveVector.x <= 1 - this.collisionSlideAddition && moveVector.x >= 0) moveVector.x += this.collisionSlideAddition;
-            else if (this.canSlideBottomLeft && moveVector.x >= -1 + this.collisionSlideAddition && moveVector.x <= 0) moveVector.x -= this.collisionSlideAddition;
+            if (this.canSlideBottomRight && moveVector.x <= 1 - this.collisionSlideAddition && moveVector.x > 0) moveVector.x += this.collisionSlideAddition;
+            else if (this.canSlideBottomLeft && moveVector.x >= -1 + this.collisionSlideAddition && moveVector.x < 0) moveVector.x -= this.collisionSlideAddition;
         } else if (this.body.touching.up) {
-            if (this.canSlideTopRight && moveVector.x <= 1 - this.collisionSlideAddition && moveVector.x >= 0) moveVector.x += this.collisionSlideAddition;
-            else if (this.canSlideTopLeft && moveVector.x >= -1 + this.collisionSlideAddition && moveVector.x <= 0) moveVector.x -= this.collisionSlideAddition;
+            if (this.canSlideTopRight && moveVector.x <= 1 - this.collisionSlideAddition && moveVector.x > 0) moveVector.x += this.collisionSlideAddition;
+            else if (this.canSlideTopLeft && moveVector.x >= -1 + this.collisionSlideAddition && moveVector.x < 0) moveVector.x -= this.collisionSlideAddition;
         }
     }
 
