@@ -109,7 +109,6 @@ export class World extends Phaser.GameObjects.Container {
 
     onSceneResume() {
         this.scene.cameras.main.useBounds = true;
-        this.scene.cameras.main.startFollow(this.player);
 
         this.scene.scene.resume("MainScene");
         if (this.menuScene) {
@@ -128,6 +127,9 @@ export class World extends Phaser.GameObjects.Container {
             rotation: {
                 getStart: () => initialRadians,
                 getEnd: () => 0,
+            },
+            onComplete: () => {
+                this.scene.cameras.main.startFollow(this.player);
             },
         });
     }
