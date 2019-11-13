@@ -8,6 +8,8 @@ import { Minimap } from "../ui/Minimap";
 import { FragmentCollection } from "./dungeaon_generation/FragmentCollection";
 import { ArrayUtils } from "../utils/ArrayUtils";
 import { Door } from "./dungeaon_generation/Door";
+import { RoomConfig } from "./RoomConfig";
+import { RoomType } from "./RoomType";
 
 export class World extends Phaser.GameObjects.Container {
 
@@ -16,6 +18,7 @@ export class World extends Phaser.GameObjects.Container {
     private id: number;
     private currentRoom: Room;
     private dungeon: Dungeon;
+    private roomConfigs: RoomConfig[] = [];
     private menuScene: Phaser.Scenes.ScenePlugin;
     private zoomOutCameraPosition: { x: number, y: number };
 
@@ -24,7 +27,7 @@ export class World extends Phaser.GameObjects.Container {
         this.id = scene.addObject(this);
         this.registerListeners();
         this.createDungeon();
-        this.createRoom(ArrayUtils.random(this.dungeon.fragmentCollections));
+        this.createRoom(ArrayUtils.random(this.roomConfigs));
         new Player(this, 200, 200);
         // new Minimap(this);
     }
@@ -51,10 +54,11 @@ export class World extends Phaser.GameObjects.Container {
 
         emitter.on(Signals.RoomComplete, (currentFragmentCollection: FragmentCollection, doorUsed: Door) => {
             if (!currentFragmentCollection) return;
-            const nextFragmentColection = doorUsed.getOtherCollection(currentFragmentCollection)
+            const nextFragmentColection = doorUsed.getOtherCollection(currentFragmentCollection);
+            const nextConfig = this.getRoomConfigForFragment(nextFragmentColection);
 
             this.scene.cameras.main.fadeOut(250, 0, 0, 0, (cam, progress: number) => {
-                if (progress === 1) this.goToNextRoom(nextFragmentColection, doorUsed);
+                if (progress === 1) this.goToNextRoom(nextConfig, doorUsed);
             });
         });
 
@@ -65,17 +69,21 @@ export class World extends Phaser.GameObjects.Container {
         });
     }
 
-    async goToNextRoom(fragmentCollection: FragmentCollection, doorUsed: Door) {
+    getRoomConfigForFragment(fragments: FragmentCollection) {
+        return this.roomConfigs.find((config, i) => config.fragments == fragments);
+    }
+
+    async goToNextRoom(config: RoomConfig, doorUsed: Door) {
         if (this.currentRoom) this.currentRoom.destroy();
         await Interval.milliseconds(100);
-        this.createRoom(fragmentCollection);
+        this.createRoom(config);
         const gridNode = this.currentRoom.getPlayerStartingPosition(doorUsed);
         this.player.cloneAndDestroy(gridNode.xCenterWorld, gridNode.yCenterWorld);
         this.scene.cameras.main.fadeIn(150, 0, 0, 0);
     }
 
-    createRoom(fragmentCollection: FragmentCollection) {
-        new Room(this, 0, 0, fragmentCollection);
+    createRoom(config: RoomConfig) {
+        new Room(this, 0, 0, config);
     }
 
     onScenePause() {
@@ -144,7 +152,20 @@ export class World extends Phaser.GameObjects.Container {
     }
 
     createDungeon() {
-        this.dungeon = new Dungeon();
+        const upgradeRoomCount = Math.random() < 0.8 ? 1 : 2;
+        const mobsRoomCount = Math.random() < 0.6 ? 4 : 5;
+
+        const dungeon = new Dungeon(upgradeRoomCount + mobsRoomCount);
+        const collections = ArrayUtils.randomGroups(dungeon.fragmentCollections);
+        collections.next();
+        (collections.next(upgradeRoomCount).value || []).forEach(collection => {
+            this.roomConfigs.push(new RoomConfig(RoomType.Upgrade, collection))
+        });
+        (collections.next(mobsRoomCount).value || []).forEach(collection => {
+            this.roomConfigs.push(new RoomConfig(RoomType.Mobs, collection))
+        });
+        this.dungeon = dungeon;
+
         this.scene.getEmitter().emit(Signals.DungeonConstruct, this.dungeon);
     }
 

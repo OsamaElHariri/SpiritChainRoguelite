@@ -9,8 +9,9 @@ import { GridNode } from "../grid/GridNode";
 import { Signals } from "../Signals";
 import { ArrayUtils } from "../utils/ArrayUtils";
 import { Door } from "./dungeaon_generation/Door";
-import { FragmentCollection } from "./dungeaon_generation/FragmentCollection";
 import { RestSpot } from "./terrain/RestSpot";
+import { RoomConfig } from "./RoomConfig";
+import { RoomType } from "./RoomType";
 
 export class Room extends Phaser.GameObjects.Container {
     scene: Scene;
@@ -29,13 +30,15 @@ export class Room extends Phaser.GameObjects.Container {
     private playerHasLeftDoor = false;
     private partitioner: RoomPartitioner;
     private doors: { door: Door, node: GridNode, collider: Phaser.GameObjects.Rectangle }[] = [];
+    private spawnPoints: GridNode[] = [];
+    private toDestroy: Phaser.GameObjects.GameObject[] = [];
 
-    constructor(public world: World, public x: number, public y: number, public fragmentCollection: FragmentCollection) {
+    constructor(public world: World, public x: number, public y: number, public config: RoomConfig) {
         super(world.scene, x, y);
         this.id = world.scene.addObject(this);
         this.scene = world.scene;
-        const gridWidth = fragmentCollection.dungeon.minWidth * fragmentCollection.width;
-        const gridHeight = fragmentCollection.dungeon.minHeight * fragmentCollection.height;
+        const gridWidth = config.fragments.dungeon.minWidth * config.fragments.width;
+        const gridHeight = config.fragments.dungeon.minHeight * config.fragments.height;
         this.grid = new Grid(x, y, gridWidth, gridHeight);
 
         this.roomWidth = this.grid.xLocalMax;
@@ -45,27 +48,33 @@ export class Room extends Phaser.GameObjects.Container {
         this.setupDoors();
         this.partitioner = new RoomPartitioner(this);
         this.partitioner.edgesExcept(this.doors.map(doorNode => doorNode.node));
-        // this.partitioner.centerPlus();
+
+        if (config.type == RoomType.Mobs) {
+            this.partitioner.centerPlus();
+            this.spawnPoints = this.partitioner.getSpawnPointsCorners(4, 3);
+        } else if (config.type == RoomType.Upgrade) {
+            this.spawnRestSpot();
+        }
         this.decorateGrid();
-        this.spawnRestSpot();
 
         world.scene.cameras.main.setBounds(x, y, this.roomWidth, this.roomHeight);
         this.scene.getEmitter().emit(Signals.RoomConstruct, this);
     }
 
     startRoom() {
-        // this.partitioner.getSpawnPointsCorners(4, 3)
-        //     .forEach((node) => this.actors.push(new Enemy(this.world, node.xCenterWorld, node.yCenterWorld)));
+        this.spawnPoints
+            .forEach((node) => this.actors.push(new Enemy(this.world, node.xCenterWorld, node.yCenterWorld)));
         this.roomHasStarted = true;
         this.scene.getEmitter().emit(Signals.RoomStart, this);
     }
 
     private spawnRestSpot() {
-        new RestSpot(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2);
+        const restSpot = new RestSpot(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2);
+        this.toDestroy.push(restSpot);
     }
 
     private setupDoors() {
-        const doors = this.fragmentCollection.getDoors();
+        const doors = this.config.fragments.getDoors();
         doors.forEach((door: Door) => {
             let node: GridNode = this.doorToGridNode(door);
             if (!node) return;
@@ -137,7 +146,7 @@ export class Room extends Phaser.GameObjects.Container {
     }
 
     onRoomCleared(door: Door) {
-        this.scene.getEmitter().emit(Signals.RoomComplete, this.fragmentCollection, door);
+        this.scene.getEmitter().emit(Signals.RoomComplete, this.config.fragments, door);
         this.roomCleared = true;
         this.scene.cameras.main.zoomTo(1, 100, 'Linear', true);
     }
@@ -149,7 +158,7 @@ export class Room extends Phaser.GameObjects.Container {
     private doorToGridNode(door: Door) {
         const xAxisValid = (x: number) => x !== null && x >= 0 && x < this.grid.width;
         const yAxisValid = (y: number) => y !== null && y >= 0 && y < this.grid.height;
-        const doorLocation = door.getDoorFor(this.fragmentCollection);
+        const doorLocation = door.getDoorFor(this.config.fragments);
         if (xAxisValid(doorLocation.xTop)) return this.grid.at(doorLocation.xTop, 0);
         if (xAxisValid(doorLocation.xBottom)) return this.grid.at(doorLocation.xBottom, this.grid.height - 1);
         if (yAxisValid(doorLocation.yLeft)) return this.grid.at(0, doorLocation.yLeft);
@@ -161,9 +170,10 @@ export class Room extends Phaser.GameObjects.Container {
         this.scene.getEmitter().emit(Signals.RoomDestroy);
         this.world.scene.stopUpdating(this.id);
         this.terrain.forEach((terrain => terrain.destroy()));
-        this.actors.forEach((actor => actor.destroy()));
-        this.decorations.forEach((decoration => decoration.destroy()));
-        this.doors.forEach((({ collider }) => collider.destroy()));
+        this.actors.forEach(actor => actor.destroy());
+        this.decorations.forEach(decoration => decoration.destroy());
+        this.doors.forEach(({ collider }) => collider.destroy());
+        this.toDestroy.forEach(item => item.destroy());
         this.floor.destroy();
         super.destroy();
     }

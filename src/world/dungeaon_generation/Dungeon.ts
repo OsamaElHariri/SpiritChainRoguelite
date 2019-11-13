@@ -6,12 +6,12 @@ export class Dungeon {
     roomFragments: { [id: string]: RoomFragment } = {};
     fragmentCollections: FragmentCollection[] = [];
 
-    constructor(public minWidth: number = 11, public minHeight: number = 9) {
+    constructor(numberOfRooms, public minWidth: number = 11, public minHeight: number = 9) {
         const initialCollection = new FragmentCollection(this, new RoomFragment(this, 0, 0));
 
         this.registerFragmentCollection(initialCollection);
         const frontier = [initialCollection];
-        while (this.fragmentCollections.length < 8) {
+        while (this.fragmentCollections.length < numberOfRooms - 1) {
             const collection = ArrayUtils.random(frontier);
 
             const initialFragments = [
