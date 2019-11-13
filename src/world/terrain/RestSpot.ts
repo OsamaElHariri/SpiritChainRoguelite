@@ -1,6 +1,8 @@
 import { World } from "../World";
 
 export class RestSpot extends Phaser.GameObjects.Sprite {
+    body: Phaser.Physics.Arcade.Body;
+
     private id: number;
     private toDestroy: Phaser.GameObjects.GameObject[] = [];
 
@@ -26,7 +28,8 @@ export class RestSpot extends Phaser.GameObjects.Sprite {
         this.toDestroy.push(restSpotTrash);
 
         this.id = world.scene.addObject(this);
-        world.scene.physics.world.enable(this, Phaser.Physics.Arcade.STATIC_BODY);
+        world.scene.physics.world.enable(this);
+        this.body.setAllowGravity(false);
     }
 
     update() {
