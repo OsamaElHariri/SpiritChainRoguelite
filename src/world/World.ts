@@ -29,7 +29,6 @@ export class World extends Phaser.GameObjects.Container {
         this.registerListeners();
         this.createDungeon();
         this.createRoom(ArrayUtils.random(this.roomConfigs));
-        new Player(this, 200, 200);
         // new Minimap(this);
     }
 
@@ -132,10 +131,10 @@ export class World extends Phaser.GameObjects.Container {
 
     async goToNextRoom(config: RoomConfig, doorUsed: Door) {
         if (this.currentRoom) this.currentRoom.destroy();
+        this.player.destroy();
         await Interval.milliseconds(100);
+        config.doorUsed = doorUsed;
         this.createRoom(config);
-        const gridNode = this.currentRoom.getPlayerStartingPosition(doorUsed);
-        this.player.cloneAndDestroy(gridNode.xCenterWorld, gridNode.yCenterWorld);
         this.scene.cameras.main.fadeIn(150, 0, 0, 0);
     }
 

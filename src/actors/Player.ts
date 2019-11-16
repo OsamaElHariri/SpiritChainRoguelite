@@ -147,8 +147,8 @@ export class Player extends Actor {
         this.weapons = this.weapons.filter((weapon) => weapon.active);
     }
 
-    cloneAndDestroy(x: number, y: number) {
-        this.destroy();
+
+    clone(x: number, y: number) {
         const newPlayer = new Player(this.world, x, y);
         this.upgradesHistory.forEach(upgrade => newPlayer.handleUpgradeRequest(upgrade));
     }

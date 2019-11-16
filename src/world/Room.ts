@@ -9,6 +9,7 @@ import { Signals } from "../Signals";
 import { ArrayUtils } from "../utils/ArrayUtils";
 import { Door } from "./dungeaon_generation/Door";
 import { RoomConfig } from "./RoomConfig";
+import { Player } from "../actors/Player";
 
 export class Room extends Phaser.GameObjects.Container {
     scene: Scene;
@@ -49,6 +50,7 @@ export class Room extends Phaser.GameObjects.Container {
         this.partitioner.edgesExcept(doorNodes);
 
         this.onRoomConstruct();
+        this.spawnPlayer();
         this.addTerrain();
 
         world.scene.cameras.main.setBounds(x, y, this.roomWidth, this.roomHeight);
@@ -60,6 +62,23 @@ export class Room extends Phaser.GameObjects.Container {
     startRoom() {
         this.roomHasStarted = true;
         this.scene.getEmitter().emit(Signals.RoomStart, this);
+    }
+
+    protected spawnPlayer() {
+        let playerPos = { x: 200, y: 200 };
+        if (this.config.doorUsed) {
+            const gridNode = this.getPlayerStartingPosition(this.config.doorUsed);
+            playerPos = { x: gridNode.xCenterWorld, y: gridNode.yCenterWorld };
+        }
+        if (this.world.player) {
+            this.world.player.clone(playerPos.x, playerPos.y);
+        } else {
+            new Player(this.world, playerPos.x, playerPos.y);
+        }
+    }
+
+    private getPlayerStartingPosition(door: Door) {
+        return this.doorToGridNode(door);
     }
 
     private setupDoors() {
@@ -138,10 +157,6 @@ export class Room extends Phaser.GameObjects.Container {
         this.scene.getEmitter().emit(Signals.RoomComplete, this.config.fragments, door);
         this.roomCleared = true;
         this.scene.cameras.main.zoomTo(1, 100, 'Linear', true);
-    }
-
-    getPlayerStartingPosition(door: Door) {
-        return this.doorToGridNode(door);
     }
 
     private doorToGridNode(door: Door) {
