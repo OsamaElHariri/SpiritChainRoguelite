@@ -11,10 +11,12 @@ import { Door } from "./dungeaon_generation/Door";
 import { RoomConfig } from "./RoomConfig";
 import { UpgradeRoom } from "./room_types/UpgradesRoom";
 import { MobsRoom } from "./room_types/MobsRoom";
+import { CartRoom } from "./room_types/CartRoom";
 
 export class World extends Phaser.GameObjects.Container {
 
     player: Player;
+    dungeonCount = 0;
 
     private id: number;
     private currentRoom: Room;
@@ -27,13 +29,16 @@ export class World extends Phaser.GameObjects.Container {
         super(scene);
         this.id = scene.addObject(this);
         this.registerListeners();
-        this.createDungeon();
-        this.createRoom(ArrayUtils.random(this.roomConfigs));
+        this.startNewDungeon();
         // new Minimap(this);
     }
 
     registerListeners() {
         const emitter = this.scene.getEmitter();
+
+        emitter.on(Signals.DungeonComplete, () => {
+            this.startNewDungeon();
+        });
 
         emitter.on(Signals.Pause, () => {
             this.onScenePause();
@@ -67,6 +72,26 @@ export class World extends Phaser.GameObjects.Container {
             await Interval.milliseconds(300);
             this.currentRoom.startRoom();
         });
+    }
+
+    startNewDungeon() {
+        this.dungeonCount += 1;
+        if (this.currentRoom) this.currentRoom.destroy();
+        if (this.player) this.player.destroy();
+        this.createDungeon();
+
+        this.scene.cameras.main.fadeOut(500, 0, 0, 0, (cam, progress: number) => {
+            if (progress === 1) {
+                const startingRoom = this.getStartingRoom();
+                this.createRoom(startingRoom);
+                this.scene.cameras.main.fadeIn(250, 0, 0, 0);
+            }
+        });
+    }
+
+    private getStartingRoom() {
+        const startingRoom = this.roomConfigs.find((config, index) => config.isStartingRoom);
+        return startingRoom || ArrayUtils.random(this.roomConfigs);
     }
 
     onScenePause() {
@@ -147,17 +172,23 @@ export class World extends Phaser.GameObjects.Container {
     }
 
     createDungeon() {
+        this.roomConfigs = [];
+
+        const cartRoomCount = 1;
         const upgradeRoomCount = Math.random() < 0.8 ? 1 : 2;
         const mobsRoomCount = Math.random() < 0.6 ? 4 : 5;
 
-        const dungeon = new Dungeon(upgradeRoomCount + mobsRoomCount);
+        const dungeon = new Dungeon(cartRoomCount + upgradeRoomCount + mobsRoomCount);
         const collections = ArrayUtils.randomGroups(dungeon.fragmentCollections);
         collections.next();
+        (collections.next(cartRoomCount).value || []).forEach(collection => {
+            this.roomConfigs.push(RoomConfig.startingRoom(CartRoom, collection));
+        });
         (collections.next(upgradeRoomCount).value || []).forEach(collection => {
-            this.roomConfigs.push(new RoomConfig(UpgradeRoom, collection))
+            this.roomConfigs.push(new RoomConfig(UpgradeRoom, collection));
         });
         (collections.next(mobsRoomCount).value || []).forEach(collection => {
-            this.roomConfigs.push(new RoomConfig(MobsRoom, collection))
+            this.roomConfigs.push(new RoomConfig(MobsRoom, collection));
         });
         this.dungeon = dungeon;
 

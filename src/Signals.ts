@@ -10,4 +10,5 @@ export enum Signals {
     RoomComplete = 'room_complete',
     RoomDestroy = 'room_destroy',
     DungeonConstruct = 'dungeon_construct',
+    DungeonComplete = 'dungeon_complete',
 }
