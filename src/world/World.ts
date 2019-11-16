@@ -9,7 +9,8 @@ import { FragmentCollection } from "./dungeaon_generation/FragmentCollection";
 import { ArrayUtils } from "../utils/ArrayUtils";
 import { Door } from "./dungeaon_generation/Door";
 import { RoomConfig } from "./RoomConfig";
-import { RoomType } from "./RoomType";
+import { UpgradeRoom } from "./room_types/UpgradesRoom";
+import { MobsRoom } from "./room_types/MobsRoom";
 
 export class World extends Phaser.GameObjects.Container {
 
@@ -69,23 +70,6 @@ export class World extends Phaser.GameObjects.Container {
         });
     }
 
-    getRoomConfigForFragment(fragments: FragmentCollection) {
-        return this.roomConfigs.find((config, i) => config.fragments == fragments);
-    }
-
-    async goToNextRoom(config: RoomConfig, doorUsed: Door) {
-        if (this.currentRoom) this.currentRoom.destroy();
-        await Interval.milliseconds(100);
-        this.createRoom(config);
-        const gridNode = this.currentRoom.getPlayerStartingPosition(doorUsed);
-        this.player.cloneAndDestroy(gridNode.xCenterWorld, gridNode.yCenterWorld);
-        this.scene.cameras.main.fadeIn(150, 0, 0, 0);
-    }
-
-    createRoom(config: RoomConfig) {
-        new Room(this, 0, 0, config);
-    }
-
     onScenePause() {
         this.scene.cameras.main.useBounds = false;
         this.scene.cameras.main.stopFollow();
@@ -142,9 +126,21 @@ export class World extends Phaser.GameObjects.Container {
         });
     }
 
-    destroy() {
-        this.scene.stopUpdating(this.id);
-        super.destroy();
+    getRoomConfigForFragment(fragments: FragmentCollection) {
+        return this.roomConfigs.find((config, i) => config.fragments == fragments);
+    }
+
+    async goToNextRoom(config: RoomConfig, doorUsed: Door) {
+        if (this.currentRoom) this.currentRoom.destroy();
+        await Interval.milliseconds(100);
+        this.createRoom(config);
+        const gridNode = this.currentRoom.getPlayerStartingPosition(doorUsed);
+        this.player.cloneAndDestroy(gridNode.xCenterWorld, gridNode.yCenterWorld);
+        this.scene.cameras.main.fadeIn(150, 0, 0, 0);
+    }
+
+    createRoom(config: RoomConfig) {
+        config.createRoom(this, 0, 0);
     }
 
     getCurrentRoom(): Room {
@@ -159,10 +155,10 @@ export class World extends Phaser.GameObjects.Container {
         const collections = ArrayUtils.randomGroups(dungeon.fragmentCollections);
         collections.next();
         (collections.next(upgradeRoomCount).value || []).forEach(collection => {
-            this.roomConfigs.push(new RoomConfig(RoomType.Upgrade, collection))
+            this.roomConfigs.push(new RoomConfig(UpgradeRoom, collection))
         });
         (collections.next(mobsRoomCount).value || []).forEach(collection => {
-            this.roomConfigs.push(new RoomConfig(RoomType.Mobs, collection))
+            this.roomConfigs.push(new RoomConfig(MobsRoom, collection))
         });
         this.dungeon = dungeon;
 
@@ -171,5 +167,10 @@ export class World extends Phaser.GameObjects.Container {
 
     getCurrentDungeon(): Dungeon {
         return this.dungeon;
+    }
+
+    destroy() {
+        this.scene.stopUpdating(this.id);
+        super.destroy();
     }
 }

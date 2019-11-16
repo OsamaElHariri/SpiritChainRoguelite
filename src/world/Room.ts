@@ -3,15 +3,12 @@ import { Actor } from "../actors/Actor";
 import { Scene } from "../scenes/Scene";
 import { Wall } from "./terrain/Wall";
 import { Grid } from "../grid/Grid";
-import { Enemy } from "../actors/Enemy";
 import { RoomPartitioner } from "./room_generation/RoomPartitioner";
 import { GridNode } from "../grid/GridNode";
 import { Signals } from "../Signals";
 import { ArrayUtils } from "../utils/ArrayUtils";
 import { Door } from "./dungeaon_generation/Door";
-import { RestSpot } from "./terrain/RestSpot";
 import { RoomConfig } from "./RoomConfig";
-import { RoomType } from "./RoomType";
 
 export class Room extends Phaser.GameObjects.Container {
     scene: Scene;
@@ -25,12 +22,13 @@ export class Room extends Phaser.GameObjects.Container {
     roomWidth: number;
     roomHeight: number;
 
+    protected spawnPoints: GridNode[] = [];
+    protected partitioner: RoomPartitioner;
+
     private id: number;
     private roomHasStarted = false;
     private playerHasLeftDoor = false;
-    private partitioner: RoomPartitioner;
     private doors: { door: Door, node: GridNode, collider: Phaser.GameObjects.Rectangle }[] = [];
-    private spawnPoints: GridNode[] = [];
     private toDestroy: Phaser.GameObjects.GameObject[] = [];
 
     constructor(public world: World, public x: number, public y: number, public config: RoomConfig) {
@@ -47,30 +45,21 @@ export class Room extends Phaser.GameObjects.Container {
         this.decorateGround();
         this.setupDoors();
         this.partitioner = new RoomPartitioner(this);
-        this.partitioner.edgesExcept(this.doors.map(doorNode => doorNode.node));
+        const doorNodes = this.doors.map(doorNode => doorNode.node);
+        this.partitioner.edgesExcept(doorNodes);
 
-        if (config.type == RoomType.Mobs) {
-            this.partitioner.centerPlus();
-            this.spawnPoints = this.partitioner.getSpawnPointsCorners(4, 3);
-        } else if (config.type == RoomType.Upgrade) {
-            this.spawnRestSpot();
-        }
-        this.decorateGrid();
+        this.onRoomConstruct();
+        this.addTerrain();
 
         world.scene.cameras.main.setBounds(x, y, this.roomWidth, this.roomHeight);
         this.scene.getEmitter().emit(Signals.RoomConstruct, this);
     }
 
+    protected onRoomConstruct() { }
+
     startRoom() {
-        this.spawnPoints
-            .forEach((node) => this.actors.push(new Enemy(this.world, node.xCenterWorld, node.yCenterWorld)));
         this.roomHasStarted = true;
         this.scene.getEmitter().emit(Signals.RoomStart, this);
-    }
-
-    private spawnRestSpot() {
-        const restSpot = new RestSpot(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2);
-        this.toDestroy.push(restSpot);
     }
 
     private setupDoors() {
@@ -107,7 +96,7 @@ export class Room extends Phaser.GameObjects.Container {
         }
     }
 
-    private decorateGrid() {
+    private addTerrain() {
         this.grid.forEach((node) => {
             if (!node.traversable)
                 this.terrain.push(new Wall(this, node.xWorld, node.yWorld, this.grid.tileWidth));
@@ -139,13 +128,13 @@ export class Room extends Phaser.GameObjects.Container {
         }
     }
 
-    allEnemiesDefeated() {
+    private allEnemiesDefeated() {
         for (let i = 0; i < this.actors.length; i++)
             if (!this.actors[i].isDead) return false;
         return true;
     }
 
-    onRoomCleared(door: Door) {
+    private onRoomCleared(door: Door) {
         this.scene.getEmitter().emit(Signals.RoomComplete, this.config.fragments, door);
         this.roomCleared = true;
         this.scene.cameras.main.zoomTo(1, 100, 'Linear', true);
