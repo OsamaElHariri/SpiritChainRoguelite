@@ -88,7 +88,9 @@ export class Room extends Phaser.GameObjects.Container {
             if (!node) return;
 
             const doorCollider = this.scene.add.rectangle(node.xWorld, node.yWorld, this.grid.tileWidth, this.grid.tileWidth, 0xff3434).setOrigin(0);
-            this.scene.physics.world.enable(doorCollider, Phaser.Physics.Arcade.STATIC_BODY);
+            this.scene.physics.world.enable(doorCollider);
+            (doorCollider.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
+
 
             this.doors.push({ node, door, collider: doorCollider });
         });
