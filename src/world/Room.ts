@@ -142,7 +142,7 @@ export class Room extends Phaser.GameObjects.Container {
             this.doors.forEach(({ door, collider }) => {
                 this.world.scene.physics.overlap(collider, this.world.player, () => {
                     isOverlapping = true;
-                    if (this.playerHasLeftDoor) this.onRoomCleared(door)
+                    if (this.playerHasLeftDoor) this.onRoomCleared(door);
                 });
             });
             if (!isOverlapping) this.playerHasLeftDoor = true;
@@ -156,6 +156,7 @@ export class Room extends Phaser.GameObjects.Container {
     }
 
     private onRoomCleared(door: Door) {
+        this.config.isComplete = true;
         this.scene.getEmitter().emit(Signals.RoomComplete, this.config.fragments, door);
         this.roomCleared = true;
         this.scene.cameras.main.zoomTo(1, 100, 'Linear', true);

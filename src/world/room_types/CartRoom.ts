@@ -18,9 +18,12 @@ export class CartRoom extends Room {
 
     update(time: number, delta: number) {
         super.update(time, delta);
-        this.scene.physics.overlap(this.cart, this.world.player, () => {
-            this.scene.getEmitter().emit(Signals.DungeonComplete);
-        });
+
+        if (this.world.allRoomsComplete()) {
+            this.scene.physics.overlap(this.cart, this.world.player, () => {
+                this.scene.getEmitter().emit(Signals.DungeonComplete);
+            });
+        }
     }
 
     destroy() {

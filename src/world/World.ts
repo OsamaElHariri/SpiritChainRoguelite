@@ -74,6 +74,13 @@ export class World extends Phaser.GameObjects.Container {
         });
     }
 
+    allRoomsComplete() {
+        for (let i = 0; i < this.roomConfigs.length; i++) {
+            if (!this.roomConfigs[i].isComplete) return false;
+        }
+        return true;
+    }
+
     startNewDungeon() {
         this.dungeonCount += 1;
         if (this.currentRoom) this.currentRoom.destroy();
@@ -182,13 +189,13 @@ export class World extends Phaser.GameObjects.Container {
         const collections = ArrayUtils.randomGroups(dungeon.fragmentCollections);
         collections.next();
         (collections.next(cartRoomCount).value || []).forEach(collection => {
-            this.roomConfigs.push(RoomConfig.startingRoom(CartRoom, collection));
+            this.roomConfigs.push(new RoomConfig(CartRoom, collection, { isStartingRoom: true }));
         });
         (collections.next(upgradeRoomCount).value || []).forEach(collection => {
             this.roomConfigs.push(new RoomConfig(UpgradeRoom, collection));
         });
         (collections.next(mobsRoomCount).value || []).forEach(collection => {
-            this.roomConfigs.push(new RoomConfig(MobsRoom, collection));
+            this.roomConfigs.push(new RoomConfig(MobsRoom, collection, { hasEnemies: true }));
         });
         this.dungeon = dungeon;
 
