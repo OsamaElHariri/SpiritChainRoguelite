@@ -8,10 +8,11 @@ import { Minimap } from "../ui/Minimap";
 import { FragmentCollection } from "./dungeaon_generation/FragmentCollection";
 import { ArrayUtils } from "../utils/ArrayUtils";
 import { Door } from "./dungeaon_generation/Door";
-import { RoomConfig } from "./RoomConfig";
+import { RoomConfig, RoomConfigFlags } from "./RoomConfig";
 import { UpgradeRoom } from "./room_types/UpgradesRoom";
 import { MobsRoom } from "./room_types/MobsRoom";
 import { CartRoom } from "./room_types/CartRoom";
+import { BossRoom } from "./room_types/BossRoom";
 
 export class World extends Phaser.GameObjects.Container {
 
@@ -181,22 +182,41 @@ export class World extends Phaser.GameObjects.Container {
     createDungeon() {
         this.roomConfigs = [];
 
-        const cartRoomCount = 1;
-        const upgradeRoomCount = Math.random() < 0.8 ? 1 : 2;
-        const mobsRoomCount = Math.random() < 0.6 ? 4 : 5;
+        const rooms: { factory: typeof Room, count: number, flags?: RoomConfigFlags }[] = [
+            {
+                factory: CartRoom,
+                count: 1,
+                flags: { isStartingRoom: true },
+            },
+            // {
+            //     factory: UpgradeRoom,
+            //     count: Math.random() < 0.8 ? 1 : 2,
+            // },
+            // {
+            //     factory: MobsRoom,
+            //     count: Math.random() < 0.6 ? 4 : 5,
+            //     flags: { hasEnemies: true },
+            // },
+            {
+                factory: BossRoom,
+                count: 1,
+                flags: { hasEnemies: true },
+            },
+        ];
+        let numberOfRooms = 0;
+        rooms.forEach(roomType => numberOfRooms += roomType.count);
 
-        const dungeon = new Dungeon(cartRoomCount + upgradeRoomCount + mobsRoomCount);
+        const dungeon = new Dungeon(numberOfRooms);
         const collections = ArrayUtils.randomGroups(dungeon.fragmentCollections);
         collections.next();
-        (collections.next(cartRoomCount).value || []).forEach(collection => {
-            this.roomConfigs.push(new RoomConfig(CartRoom, collection, { isStartingRoom: true }));
+
+        rooms.forEach(roomType => {
+            const roomConfigs = collections.next(roomType.count).value || [];
+            roomConfigs.forEach(collection => {
+                this.roomConfigs.push(new RoomConfig(roomType.factory, collection, roomType.flags));
+            });
         });
-        (collections.next(upgradeRoomCount).value || []).forEach(collection => {
-            this.roomConfigs.push(new RoomConfig(UpgradeRoom, collection));
-        });
-        (collections.next(mobsRoomCount).value || []).forEach(collection => {
-            this.roomConfigs.push(new RoomConfig(MobsRoom, collection, { hasEnemies: true }));
-        });
+
         this.dungeon = dungeon;
 
         this.scene.getEmitter().emit(Signals.DungeonConstruct, this.dungeon);

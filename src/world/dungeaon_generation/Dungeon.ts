@@ -11,7 +11,7 @@ export class Dungeon {
 
         this.registerFragmentCollection(initialCollection);
         const frontier = [initialCollection];
-        while (this.fragmentCollections.length < numberOfRooms - 1) {
+        while (this.fragmentCollections.length < numberOfRooms) {
             const collection = ArrayUtils.random(frontier);
 
             const initialFragments = [

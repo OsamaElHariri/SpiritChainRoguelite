@@ -13,6 +13,7 @@ export class MobsRoom extends Room {
         this.partitioner.centerPlus();
         this.spawnPoints = this.partitioner.getSpawnPointsCorners(4, 3);
     }
+
     startRoom() {
         super.startRoom();
         if (this.config.creationCount > 1) return;

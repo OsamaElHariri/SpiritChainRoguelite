@@ -44,6 +44,8 @@ export class MainScene extends Scene {
         this.load.image('weaponshadow', '../assets/sprites/weapon/weaponshadow.png');
         this.load.image('topdownplayer', '../assets/sprites/actor/topdownplayer.png');
         this.load.image('topdownenemy', '../assets/sprites/actor/topdownenemy.png');
+        this.load.image('magician_hat', '../assets/sprites/actor/hands_boss/magician_hat.png');
+        this.load.image('evil_spirit_hand', '../assets/sprites/actor/hands_boss/evil_spirit_hand.png');
     }
 
     create(): void {

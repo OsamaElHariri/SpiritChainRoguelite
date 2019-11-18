@@ -3,7 +3,7 @@ import { Room } from "./Room";
 import { World } from "./World";
 import { Door } from "./dungeaon_generation/Door";
 
-type RoomConfigFlags = { isStartingRoom?: boolean, hasEnemies?: boolean };
+export type RoomConfigFlags = { isStartingRoom?: boolean, hasEnemies?: boolean };
 
 export class RoomConfig {
     creationCount = 0;
@@ -11,7 +11,8 @@ export class RoomConfig {
     isStartingRoom = false;
     isComplete = true;
 
-    constructor(public RoomFactory: typeof Room, public fragments: FragmentCollection, flags: RoomConfigFlags = {}) {
+    constructor(public RoomFactory: typeof Room, public fragments: FragmentCollection, flags: RoomConfigFlags) {
+        if (!flags) flags = {};
         this.isComplete = !flags.hasEnemies;
         this.isStartingRoom = flags.isStartingRoom;
     }
