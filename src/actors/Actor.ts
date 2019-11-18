@@ -4,12 +4,14 @@ import { EmptyMoveEngine } from "../move_engines/EmptyMoveEngine";
 import { ActorType } from "./ActorType";
 import { Weapon } from "../weapons/Weapon";
 import { SimpleLifeBar } from "../ui/SimpleLifeBar"
+import { CircleUtils } from "../utils/CircleUtils";
 
 export class Actor extends Phaser.GameObjects.Ellipse {
     id: number;
     actorType: ActorType = ActorType.Enemy;
     body: Phaser.Physics.Arcade.Body;
     container: Phaser.GameObjects.Container;
+    facingRotation = 0;
     healthBar: SimpleLifeBar
 
     maxHealthPoints: number = 1000;
@@ -88,6 +90,9 @@ export class Actor extends Phaser.GameObjects.Ellipse {
         this.container.setPosition(this.x, this.y);
         this.mainSprite.setPosition(this.x, this.y);
 
+        const thetaDiff = CircleUtils.rotationTowardsTargetTheta(this.mainSprite.rotation, this.facingRotation);
+        this.mainSprite.rotation += 0.25 * thetaDiff;
+
         const velocity = this.body.velocity.clone().normalize();
         if (velocity.length()) {
             const radians = Math.atan2(velocity.y, velocity.x) + Math.PI / 2;
@@ -105,7 +110,7 @@ export class Actor extends Phaser.GameObjects.Ellipse {
     }
 
     protected faceMoveDirection(rotation: number) {
-        this.mainSprite.setRotation(rotation);
+        this.facingRotation = rotation;
     }
 
     onNegativeHealth() {
@@ -167,6 +172,11 @@ export class Actor extends Phaser.GameObjects.Ellipse {
         if (this.isAlliedWith(source)) return;
         this.setHealth(this.healthPoints - weapon.strength);
 
+    }
+
+    setMaxHealth(maxHp: number) {
+        this.maxHealthPoints = maxHp;
+        this.setHealth(maxHp);
     }
 
     setHealth(hp: number) {
