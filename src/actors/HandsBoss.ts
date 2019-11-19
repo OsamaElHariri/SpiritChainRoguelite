@@ -76,8 +76,7 @@ export class HandsBoss extends Actor {
             this.moveWith(this.playerFollowMoveEngine);
             this.rotateHandsTowardsPlayer();
             if (Date.now() > this.nextAttackTime) {
-                this.nextAttackTime = Date.now() + 10000 + Math.random() * 5000;
-                this.moveWith(this.emptyMoveEngine);
+                this.nextAttackTime = Date.now() + 10000 + Math.random() * 4000;
                 this.handsAtRestCount = 0;
                 this.selectRandomAttack();
             }
@@ -85,8 +84,19 @@ export class HandsBoss extends Actor {
     }
 
     selectRandomAttack() {
-        for (let i = 0; i < this.hands.length; i++) {
-            this.punchesAttack({ handIndex: i, reachedTargetCount: 0, maxTargetReached: 12 });
+        if (Math.random() < 0.5) {
+            this.moveWith(this.emptyMoveEngine);
+            for (let i = 0; i < this.hands.length; i++) {
+                this.punchesAttack({ handIndex: i, reachedTargetCount: 0, maxTargetReached: 12 });
+            }
+        } else {
+            const direction = Math.random() < 0.5 ? -1 : 1;
+            const delay = 500;
+            const duration = 6000;
+            for (let i = 0; i < this.hands.length; i++) {
+                this.twistAttack({ handIndex: i, direction, delay, duration });
+                this.twistHandsContainer({ direction, delay, duration, numberOfTurns: 1 });
+            }
         }
     }
 
@@ -97,7 +107,6 @@ export class HandsBoss extends Actor {
     }
 
     punchesAttack(attackConfig: { handIndex: number, reachedTargetCount: number, maxTargetReached: number }) {
-
         if (!this.active) return;
 
         const hand = this.hands[attackConfig.handIndex];
@@ -166,8 +175,58 @@ export class HandsBoss extends Actor {
         });
     }
 
-    setHandBackToNormal(handIndex: number) {
+    twistAttack(attackConfig: { handIndex: number, direction: number, delay: number, duration: number }) {
         if (!this.active) return;
+
+        const hand = this.hands[attackConfig.handIndex];
+
+        const xInitial = hand.x;
+        const yInitial = hand.y;
+        const angleInitial = hand.angle;
+        const x = (attackConfig.handIndex - 2) * -130 + 65
+        const angle = attackConfig.direction * hand.scaleX < 0 ? 180 : 0;
+        this.scene.add.tween({
+            targets: [hand],
+            duration: attackConfig.delay,
+            ease: Phaser.Math.Easing.Quadratic.Out,
+            x: {
+                getStart: () => xInitial,
+                getEnd: () => x,
+            },
+            y: {
+                getStart: () => yInitial,
+                getEnd: () => 0,
+            },
+            angle: {
+                getStart: () => angleInitial,
+                getEnd: () => angle,
+            },
+
+            onComplete: () => {
+                this.setHandBackToNormal(attackConfig.handIndex, attackConfig.duration);
+            },
+        });
+    }
+    twistHandsContainer(config: { direction: number, delay: number, duration: number, numberOfTurns: number }) {
+        if (!this.active) return;
+        const direction = config.direction / Math.abs(config.direction);
+        const initial = this.handsContainer.rotation;
+        const target = this.handsContainer.rotation + config.numberOfTurns * direction * Math.PI * 2;
+        this.scene.add.tween({
+            targets: [this.handsContainer],
+            duration: config.duration,
+            delay: config.delay,
+            ease: Phaser.Math.Easing.Quadratic.InOut,
+            rotation: {
+                getStart: () => initial,
+                getEnd: () => target,
+            },
+        });
+    }
+
+    setHandBackToNormal(handIndex: number, delay?: number) {
+        if (!this.active) return;
+        if (delay === 0) delay = 1;
 
         const hand = this.hands[handIndex];
 
@@ -181,7 +240,7 @@ export class HandsBoss extends Actor {
         this.scene.add.tween({
             targets: [hand],
             duration: 300,
-            delay: 100,
+            delay: delay || 100,
             ease: Phaser.Math.Easing.Quadratic.Out,
             x: {
                 getStart: () => xInitial,
