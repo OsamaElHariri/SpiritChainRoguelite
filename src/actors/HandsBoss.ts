@@ -4,6 +4,7 @@ import { PlayerFollowMoveEngine } from "../move_engines/PlayerFollowMoveEngine";
 import { EmptyMoveEngine } from "../move_engines/EmptyMoveEngine";
 import { World } from "../world/World";
 import { CircleUtils } from "../utils/CircleUtils";
+import { ArrayUtils } from "../utils/ArrayUtils";
 
 export class HandsBoss extends Actor {
     private hands: Phaser.GameObjects.Sprite[] = [];
@@ -11,6 +12,11 @@ export class HandsBoss extends Actor {
 
     private playerFollowMoveEngine: PlayerFollowMoveEngine;
     private emptyMoveEngine = new EmptyMoveEngine()
+
+    private attackGenerator = ArrayUtils.pullWithLittleRepetition([
+        this.startPunchesAttack.bind(this),
+        this.startTwistAttack.bind(this),
+        this.startSpreadAttack.bind(this)]);
 
     private nextAttackTime: number = Date.now() + 4000 + Math.random() * 1000;
     private handsAtRestCount = 6;
@@ -84,26 +90,32 @@ export class HandsBoss extends Actor {
     }
 
     selectRandomAttack() {
-        const rand = Math.random();
-        if (rand < 0.33) {
-            this.moveWith(this.emptyMoveEngine);
-            for (let i = 0; i < this.hands.length; i++) {
-                this.punchesAttack({ handIndex: i, reachedTargetCount: 0, maxTargetReached: 12 });
-            }
-        } else if (rand < 0.66) {
-            this.moveWith(this.emptyMoveEngine);
-            const thetaOffset = Math.PI * 2 * Math.random();
-            for (let i = 0; i < this.hands.length; i++) {
-                this.spreadHandsAttack({ handIndex: i, thetaOffset });
-            }
-        } else {
-            const direction = Math.random() < 0.5 ? -1 : 1;
-            const delay = 500;
-            const duration = 6000;
-            for (let i = 0; i < this.hands.length; i++) {
-                this.twistAttack({ handIndex: i, direction, delay, duration });
-                this.twistHandsContainer({ direction, delay, duration, numberOfTurns: 1 });
-            }
+        const attackStarter = this.attackGenerator.next().value;
+        attackStarter();
+    }
+
+    startPunchesAttack() {
+        this.moveWith(this.emptyMoveEngine);
+        for (let i = 0; i < this.hands.length; i++) {
+            this.punchesAttack({ handIndex: i, reachedTargetCount: 0, maxTargetReached: 12 });
+        }
+    }
+
+    startTwistAttack() {
+        this.moveWith(this.emptyMoveEngine);
+        const thetaOffset = Math.PI * 2 * Math.random();
+        for (let i = 0; i < this.hands.length; i++) {
+            this.spreadHandsAttack({ handIndex: i, thetaOffset });
+        }
+    }
+
+    startSpreadAttack() {
+        const direction = Math.random() < 0.5 ? -1 : 1;
+        const delay = 500;
+        const duration = 6000;
+        for (let i = 0; i < this.hands.length; i++) {
+            this.twistAttack({ handIndex: i, direction, delay, duration });
+            this.twistHandsContainer({ direction, delay, duration, numberOfTurns: 1 });
         }
     }
 
@@ -245,7 +257,7 @@ export class HandsBoss extends Actor {
         const distanceFromActor = 70;
         const x = distanceFromActor * Math.cos(thetaAroundActor);
         const y = distanceFromActor * Math.sin(thetaAroundActor);
-        const rotation = Math.atan2(y, x) + Math.PI / 2;
+        const rotation = attackConfig.shouldSetBackToNormal ? rotationInitial : Math.atan2(y, x) + Math.PI / 2;
         this.scene.add.tween({
             targets: [hand],
             duration: attackConfig.shouldSetBackToNormal ? 400 : 200,
