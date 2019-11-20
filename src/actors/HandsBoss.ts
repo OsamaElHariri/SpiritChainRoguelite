@@ -84,10 +84,17 @@ export class HandsBoss extends Actor {
     }
 
     selectRandomAttack() {
-        if (Math.random() < 0.5) {
+        const rand = Math.random();
+        if (rand < 0.33) {
             this.moveWith(this.emptyMoveEngine);
             for (let i = 0; i < this.hands.length; i++) {
                 this.punchesAttack({ handIndex: i, reachedTargetCount: 0, maxTargetReached: 12 });
+            }
+        } else if (rand < 0.66) {
+            this.moveWith(this.emptyMoveEngine);
+            const thetaOffset = Math.PI * 2 * Math.random();
+            for (let i = 0; i < this.hands.length; i++) {
+                this.spreadHandsAttack({ handIndex: i, thetaOffset });
             }
         } else {
             const direction = Math.random() < 0.5 ? -1 : 1;
@@ -207,6 +214,7 @@ export class HandsBoss extends Actor {
             },
         });
     }
+
     twistHandsContainer(config: { direction: number, delay: number, duration: number, numberOfTurns: number }) {
         if (!this.active) return;
         const direction = config.direction / Math.abs(config.direction);
@@ -220,6 +228,78 @@ export class HandsBoss extends Actor {
             rotation: {
                 getStart: () => initial,
                 getEnd: () => target,
+            },
+        });
+    }
+
+    spreadHandsAttack(attackConfig: { handIndex: number, thetaOffset: number, delay?: number, shouldSetBackToNormal?: boolean }) {
+        if (!this.active) return;
+
+        const hand = this.hands[attackConfig.handIndex];
+
+        const xInitial = hand.x;
+        const yInitial = hand.y;
+        const rotationInitial = hand.rotation;
+
+        const thetaAroundActor = (Math.PI * 2 / this.hands.length) * attackConfig.handIndex + attackConfig.thetaOffset;
+        const distanceFromActor = 70;
+        const x = distanceFromActor * Math.cos(thetaAroundActor);
+        const y = distanceFromActor * Math.sin(thetaAroundActor);
+        const rotation = Math.atan2(y, x) + Math.PI / 2;
+        this.scene.add.tween({
+            targets: [hand],
+            duration: attackConfig.shouldSetBackToNormal ? 400 : 200,
+            delay: attackConfig.delay || 0,
+            ease: Phaser.Math.Easing.Quadratic.Out,
+            x: {
+                getStart: () => xInitial,
+                getEnd: () => x,
+            },
+            y: {
+                getStart: () => yInitial,
+                getEnd: () => y,
+            },
+            rotation: {
+                getStart: () => rotationInitial,
+                getEnd: () => rotation,
+            },
+
+            onComplete: () => {
+                if (attackConfig.shouldSetBackToNormal) this.setHandBackToNormal(attackConfig.handIndex);
+                else this.spreadHands(attackConfig);
+            },
+        });
+    }
+
+
+    spreadHands(attackConfig: { handIndex: number, thetaOffset: number, delay?: number, shouldSetBackToNormal?: boolean }) {
+        if (!this.active) return;
+
+        const hand = this.hands[attackConfig.handIndex];
+
+        const xInitial = hand.x;
+        const yInitial = hand.y;
+        const thetaAroundActor = (Math.PI * 2 / this.hands.length) * attackConfig.handIndex + attackConfig.thetaOffset;
+        const distanceFromActor = 400;
+        const x = distanceFromActor * Math.cos(thetaAroundActor);
+        const y = distanceFromActor * Math.sin(thetaAroundActor);
+        this.scene.add.tween({
+            targets: [hand],
+            duration: 1800,
+            delay: 300,
+            ease: Phaser.Math.Easing.Quadratic.Out,
+            x: {
+                getStart: () => xInitial,
+                getEnd: () => x,
+            },
+            y: {
+                getStart: () => yInitial,
+                getEnd: () => y,
+            },
+            onComplete: () => {
+                attackConfig.shouldSetBackToNormal = true;
+                attackConfig.delay = 200 + 200 * Math.random();
+                this.spreadHandsAttack(attackConfig);
             },
         });
     }
