@@ -102,20 +102,20 @@ export class HandsBoss extends Actor {
     }
 
     startTwistAttack() {
-        this.moveWith(this.emptyMoveEngine);
-        const thetaOffset = Math.PI * 2 * Math.random();
-        for (let i = 0; i < this.hands.length; i++) {
-            this.spreadHandsAttack({ handIndex: i, thetaOffset });
-        }
-    }
-
-    startSpreadAttack() {
         const direction = Math.random() < 0.5 ? -1 : 1;
         const delay = 500;
         const duration = 6000;
         for (let i = 0; i < this.hands.length; i++) {
             this.twistAttack({ handIndex: i, direction, delay, duration });
             this.twistHandsContainer({ direction, delay, duration, numberOfTurns: 1 });
+        }
+    }
+
+    startSpreadAttack() {
+        this.moveWith(this.emptyMoveEngine);
+        const thetaOffset = Math.PI * 2 * Math.random();
+        for (let i = 0; i < this.hands.length; i++) {
+            this.spreadHandsAttack({ handIndex: i, thetaOffset });
         }
     }
 
@@ -298,7 +298,7 @@ export class HandsBoss extends Actor {
         this.scene.add.tween({
             targets: [hand],
             duration: 1800,
-            delay: 300,
+            delay: 300 + 100 * Math.random(),
             ease: Phaser.Math.Easing.Quadratic.Out,
             x: {
                 getStart: () => xInitial,

@@ -11,7 +11,7 @@ export class SpiritFist extends Phaser.GameObjects.Container implements Weapon {
     onOtherHit: ((weapon: SpiritFist, enemy: Actor) => void)[] = [];
     onDestroy: ((weapon: SpiritFist) => void)[] = [];
 
-    private holdTime = 100;
+    private holdTime = 200;
     private offset = 30;
     private colliderSize = 40;
     private isAtMaxDistance = false;
