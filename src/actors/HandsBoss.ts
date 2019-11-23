@@ -5,9 +5,11 @@ import { EmptyMoveEngine } from "../move_engines/EmptyMoveEngine";
 import { World } from "../world/World";
 import { CircleUtils } from "../utils/CircleUtils";
 import { ArrayUtils } from "../utils/ArrayUtils";
+import { Player } from "./Player";
+import { EvilSpiritHand } from "../weapons/enemy_weapons/EvilSpiritHand";
 
 export class HandsBoss extends Actor {
-    private hands: Phaser.GameObjects.Sprite[] = [];
+    private hands: EvilSpiritHand[] = [];
     private handsContainer: Phaser.GameObjects.Container;
 
     private playerFollowMoveEngine: PlayerFollowMoveEngine;
@@ -21,42 +23,12 @@ export class HandsBoss extends Actor {
     private nextAttackTime: number = Date.now() + 4000 + Math.random() * 1000;
     private handsAtRestCount = 6;
     private restHandConfigs = [
-        {
-            x: 80,
-            y: -85,
-            xScale: -1,
-            angle: -25
-        },
-        {
-            x: 75,
-            y: -10,
-            xScale: -1,
-            angle: -5
-        },
-        {
-            x: 30,
-            y: -75,
-            xScale: -1,
-            angle: -10
-        },
-        {
-            x: -80,
-            y: -85,
-            xScale: 1,
-            angle: 25
-        },
-        {
-            x: -75,
-            y: -10,
-            xScale: 1,
-            angle: 5
-        },
-        {
-            x: -30,
-            y: -75,
-            xScale: 1,
-            angle: 10
-        },
+        { x: 80, y: -85, xScale: -1, angle: -25 },
+        { x: 75, y: -10, xScale: -1, angle: -5 },
+        { x: 30, y: -75, xScale: -1, angle: -10 },
+        { x: -80, y: -85, xScale: 1, angle: 25 },
+        { x: -75, y: -10, xScale: 1, angle: 5 },
+        { x: -30, y: -75, xScale: 1, angle: 10 },
     ];
 
     constructor(world: World, x: number, y: number) {
@@ -69,9 +41,10 @@ export class HandsBoss extends Actor {
 
         this.handsContainer = this.scene.add.container(x, y);
         this.hands = this.restHandConfigs.map(config =>
-            this.scene.add.sprite(config.x, config.y, 'evil_spirit_hand')
+            new EvilSpiritHand(world.scene, config.x, config.y)
                 .setScale(config.xScale, 1).
                 setAngle(config.angle));
+                
         this.handsContainer.add(this.hands);
     }
 
@@ -85,6 +58,20 @@ export class HandsBoss extends Actor {
                 this.nextAttackTime = Date.now() + 10000 + Math.random() * 4000;
                 this.handsAtRestCount = 0;
                 this.selectRandomAttack();
+            }
+        }
+
+        if (this.active) {
+            let hitPlayer = false;
+            for (let i = 0; i < this.hands.length && !hitPlayer; i++) {
+                if (hitPlayer) break;
+
+                this.scene.physics.overlap(this.world.player, this.hands[i],
+                    (player: Player, hand: EvilSpiritHand) => {
+                        hitPlayer = true;
+                        player.takeDamage(this, hand);
+                    }
+                )
             }
         }
     }
