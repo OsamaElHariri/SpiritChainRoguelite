@@ -8,6 +8,7 @@ import { CircleUtils } from "../utils/CircleUtils";
 
 export class Actor extends Phaser.GameObjects.Ellipse {
     id: number;
+
     actorType: ActorType = ActorType.Enemy;
     body: Phaser.Physics.Arcade.Body;
     container: Phaser.GameObjects.Container;
@@ -18,12 +19,12 @@ export class Actor extends Phaser.GameObjects.Ellipse {
     healthPoints: number = 1000;
     speed: number = 160;
     stunRemoveTime: number = 0;
-
     isDead = false;
+
+    protected mainSprite: Phaser.GameObjects.Sprite;
 
     private moveEngine: MoveEngine = new EmptyMoveEngine();
 
-    private mainSprite: Phaser.GameObjects.Sprite;
     private collisionSlideAddition: number = 0.75;
     private topLeftOverlapChecker: Phaser.GameObjects.Rectangle;
     private topRightOverlapChecker: Phaser.GameObjects.Rectangle;

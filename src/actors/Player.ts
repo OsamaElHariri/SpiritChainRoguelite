@@ -6,6 +6,7 @@ import { InputsMoveEngine } from "../move_engines/InputsMoveEngine";
 import { Signals } from "../Signals";
 import { ActorType } from "./ActorType";
 import { SpiritFist } from "../weapons/spirit_fist/SpiritFist";
+import { Weapon } from "../weapons/Weapon";
 
 export type UpgradeRequest = {
     weaponUpgrade?: (weapon: SpiritWeapon) => void,
@@ -27,6 +28,7 @@ export class Player extends Actor {
     private phoneAndHands: Phaser.GameObjects.Sprite;
     private phoneAndHandsOriginalScale: number;
     private toCancel: { cancel: Function }[] = [];
+    private isInvulnerable = false;
 
     constructor(world: World, x: number, y: number) {
         super(world, x, y, 'topdownplayer');
@@ -92,6 +94,10 @@ export class Player extends Actor {
         });
     }
 
+    private removeInactiveWeapons() {
+        this.weapons = this.weapons.filter((weapon) => weapon.active);
+    }
+
     private fireSpiritFist(pointer) {
         const xTouch = pointer.worldX;
         const yTouch = pointer.worldY;
@@ -134,19 +140,28 @@ export class Player extends Actor {
         this.handsContainer.setRotation(rotation);
     }
 
+    takeDamage(actor: Actor, weapon: Weapon) {
+        if (this.isInvulnerable) return;
+        this.isInvulnerable = true;
+        super.takeDamage(actor, weapon);
+        this.scene.add.tween({
+            targets: [this.mainSprite],
+            yoyo: true,
+            repeat: 5,
+            duration: 100,
+            alpha: {
+                getStart: () => 1,
+                getEnd: () => 0.5,
+            },
+            onComplete: () => this.isInvulnerable = false,
+        });
+
+    }
+
     onNegativeHealth() {
         this.world.scene.getEmitter().emit(Signals.PlayerDeath);
         super.onNegativeHealth();
     }
-
-    protected setupSprite() {
-        return this.world.scene.add.ellipse(this.x, this.y, 20, 20, 0xe35d57)
-    }
-
-    private removeInactiveWeapons() {
-        this.weapons = this.weapons.filter((weapon) => weapon.active);
-    }
-
 
     clone(x: number, y: number) {
         const newPlayer = new Player(this.world, x, y);
