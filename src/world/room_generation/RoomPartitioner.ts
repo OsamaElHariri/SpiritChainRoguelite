@@ -24,7 +24,7 @@ export class RoomPartitioner {
 
     concaveCorners() {
         const horizontalDistanceFromEdge = 2;
-        const verticalDistanceFromEdge = 1;
+        const verticalDistanceFromEdge = 2;
 
         const gridWidth = this.grid.width - 1;
         const gridHeight = this.grid.height - 1;
@@ -108,6 +108,14 @@ export class RoomPartitioner {
             this.grid.at(horizontalDistance, gridHeight - verticalDistance),
             this.grid.at(gridWidth - horizontalDistance, verticalDistance),
             this.grid.at(gridWidth - horizontalDistance, gridHeight - verticalDistance),
+        ]
+    }
+
+    getCenterSpawnPoint() {
+        const gridWidth = this.grid.width - 1;
+        const gridHeight = this.grid.height - 1;
+        return [
+            this.grid.at(Math.floor(gridWidth / 2), Math.floor(gridHeight / 2)),
         ]
     }
 }

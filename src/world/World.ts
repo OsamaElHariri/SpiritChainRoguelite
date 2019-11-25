@@ -188,15 +188,15 @@ export class World extends Phaser.GameObjects.Container {
                 count: 1,
                 flags: { isStartingRoom: true },
             },
-            // {
-            //     factory: UpgradeRoom,
-            //     count: Math.random() < 0.8 ? 1 : 2,
-            // },
-            // {
-            //     factory: MobsRoom,
-            //     count: Math.random() < 0.6 ? 4 : 5,
-            //     flags: { hasEnemies: true },
-            // },
+            {
+                factory: UpgradeRoom,
+                count: Math.random() < 0.8 ? 1 : 2,
+            },
+            {
+                factory: MobsRoom,
+                count: Math.random() < 0.6 ? 4 : 5,
+                flags: { hasEnemies: true },
+            },
             {
                 factory: BossRoom,
                 count: 1,
