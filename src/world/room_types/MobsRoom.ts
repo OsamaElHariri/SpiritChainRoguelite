@@ -13,9 +13,8 @@ export class MobsRoom extends Room {
 
     protected onRoomConstruct() {
         super.onRoomConstruct();
-        
+
         this.rand = Math.random();
-        
         if (this.rand < 0.5) {
             this.partitioner.centerPlus();
             this.spawnPoints = this.partitioner.getSpawnPointsCorners(4, 3);

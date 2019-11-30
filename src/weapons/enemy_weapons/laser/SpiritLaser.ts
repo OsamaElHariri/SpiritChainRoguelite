@@ -12,15 +12,21 @@ export class SpiritLaser extends Phaser.GameObjects.Container implements Weapon 
     private colliders: Phaser.GameObjects.Ellipse[] = [];
     private firstHitting: Phaser.GameObjects.Ellipse;
 
+    private laserImpact: Phaser.GameObjects.Sprite;
+    private impactDirection = 1;
+
     constructor(public source: Actor, public target: Actor) {
         super(source.world.scene, source.x, source.y);
         this.world = source.world;
         this.id = this.world.scene.addObject(this);
-        this.laser = this.scene.add.tileSprite(0, 0, 64, 128, 'spirit_laser').setOrigin(0.5, 1);
+        this.laser = this.scene.add.tileSprite(0, 0, 32, 128, 'spirit_laser').setOrigin(0.5, 1);
         this.add(this.laser);
+        this.laserImpact = this.scene.add.sprite(0, 0, 'spirit_laser_impact');
+        this.add(this.laserImpact);
 
+        const colliderSize = 32;
         for (let i = 0; i < 10; i++) {
-            const collider = this.scene.add.ellipse(0, -i * 64 - 32, 64, 64);
+            const collider = this.scene.add.ellipse(0, -i * colliderSize - colliderSize / 2, colliderSize, colliderSize);
             this.world.scene.physics.world.enable(collider);
             const colliderBody = collider.body as Phaser.Physics.Arcade.Body;
             colliderBody.setAllowGravity(false);
@@ -42,8 +48,14 @@ export class SpiritLaser extends Phaser.GameObjects.Container implements Weapon 
 
         this.firstHitting = this.getFirstColliderHittingTerrain();
         const targetHeight = -this.firstHitting.y;
-        this.laser.height += (targetHeight - this.laser.height) * 0.7;
-        this.laser.tilePositionY += 2;
+        const offset = (targetHeight - this.laser.height) * 0.7
+        this.laser.height += offset;
+        this.laser.tilePositionY += 2 - offset;
+
+        this.laserImpact.setPosition(0, -this.laser.height);
+        const impactRand = Math.random();
+        this.laserImpact.rotation += (Math.PI / 30) * impactRand * this.impactDirection;
+        if (impactRand < 0.001) this.impactDirection *= -1;
 
         this.overlapWithPlayer();
     }
