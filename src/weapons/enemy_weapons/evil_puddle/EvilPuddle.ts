@@ -20,6 +20,7 @@ export class EvilPuddle extends Phaser.GameObjects.Sprite implements Weapon {
         this.id = this.world.scene.addObject(this);
         this.scene.physics.world.enable(this);
         this.body.setAllowGravity(false);
+        this.body.setSize(this.body.width * 0.6, this.body.height * 0.6);
         this.setRotation(Math.PI * 2 * Math.random());
 
         this.scene.add.tween({
@@ -67,6 +68,7 @@ export class EvilPuddle extends Phaser.GameObjects.Sprite implements Weapon {
 
     private remove() {
         if (!this.scene || !this.active) return;
+        if (this.particles) this.particles.destroy();
         this.scene.add.tween({
             targets: [this],
             duration: 300,
@@ -88,7 +90,7 @@ export class EvilPuddle extends Phaser.GameObjects.Sprite implements Weapon {
 
     destroy() {
         this.world.scene.stopUpdating(this.id);
-        this.particles.destroy();
+        if (this.particles) this.particles.destroy();
         super.destroy();
     }
 }

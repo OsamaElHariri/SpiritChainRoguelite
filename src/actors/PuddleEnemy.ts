@@ -1,20 +1,20 @@
 import { Actor } from "./Actor";
 import { World } from "../world/World";
-import { PlayerFollowMoveEngine } from "../move_engines/PlayerFollowMoveEngine";
 import { Interval } from "../utils/interval";
 import { EvilPuddle } from "../weapons/enemy_weapons/evil_puddle/EvilPuddle";
 import { ActorType } from "./ActorType";
+import { SurroundPlayerMoveEngine } from "../move_engines/SurroundPlayerMoveEngine";
 
 export class PuddleEnemy extends Actor {
 
-    private spawnPuddleInterval = 2000;
+    private spawnPuddleInterval = 1500;
     private initialPuddleSpawnDelay = 1000;
     private currentSpawnDelay: number;
 
     constructor(world: World, x: number, y: number) {
-        super(world, x, y, 'topdownenemy');
-        this.moveWith(new PlayerFollowMoveEngine(world, this));
-        this.speed = 40;
+        super(world, x, y, 'puddle_enemy');
+        this.moveWith(new SurroundPlayerMoveEngine(world, this));
+        this.speed = 100;
         this.actorType = ActorType.Enemy;
         this.spawnPuddles();
     }
