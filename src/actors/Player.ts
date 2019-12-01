@@ -142,20 +142,22 @@ export class Player extends Actor {
 
     takeDamage(actor: Actor, weapon: Weapon) {
         if (this.isInvulnerable) return;
-        this.isInvulnerable = true;
-        super.takeDamage(actor, weapon);
-        this.scene.add.tween({
-            targets: [this.mainSprite],
-            yoyo: true,
-            repeat: 5,
-            duration: 100,
-            alpha: {
-                getStart: () => 1,
-                getEnd: () => 0.5,
-            },
-            onComplete: () => this.isInvulnerable = false,
-        });
-
+        const damageTaken = super.takeDamage(actor, weapon);
+        if (damageTaken) {
+            this.isInvulnerable = true;
+            this.scene.add.tween({
+                targets: [this.mainSprite],
+                yoyo: true,
+                repeat: 5,
+                duration: 100,
+                alpha: {
+                    getStart: () => 1,
+                    getEnd: () => 0.5,
+                },
+                onComplete: () => this.isInvulnerable = false,
+            });
+            return damageTaken;
+        } else return 0;
     }
 
     onNegativeHealth() {

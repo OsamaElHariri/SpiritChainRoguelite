@@ -46,7 +46,10 @@ export class MainScene extends Scene {
         this.load.image('topdownenemy', '../assets/sprites/actor/topdownenemy.png');
         this.load.image('magician_hat', '../assets/sprites/actor/hands_boss/magician_hat.png');
         this.load.image('evil_spirit_hand', '../assets/sprites/actor/hands_boss/evil_spirit_hand.png');
-        this.load.image('spirit_laser', '../assets/sprites/enemy_attacks/spirit_laser.png');
+        this.load.image('spirit_laser', '../assets/sprites/enemy_attacks/spirit_laser/spirit_laser.png');
+        this.load.image('spirit_laser_impact', '../assets/sprites/enemy_attacks/spirit_laser/spirit_laser_impact.png');
+        this.load.image('evil_puddle', '../assets/sprites/enemy_attacks/evil_puddle/evil_puddle.png');
+        this.load.image('evil_puddle_bubble', '../assets/sprites/enemy_attacks/evil_puddle/evil_puddle_bubble.png');
     }
 
     create(): void {

@@ -170,9 +170,9 @@ export class Actor extends Phaser.GameObjects.Ellipse {
     }
 
     takeDamage(source: Actor, weapon: Weapon) {
-        if (this.isAlliedWith(source)) return;
+        if (this.isAlliedWith(source)) return 0;
         this.setHealth(this.healthPoints - weapon.strength);
-
+        return weapon.strength;
     }
 
     setMaxHealth(maxHp: number) {
