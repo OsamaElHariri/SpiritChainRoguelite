@@ -14,8 +14,8 @@ export class EvilPuddle extends Phaser.GameObjects.Sprite implements Weapon {
     private particles: Phaser.GameObjects.Particles.ParticleEmitterManager;
     private lifetime = 4500;
 
-    constructor(private source: Actor) {
-        super(source.world.scene, source.x, source.y, 'evil_puddle');
+    constructor(private source: Actor, x?: number, y?: number) {
+        super(source.world.scene, x || source.x, y || source.y, 'evil_puddle');
         this.world = source.world;
         this.id = this.world.scene.addObject(this);
         this.scene.physics.world.enable(this);

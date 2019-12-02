@@ -2,6 +2,7 @@ import { Room } from "../Room";
 import { World } from "../World";
 import { RoomConfig } from "../RoomConfig";
 import { HandsBoss } from "../../actors/HandsBoss";
+import { PuddleBoss } from "../../actors/PuddleBoss";
 
 export class BossRoom extends Room {
 
@@ -16,6 +17,11 @@ export class BossRoom extends Room {
     }
 
     private spawnBoss() {
-        this.actors.push(new HandsBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2))
+        const rand = Math.random();
+        if (rand < 0.5) {
+            this.actors.push(new HandsBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2))
+        } else {
+            this.actors.push(new PuddleBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2))
+        }
     }
 }
