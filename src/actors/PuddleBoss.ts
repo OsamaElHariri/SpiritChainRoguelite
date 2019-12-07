@@ -4,6 +4,7 @@ import { ActorType } from "./ActorType";
 import { SurroundPlayerMoveEngine } from "../move_engines/SurroundPlayerMoveEngine";
 import { Interval } from "../utils/interval";
 import { EvilPuddle } from "../weapons/enemy_weapons/evil_puddle/EvilPuddle";
+import { CowardlyMoveEngine } from "../move_engines/CowardlyMoveEngine";
 
 export class PuddleBoss extends Actor {
 
@@ -11,13 +12,23 @@ export class PuddleBoss extends Actor {
     private initialPuddleSpawnDelay = 1000;
     private currentSpawnDelay: number;
 
-    constructor(world: World, x: number, y: number, config: { isCrazy: boolean, initialDelay: number, speed:number }) {
+    private puddlePropagationDelay = 250;
+
+    constructor(world: World, x: number, y: number, private config: { isCrazy: boolean, initialDelay: number }) {
         super(world, x, y, config.isCrazy ? 'puddle_boss_crazy' : 'puddle_boss');
-        this.speed = config.speed;
         this.initialPuddleSpawnDelay = config.initialDelay;
         this.setMaxHealth(2000);
         this.actorType = ActorType.Enemy;
-        this.moveWith(new SurroundPlayerMoveEngine(world, this));
+
+        if (config.isCrazy) {
+            this.moveWith(new CowardlyMoveEngine(world, this));
+            this.speed = 190;
+        } else {
+            this.moveWith(new SurroundPlayerMoveEngine(world, this));
+            this.spawnPuddleInterval = 4000;
+            this.speed = 100;
+        }
+
         this.spawnPuddles();
     }
 
@@ -25,11 +36,14 @@ export class PuddleBoss extends Actor {
         await Interval.milliseconds(this.currentSpawnDelay || this.initialPuddleSpawnDelay);
         this.currentSpawnDelay = this.spawnPuddleInterval;
         if (!this.active) return;
-        const rand = Math.random();
-        if (rand < 0.33) {
-            this.spawnOrthogonal();
-        } else if (rand < 0.66) {
-            this.spawnDiagonals();
+
+        if (this.config.isCrazy) {
+            const rand = Math.random();
+            if (rand < 0.5) {
+                this.spawnOrthogonal();
+            } else {
+                this.spawnDiagonals();
+            }
         } else {
             this.spawnSurroundingPuddles();
         }
@@ -37,7 +51,7 @@ export class PuddleBoss extends Actor {
     }
 
     private spawnSurroundingPuddles() {
-        const offset = 70;
+        const offset = 60;
         let x = this.x - offset;
         let y = this.y - offset;
         for (let i = 0; i < 3; i++) {
@@ -56,7 +70,7 @@ export class PuddleBoss extends Actor {
 
         new EvilPuddle(this);
 
-        const offset = 70;
+        const offset = 60;
         let count = 1;
         while (this.active) {
             const currentOffset = count * offset;
@@ -92,7 +106,7 @@ export class PuddleBoss extends Actor {
             if (!spawnTopLeft && !spawnTopRight && !spawnBottomLeft && !spawnBottomRight) break;
 
             count += 1;
-            await Interval.milliseconds(70);
+            await Interval.milliseconds(this.puddlePropagationDelay);
         }
     }
     private async spawnOrthogonal() {
@@ -133,7 +147,7 @@ export class PuddleBoss extends Actor {
             if (!spawnTop && !spawnBottom && !spawnLeft && !spawnRight) break;
 
             count += 1;
-            await Interval.milliseconds(70);
+            await Interval.milliseconds(this.puddlePropagationDelay);
         }
     }
 }

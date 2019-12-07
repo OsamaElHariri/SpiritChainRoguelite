@@ -23,10 +23,10 @@ export class BossRoom extends Room {
         } else {
             this.actors.push(new PuddleBoss(this.world, this.grid.xWorld + 2 * this.grid.xLocalMax / 3,
                 this.grid.yWorld + this.grid.yLocalMax / 2,
-                { isCrazy: false, speed: 90, initialDelay: 2000 }));
+                { isCrazy: false, initialDelay: 2000 }));
             this.actors.push(new PuddleBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 3,
                 this.grid.yWorld + this.grid.yLocalMax / 2,
-                { isCrazy: true, speed: 120, initialDelay: 6500 }));
+                { isCrazy: true, initialDelay: 6500 }));
         }
     }
 }
