@@ -17,6 +17,7 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
     maxDirectionChangeCount: number = 1;
     radius: number = 20;
     shouldCollideWithTerrain: boolean = true;
+    terrainCollider: Phaser.GameObjects.Rectangle;
 
     onHoldStart: ((weapon: SpiritWeapon) => void)[] = [];
     onHoldEnd: ((weapon: SpiritWeapon) => void)[] = [];
@@ -29,7 +30,6 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
     private isHolding: boolean = false;
     private chain: SpiritChain;
     private weaponSprite: SpriritWeaponEffect;
-    private terrainCollider: Phaser.GameObjects.Rectangle;
 
 
     constructor(public world: World, source: Actor, public target: { x: number, y: number }) {
@@ -103,7 +103,10 @@ export class SpiritWeapon extends Phaser.GameObjects.Ellipse implements Weapon {
         this.isHolding = true;
         this.defaultOnHoldStart();
         this.onHoldStart.forEach((onStart) => onStart(this));
+
         await Interval.milliseconds(delay);
+        if (!this.active) return;
+
         this.isHolding = false;
         this.defaultOnHoldEnd();
         this.onHoldEnd.forEach((onEnd) => onEnd(this));

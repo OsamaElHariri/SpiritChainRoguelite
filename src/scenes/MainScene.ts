@@ -53,6 +53,8 @@ export class MainScene extends Scene {
         this.load.image('spirit_laser_impact', '../assets/sprites/enemy_attacks/spirit_laser/spirit_laser_impact.png');
         this.load.image('evil_puddle', '../assets/sprites/enemy_attacks/evil_puddle/evil_puddle.png');
         this.load.image('evil_puddle_bubble', '../assets/sprites/enemy_attacks/evil_puddle/evil_puddle_bubble.png');
+        this.load.image('nullify_field', '../assets/sprites/enemy_attacks/nullify_field/nullify_field.png');
+        this.load.image('nullify_field_effect', '../assets/sprites/enemy_attacks/nullify_field/nullify_field_effect.png');
     }
 
     create(): void {

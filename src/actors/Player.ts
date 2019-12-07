@@ -95,7 +95,11 @@ export class Player extends Actor {
     }
 
     private removeInactiveWeapons() {
-        this.weapons = this.weapons.filter((weapon) => weapon.active);
+        this.weapons = this.getActiveWeapons();
+    }
+
+    getActiveWeapons() {
+        return this.weapons.filter(weapon => weapon.active);
     }
 
     private fireSpiritFist(pointer) {
