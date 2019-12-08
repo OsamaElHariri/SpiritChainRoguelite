@@ -114,7 +114,7 @@ export class World extends Phaser.GameObjects.Container {
         var d: any = tempMatrix.decomposeMatrix();
         this.scene.cameras.main.scrollX
         this.scene.cameras.main.pan(d.translateX, d.translateY, animationTime, Phaser.Math.Easing.Expo.Out);
-        this.scene.cameras.main.zoomTo(1 / 0.015, animationTime, Phaser.Math.Easing.Expo.In);
+        this.scene.cameras.main.zoomTo(1 / 0.03, animationTime, Phaser.Math.Easing.Expo.In);
         this.scene.add.tween({
             targets: [this.scene.cameras.main],
             duration: animationTime,
