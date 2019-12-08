@@ -184,8 +184,8 @@ export class FragmentCollection {
 
     private collectionsAlreadyConnected(doors: Door[], otherCollection: FragmentCollection) {
         return false;
-        for (let i = 0; i < doors.length; i++)
-            if (doors[i].getOtherCollection(this) == otherCollection) return true;
-        return false;
+        // for (let i = 0; i < doors.length; i++)
+        //     if (doors[i].getOtherCollection(this) == otherCollection) return true;
+        // return false;
     }
 }

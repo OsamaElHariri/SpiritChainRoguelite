@@ -17,8 +17,7 @@ export class BossRoom extends Room {
     }
 
     private spawnBoss() {
-        const rand = Math.random();
-        if (rand < 0.5) {
+        if (this.config.roomSelectionRandom < 0.5) {
             this.actors.push(new HandsBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2))
         } else {
             this.actors.push(new PuddleBoss(this.world, this.grid.xWorld + 2 * this.grid.xLocalMax / 3,

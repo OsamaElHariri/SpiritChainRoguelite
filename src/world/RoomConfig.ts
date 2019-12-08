@@ -11,10 +11,13 @@ export class RoomConfig {
     isStartingRoom = false;
     isComplete = true;
 
+    roomSelectionRandom: number;
+
     constructor(public RoomFactory: typeof Room, public fragments: FragmentCollection, flags: RoomConfigFlags) {
         if (!flags) flags = {};
         this.isComplete = !flags.hasEnemies;
         this.isStartingRoom = flags.isStartingRoom;
+        this.roomSelectionRandom = Math.random();
     }
 
     createRoom(world: World, x: number, y: number) {

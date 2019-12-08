@@ -70,8 +70,6 @@ export class World extends Phaser.GameObjects.Container {
 
         emitter.on(Signals.RoomConstruct, async (room: Room) => {
             this.currentRoom = room;
-            await Interval.milliseconds(300);
-            this.currentRoom.startRoom();
         });
     }
 

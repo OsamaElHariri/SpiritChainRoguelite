@@ -14,6 +14,8 @@ export class CartRoom extends Room {
         super.onRoomConstruct();
         this.cart = this.scene.add.rectangle(this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2, 50, 50, 0x3432de);
         this.scene.physics.world.enable(this.cart, Phaser.Physics.Arcade.STATIC_BODY);
+
+        super.startRoom();
     }
 
     update(time: number, delta: number) {

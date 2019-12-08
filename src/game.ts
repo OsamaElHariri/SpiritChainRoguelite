@@ -10,7 +10,7 @@ const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   parent: "game",
   disableContextMenu: true,
-  backgroundColor: '#303a59',
+  backgroundColor: '#398547',
   scene: [MainScene, MenuScene, SnakesScene, VideosScene],
   physics: {
     default: "arcade",

@@ -7,6 +7,7 @@ export enum Signals {
     CloseMenu = 'close_menu',
     RoomConstruct = 'room_construct',
     RoomStart = 'room_start',
+    AllEnemiesDefeated = 'all_enemies_defeated',
     RoomComplete = 'room_complete',
     RoomDestroy = 'room_destroy',
     DungeonConstruct = 'dungeon_construct',

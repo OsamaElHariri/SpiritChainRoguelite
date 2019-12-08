@@ -151,7 +151,7 @@ export class Actor extends Phaser.GameObjects.Ellipse {
         this.canSlideTopRight = true;
         this.canSlideBottomLeft = true;
         this.canSlideBottomRight = true;
-        this.world.getCurrentRoom().terrain.forEach(terrain => {
+        this.world.getCurrentRoom().getCollidables().forEach(terrain => {
             this.world.scene.physics.collide(this, terrain);
 
             this.world.scene.physics.overlap(this.topLeftOverlapChecker, terrain, (_, __) => this.canSlideTopLeft = false);

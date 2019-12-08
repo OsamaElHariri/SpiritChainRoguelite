@@ -55,6 +55,11 @@ export class MainScene extends Scene {
         this.load.image('evil_puddle_bubble', '../assets/sprites/enemy_attacks/evil_puddle/evil_puddle_bubble.png');
         this.load.image('nullify_field', '../assets/sprites/enemy_attacks/nullify_field/nullify_field.png');
         this.load.image('nullify_field_effect', '../assets/sprites/enemy_attacks/nullify_field/nullify_field_effect.png');
+        this.load.image('fence', '../assets/sprites/environment/room_decorations/fence.png');
+        this.load.image('fence_corner', '../assets/sprites/environment/room_decorations/fence_corner.png');
+        this.load.image('fence_block', '../assets/sprites/environment/room_decorations/fence_block.png');
+        this.load.image('fence_edge', '../assets/sprites/environment/room_decorations/fence_edge.png');
+
     }
 
     create(): void {
