@@ -30,7 +30,7 @@ export class World extends Phaser.GameObjects.Container {
         super(scene);
         this.id = scene.addObject(this);
         this.registerListeners();
-        this.startNewDungeon();
+        this.startNewDungeon({ skipFadeOut: true });
         // new Minimap(this);
     }
 
@@ -80,19 +80,25 @@ export class World extends Phaser.GameObjects.Container {
         return true;
     }
 
-    startNewDungeon() {
+    startNewDungeon(config: { skipFadeOut?} = {}) {
         this.dungeonCount += 1;
         if (this.currentRoom) this.currentRoom.destroy();
         if (this.player) this.player.destroy();
         this.createDungeon();
 
-        this.scene.cameras.main.fadeOut(500, 0, 0, 0, (cam, progress: number) => {
-            if (progress === 1) {
-                const startingRoom = this.getStartingRoom();
-                this.createRoom(startingRoom);
-                this.scene.cameras.main.fadeIn(250, 0, 0, 0);
-            }
-        });
+        if (config.skipFadeOut) {
+            const startingRoom = this.getStartingRoom();
+            this.createRoom(startingRoom);
+            this.scene.cameras.main.fadeIn(250, 0, 0, 0);
+        } else {
+            this.scene.cameras.main.fadeOut(500, 0, 0, 0, (cam, progress: number) => {
+                if (progress === 1) {
+                    const startingRoom = this.getStartingRoom();
+                    this.createRoom(startingRoom);
+                    this.scene.cameras.main.fadeIn(250, 0, 0, 0);
+                }
+            });
+        }
     }
 
     private getStartingRoom() {
