@@ -1,8 +1,19 @@
 import { Scene } from "./Scene";
+import { Interval } from "../utils/interval";
 
 export class LoadingScene extends Scene {
     private transitioning = false;
     private loadingRatio = 0;
+
+    private offroad: Phaser.GameObjects.TileSprite;
+    private road: Phaser.GameObjects.TileSprite;
+    private cloud: Phaser.GameObjects.Sprite;
+    private tree: Phaser.GameObjects.Sprite;
+    private hill: Phaser.GameObjects.Sprite;
+    private carContainer: Phaser.GameObjects.Container;
+
+    private loadingBar: Phaser.GameObjects.Rectangle;
+    private loadingBarFill: Phaser.GameObjects.Rectangle;
 
     constructor() {
         super('LoadingScene');
@@ -63,17 +74,12 @@ export class LoadingScene extends Scene {
         this.load.image('fence_edge', '../assets/sprites/environment/room_decorations/fence_edge.png');
     }
 
-    constructLoadingScrean(): void {
-        const text = this.add.text(400, 300, '0%', {
-            fontFamily: 'Verdana',
-            color: '#F9C62D',
-            fontSize: '22px',
-        }).setOrigin(0.5);
+    private constructLoadingScrean(): void {
+        this.setupLoadingScreen();
 
         this.load.on('progress', (value: number) => {
-            text.setText(Math.round(value * 100) + "%");
+            this.loadingBarFill.scaleX = value;
             this.loadingRatio = value;
-
         });
     }
 
@@ -85,11 +91,115 @@ export class LoadingScene extends Scene {
         });
     }
 
-    fadeToOtherScene(): void {
+    private setupLoadingScreen() {
+        this.add.rectangle(0, 0, 800, 600, 0x42abbe).setOrigin(0);
+        this.addSprites();
+        this.addCar();
+        this.addTitle();
+        this.addLoadingBar();
+    }
+
+    private addSprites() {
+        this.cloud = this.add.sprite(850, 100, 'cloud').setAlpha(0.7);
+        this.hill = this.add.sprite(1200, 430, 'hill');
+        this.offroad = this.add.tileSprite(0, 585, 800, 114, 'offroad').setOrigin(0, 1);
+        this.tree = this.add.sprite(900, 360, 'tree');
+        this.road = this.add.tileSprite(0, 600, 800, 72, 'road').setOrigin(0, 1);
+    }
+
+    private addTitle() {
+        const title = this.add.sprite(400, 150, 'title').setOrigin(0.5);
+        const yStart = title.y;
+        this.add.tween({
+            targets: [title],
+            ease: Phaser.Math.Easing.Quadratic.InOut,
+            duration: 3000,
+            yoyo: true,
+            repeat: -1,
+            y: {
+                getStart: () => yStart,
+                getEnd: () => yStart - 30
+            }
+        });
+
+
+        const titleUnderline = this.add.sprite(400, 270, 'title_underline').setOrigin(0.5);
+        const yUnderlineStart = titleUnderline.y;
+        this.add.tween({
+            targets: [titleUnderline],
+            ease: Phaser.Math.Easing.Quadratic.InOut,
+            duration: 3000,
+            delay: 300,
+            yoyo: true,
+            repeat: -1,
+            y: {
+                getStart: () => yUnderlineStart,
+                getEnd: () => yUnderlineStart - 30
+            }
+        });
+    }
+
+    private addCar() {
+        const car = this.add.sprite(0, 0, 'loading_car').setOrigin(0.5);
+        const yStartCar = car.y;
+        const leftWheel = this.add.sprite(-60, 50, 'car_wheel').setOrigin(0.5);
+        const rightWheel = this.add.sprite(50, 50, 'car_wheel').setOrigin(0.5);
+        this.carContainer = this.add.container(400, 490, [car, leftWheel, rightWheel]);
+        this.add.tween({
+            targets: [leftWheel, rightWheel],
+            duration: 550,
+            repeat: -1,
+            rotation: {
+                getStart: () => 0,
+                getEnd: () => Math.PI * 2,
+            }
+        });
+
+        this.add.tween({
+            targets: [car],
+            repeat: -1,
+            yoyo: true,
+            duration: 200,
+            ease: Phaser.Math.Easing.Quadratic.Out,
+            y: {
+                getStart: () => yStartCar,
+                getEnd: () => yStartCar - 8,
+            }
+        });
+    }
+
+    private addLoadingBar() {
+        this.loadingBar = this.add.rectangle(150, 350, 500, 30, 0x515151).setOrigin(0, 0.5);
+        this.loadingBarFill = this.add.rectangle(155, 350, 490, 20, 0x8cdfe0).setOrigin(0, 0.5);
+    }
+
+    private async fadeToOtherScene() {
+        const xStart = this.carContainer.x;
+        this.add.tween({
+            targets: [this.carContainer],
+            duration: 900,
+            ease: Phaser.Math.Easing.Quadratic.In,
+            x: {
+                getStart: () => xStart,
+                getEnd: () => 1000,
+            }
+        });
+        await Interval.milliseconds(1500);
         this.cameras.main.fade(500, 0, 0, 0, false, (camera, progress) => {
             if (progress == 1) {
                 this.scene.start('MainScene');
             }
         });
+    }
+
+    update(time: number, delta: number) {
+        this.offroad.tilePositionX += 6.5;
+        this.road.tilePositionX += 8;
+        this.cloud.x -= 0.5;
+        if (this.cloud.x < -200) this.cloud.setPosition(1200, 50 + 100 * Math.random());
+        this.hill.x -= 2;
+        if (this.hill.x < -800) this.hill.x = 1400;
+        this.tree.x -= 6.5;
+        if (this.tree.x < -400) this.tree.x = 1000;
     }
 }
