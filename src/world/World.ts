@@ -53,11 +53,6 @@ export class World extends Phaser.GameObjects.Container {
             this.scene.unpause();
         });
 
-        emitter.on(Signals.PlayerSpawn, (player: Player) => {
-            this.player = player;
-            this.scene.cameras.main.startFollow(player, true, 0.1);
-        });
-
         emitter.on(Signals.RoomComplete, (currentFragmentCollection: FragmentCollection, doorUsed: Door) => {
             if (!currentFragmentCollection) return;
             const nextFragmentColection = doorUsed.getOtherCollection(currentFragmentCollection);
@@ -67,10 +62,15 @@ export class World extends Phaser.GameObjects.Container {
                 if (progress === 1) this.goToNextRoom(nextConfig, doorUsed);
             });
         });
+    }
 
-        emitter.on(Signals.RoomConstruct, async (room: Room) => {
-            this.currentRoom = room;
-        });
+    onPlayerSpawn(player: Player) {
+        this.player = player;
+        this.scene.cameras.main.startFollow(player, true, 0.1);
+    }
+
+    onRoomConstruct(room: Room) {
+        this.currentRoom = room;
     }
 
     allRoomsComplete() {
@@ -176,7 +176,8 @@ export class World extends Phaser.GameObjects.Container {
     }
 
     createRoom(config: RoomConfig) {
-        config.createRoom(this, 0, 0);
+        const room = config.createRoom(this, 0, 0);
+        this.onRoomConstruct(room);
     }
 
     getCurrentRoom(): Room {

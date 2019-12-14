@@ -84,15 +84,17 @@ export class Room extends Phaser.GameObjects.Container {
 
     protected spawnPlayer() {
         let playerPos = { x: 200, y: 200 };
+        let player: Player;
         if (this.config.doorUsed) {
             const gridNode = this.getPlayerStartingPosition(this.config.doorUsed);
             playerPos = { x: gridNode.xCenterWorld, y: gridNode.yCenterWorld };
         }
         if (this.world.player) {
-            this.world.player.clone(playerPos.x, playerPos.y);
+            player = this.world.player.clone(playerPos.x, playerPos.y);
         } else {
-            new Player(this.world, playerPos.x, playerPos.y);
+            player = new Player(this.world, playerPos.x, playerPos.y);
         }
+        this.world.onPlayerSpawn(player);
     }
 
     private getPlayerStartingPosition(door: Door) {

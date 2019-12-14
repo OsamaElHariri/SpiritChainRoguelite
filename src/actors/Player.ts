@@ -176,6 +176,7 @@ export class Player extends Actor {
         const newPlayer = new Player(this.world, x, y);
         newPlayer.setHealth(this.healthPoints);
         this.upgradesHistory.forEach(upgrade => newPlayer.handleUpgradeRequest(upgrade));
+        return newPlayer;
     }
 
     destroy() {
