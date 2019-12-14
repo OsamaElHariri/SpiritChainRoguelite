@@ -30,6 +30,8 @@ export class Player extends Actor {
     private toCancel: { cancel: Function }[] = [];
     private isInvulnerable = false;
 
+    private clickListenerFunction: Function;
+
     constructor(world: World, x: number, y: number) {
         super(world, x, y, 'topdownplayer');
         this.actorType = ActorType.Friendly;
@@ -82,7 +84,7 @@ export class Player extends Actor {
     }
 
     setupOnClickListener() {
-        this.onClickListener = this.world.scene.input.on('pointerdown', (pointer) => {
+        this.clickListenerFunction = (pointer) => {
             this.removeInactiveWeapons();
             const isRightClick = pointer.button == 2;
             const isLeftClick = pointer.button == 0;
@@ -91,7 +93,8 @@ export class Player extends Actor {
             } else if (isRightClick && (!this.spiritFist || !this.spiritFist.active)) {
                 this.fireSpiritFist(pointer);
             }
-        });
+        };
+        this.onClickListener = this.world.scene.input.on('pointerdown', this.clickListenerFunction);
     }
 
     private removeInactiveWeapons() {
@@ -177,7 +180,7 @@ export class Player extends Actor {
 
     destroy() {
         if (this.spiritFist && this.spiritFist.active) this.spiritFist.destroy();
-        this.onClickListener.removeListener('pointerdown');
+        this.onClickListener.removeListener('pointerdown', this.clickListenerFunction);
         this.phoneAndHands.destroy();
         this.toCancel.forEach((c => c.cancel()));
         this.weapons.forEach((weapon) => weapon.destroy());

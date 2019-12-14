@@ -5,6 +5,7 @@ import { SnakesScene } from "./scenes/SnakesScene";
 import { VideosScene } from "./scenes/VideosScene";
 import { LoadingScene } from "./scenes/LoadingScene";
 import { SetupScene } from "./scenes/SetupScene";
+import { IntroLoopScene } from "./scenes/IntroLoopScene";
 
 const config: Phaser.Types.Core.GameConfig = {
   width: 800,
@@ -13,7 +14,15 @@ const config: Phaser.Types.Core.GameConfig = {
   parent: "game",
   disableContextMenu: true,
   backgroundColor: '#398547',
-  scene: [SetupScene, LoadingScene, MainScene, MenuScene, SnakesScene, VideosScene],
+  scene: [
+    SetupScene,
+    LoadingScene,
+    IntroLoopScene,
+    MainScene,
+    MenuScene,
+    SnakesScene,
+    VideosScene
+  ],
   physics: {
     default: "arcade",
     arcade: {

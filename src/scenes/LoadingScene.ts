@@ -189,7 +189,7 @@ export class LoadingScene extends Scene {
         await Interval.milliseconds(1500);
         this.cameras.main.fade(500, 0, 0, 0, false, (camera, progress) => {
             if (progress == 1) {
-                this.scene.start('MainScene');
+                this.scene.start('IntroLoopScene');
             }
         });
     }

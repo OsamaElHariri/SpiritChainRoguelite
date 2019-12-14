@@ -89,6 +89,7 @@ export class EvilPuddle extends Phaser.GameObjects.Sprite implements Weapon {
     }
 
     destroy() {
+        if (!this.active) return;
         this.world.scene.stopUpdating(this.id);
         if (this.particles) this.particles.destroy();
         super.destroy();

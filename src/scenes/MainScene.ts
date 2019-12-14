@@ -14,20 +14,10 @@ export class MainScene extends Scene {
     }
 
     create(): void {
+        this.resetEmitter()
         InputKeys.setKeyboard(this.input.keyboard);
         this.setupListeners();
         this.world = new World(this);
-        // this.world.scene.input.on('pointerdown', (pointer) => {
-        //     this.world.player.onNegativeHealth();
-            // const isRightClick = pointer.button == 2;
-            // const isLeftClick = pointer.button == 0;
-
-            // if (isLeftClick) {
-            //     this.cameras.main.zoom += 0.1;
-            // } else if (isRightClick) {
-            //     this.cameras.main.zoom -= 0.1;
-            // }
-        // });
     }
 
     private setupListeners() {
@@ -47,12 +37,17 @@ export class MainScene extends Scene {
                     getStart: () => 0,
                     getEnd: () => 1,
                 }
-            })
+            });
             this.add.sprite(xCam, yCam, 'phone_with_background').setDepth(1000);
             this.cameras.main.zoomTo(0.55, 800, Phaser.Math.Easing.Quadratic.InOut, true);
+            await Interval.milliseconds(2000);
+
+            this.world.destroy();
+            this.scene.start('IntroLoopScene');
 
         });
     }
+
     update(time: number, delta: number): void {
         super.update(time, delta);
     }

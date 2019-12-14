@@ -29,6 +29,13 @@ export class Scene extends Phaser.Scene {
         return this.emitter;
     }
 
+    protected resetEmitter() {
+        if (this.emitter) {
+            this.emitter.destroy;
+            this.emitter = null;
+        }
+    }
+
     unpause() {
         const currentTimeStamp = new Date().getTime();
         if (!this.paused || currentTimeStamp - this.lastPauseToggleTime < this.pauseAnimationTime) return;
