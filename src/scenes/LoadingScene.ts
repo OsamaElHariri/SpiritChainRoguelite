@@ -41,6 +41,8 @@ export class LoadingScene extends Scene {
         this.load.image('playvideoicon', '../assets/sprites/phone/playvideoicon.png');
         this.load.image('videobackground1', '../assets/sprites/phone/videobackground1.png');
         this.load.image('videobackground2', '../assets/sprites/phone/videobackground2.png');
+        this.load.image('rounded_rect', '../assets/sprites/phone/rounded_rect.png');
+        this.load.image('alert_icon', '../assets/sprites/phone/alert_icon.png');
         this.load.image('phone_with_background', '../assets/sprites/phone/phone_with_background.png');
         this.load.image('phone_restart_screen', '../assets/sprites/phone/phone_restart_screen.png');
         this.load.image('phonebackicon', '../assets/sprites/phone/phonebackicon.png');

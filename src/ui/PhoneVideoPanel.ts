@@ -15,6 +15,11 @@ export class PhoneVideoPanel extends Phaser.GameObjects.Container {
             scene.add.rectangle(0, 0, 175, 128, 0x7034ff2),
             scene.add.sprite(0, 0, Math.random() < 0.5 ? 'videobackground1' : 'videobackground2').setScale(Math.random() < 0.5 ? -1 : 1, Math.random() < 0.5 ? -1 : 1),
             scene.add.sprite(0, 0, 'playvideoicon'),
+            scene.add.sprite(52, 45, 'rounded_rect').setAlpha(0.85),
+            scene.add.text(52, 45, '3:00', {
+                fontSize: '18px',
+            }).setOrigin(0.5),
+
         ]);
 
         this.add(scene.add.text(230, 20, this.getRandomVideoTitle(), { color: '#4e4e4e', fontSize: '30px' }).setOrigin(0));
