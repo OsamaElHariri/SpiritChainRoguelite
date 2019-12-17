@@ -2,33 +2,45 @@ import { Scene } from "../scenes/Scene";
 import { UpgradeRequest } from "../actors/Player";
 import { Signals } from "../Signals";
 import { ArrayUtils } from "../utils/ArrayUtils";
+import { StringUtils } from "../utils/StringUtils";
 
 export class PhoneVideoPanel extends Phaser.GameObjects.Container {
+    public consumed = false;
 
-    constructor(public scene: Scene, x: number, y: number, upgradeDescription: string, upgradeRequest: UpgradeRequest) {
+    private minutesBackground: Phaser.GameObjects.Sprite;
+    private minutesText: Phaser.GameObjects.Text;
+    private consumedIndicator: Phaser.GameObjects.Rectangle;
+
+    constructor(public scene: Scene, x: number, y: number, upgradeDescription: string, upgradeRequest: UpgradeRequest, cost: number) {
         super(scene, x, y);
+        this.setScale(0.6);
         scene.add.existing(this);
+        this.add(scene.add.rectangle(0, -4, 800, 168, 0xa4a4a4).setOrigin(0));
         this.add(scene.add.rectangle(4, 0, 792, 160, 0xfffffff).setOrigin(0));
         const thumbnailContainer = scene.add.container(120, 80);
         this.add(thumbnailContainer);
+
+
+        this.consumedIndicator = scene.add.rectangle(-86, 64, 175, 10, 0x8f1221).setOrigin(0, 1).setScale(0, 1);
+        this.minutesBackground = scene.add.sprite(44, 40, 'rounded_rect').setScale(1.4).setAlpha(0.85);
+        this.minutesText = scene.add.text(44, 40, StringUtils.numberToVideoMinutes(cost), {
+            fontSize: '30px',
+        }).setOrigin(0.5);
+
         thumbnailContainer.add([
             scene.add.rectangle(0, 0, 175, 128, 0x7034ff2),
             scene.add.sprite(0, 0, Math.random() < 0.5 ? 'videobackground1' : 'videobackground2').setScale(Math.random() < 0.5 ? -1 : 1, Math.random() < 0.5 ? -1 : 1),
             scene.add.sprite(0, 0, 'playvideoicon'),
-            scene.add.sprite(52, 45, 'rounded_rect').setAlpha(0.85),
-            scene.add.text(52, 45, '3:00', {
-                fontSize: '18px',
-            }).setOrigin(0.5),
-
+            this.minutesBackground,
+            this.minutesText,
+            this.consumedIndicator,
         ]);
 
         this.add(scene.add.text(230, 20, this.getRandomVideoTitle(), { color: '#4e4e4e', fontSize: '30px' }).setOrigin(0));
-        this.add(scene.add.text(230, 60, upgradeDescription, { color: '#4e4e4e', wordWrap: { width: 520, useAdvancedWrap: true } }).setOrigin(0));
+        this.add(scene.add.text(230, 68, upgradeDescription, { color: '#4e4e4e', fontSize: '24px', wordWrap: { width: 520, useAdvancedWrap: true } }).setOrigin(0));
 
         const clickZone = scene.add.zone(0, 0, 800, 160).setOrigin(0).setInteractive({ cursor: 'pointer' });
-        clickZone.on('pointerdown', () => {
-            scene.events.emit(Signals.UpgradePlayer, upgradeRequest);
-        });
+        clickZone.on('pointerdown', () => this.emit(Signals.UpgradePlayer, upgradeRequest));
         this.add(clickZone);
     }
 
@@ -43,5 +55,27 @@ export class PhoneVideoPanel extends Phaser.GameObjects.Container {
         ];
 
         return ArrayUtils.random(videoTitles);
+    }
+
+    consume() {
+        if (this.consumed) return;
+        this.consumed = true;
+        this.scene.add.tween({
+            targets: [this.consumedIndicator],
+            duration: 400,
+            scaleX: {
+                getStart: () => 0,
+                getEnd: () => 1,
+            }
+        });
+
+        this.scene.add.tween({
+            targets: [this.minutesBackground, this.minutesText],
+            duration: 200,
+            alpha: {
+                getStart: () => 1,
+                getEnd: () => 0,
+            }
+        });
     }
 }

@@ -14,10 +14,13 @@ export class CircularProgressBar extends Phaser.GameObjects.Graphics {
             initialProgress?: number,
             lineWidth?: number,
             circleWidth?: number,
-            color?: number
+            color?: number,
+            backgroundColor?: number
         }) {
         super(scene);
         this.id = scene.addObject(this);
+
+        if (config.backgroundColor) this.drawBackgroundCircle();
 
         if (config.initialProgress) {
             this.progress = config.initialProgress;
@@ -34,12 +37,25 @@ export class CircularProgressBar extends Phaser.GameObjects.Graphics {
         this.drawIndicator();
     }
 
+    drawBackgroundCircle() {
+        const backgroundGraphics = this.scene.add.graphics({
+            lineStyle: {
+                color: this.config.backgroundColor,
+                width: this.config.lineWidth || 10,
+            }
+        });
+
+        backgroundGraphics.beginPath();
+        backgroundGraphics.arc(this.config.x, this.config.y, this.config.circleWidth || 100, 0, Math.PI * 2);
+        backgroundGraphics.strokePath();
+    }
+
     setProgress(progress: number) {
         this.progress = progress;
     }
 
     update() {
-        if (Math.abs(this.progress - this.currentProgress) < 0.1) return;
+        if (Math.abs(this.progress - this.currentProgress) < 0.005) return;
         this.currentProgress = this.currentProgress + (this.progress - this.currentProgress) * 0.05;
         this.drawIndicator();
     }
