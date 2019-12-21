@@ -1,4 +1,4 @@
-import { Player } from "../../actors/Player";
+import { Player } from "../actors/Player";
 
 export class PlayerUpgrade {
     static doubleSpeed(player: Player) {

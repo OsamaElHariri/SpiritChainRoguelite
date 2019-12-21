@@ -78,12 +78,12 @@ export class Player extends Actor {
         });
     }
 
-    handleUpgradeRequest(upgrades: UpgradeRequest) {
+    private handleUpgradeRequest(upgrades: UpgradeRequest) {
         if (upgrades.playerUpgrade) upgrades.playerUpgrade(this);
         this.upgradesHistory.push(upgrades);
     }
 
-    setupOnClickListener() {
+    private setupOnClickListener() {
         this.clickListenerFunction = (pointer) => {
             this.removeInactiveWeapons();
             const isRightClick = pointer.button == 2;

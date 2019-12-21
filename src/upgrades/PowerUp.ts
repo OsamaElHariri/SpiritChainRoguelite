@@ -1,4 +1,4 @@
-import { SpiritWeapon } from "./SpiritWeapon";
+import { SpiritWeapon } from "../weapons/spirit_weapon/SpiritWeapon";
 
 export class PowerUp {
     static stun(weapon: SpiritWeapon) {

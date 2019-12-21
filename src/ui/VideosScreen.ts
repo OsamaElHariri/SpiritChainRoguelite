@@ -1,9 +1,9 @@
 import { VideosScene } from "../scenes/VideosScene";
 import { CircularProgressBar } from "./CircularProgressBar";
 import { PhoneVideoPanel } from "./PhoneVideoPanel";
-import { PlayerUpgrade } from "../weapons/spirit_weapon/PlayerUpgrade";
-import { PowerUp } from "../weapons/spirit_weapon/PowerUp";
-import { MeleePowerUp } from "../weapons/spirit_fist/MeleePowerUps";
+import { PlayerUpgrade } from "../upgrades/PlayerUpgrade";
+import { PowerUp } from "../upgrades/PowerUp";
+import { MeleePowerUp } from "../upgrades/MeleePowerUps";
 import { UpgradeRequest } from "../actors/Player";
 import { Signals } from "../Signals";
 import { Interval } from "../utils/interval";

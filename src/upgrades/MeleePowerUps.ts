@@ -1,4 +1,4 @@
-import { SpiritFist } from "./SpiritFist";
+import { SpiritFist } from "../weapons/spirit_fist/SpiritFist";
 
 export class MeleePowerUp {
     static doubleStrength(weapon: SpiritFist) {
