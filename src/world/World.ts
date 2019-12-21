@@ -109,7 +109,7 @@ export class World extends Phaser.GameObjects.Container {
     onScenePause() {
         this.scene.cameras.main.useBounds = false;
         this.scene.cameras.main.stopFollow();
-        this.zoomOutCameraPosition = { x: this.scene.cameras.main.scrollX, y: this.scene.cameras.main.scrollY }
+        this.zoomOutCameraPosition = { x: this.player.x, y: this.player.y }
         const animationTime = this.scene.pauseAnimationTime;
 
         const radians = this.player.handsContainer.rotation;
@@ -118,7 +118,6 @@ export class World extends Phaser.GameObjects.Container {
         const tempParentMatrix = new Phaser.GameObjects.Components.TransformMatrix();
         this.player.cameraFollowPoint.getWorldTransformMatrix(tempMatrix, tempParentMatrix);
         var d: any = tempMatrix.decomposeMatrix();
-        this.scene.cameras.main.scrollX
         this.scene.cameras.main.pan(d.translateX, d.translateY, animationTime, Phaser.Math.Easing.Expo.Out);
         this.scene.cameras.main.zoomTo(1 / 0.03, animationTime, Phaser.Math.Easing.Expo.In);
         this.scene.add.tween({
@@ -157,7 +156,7 @@ export class World extends Phaser.GameObjects.Container {
                 getEnd: () => 0,
             },
             onComplete: () => {
-                this.scene.cameras.main.startFollow(this.player);
+                this.scene.cameras.main.startFollow(this.player, true, 0.1);
             },
         });
     }
