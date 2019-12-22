@@ -79,6 +79,7 @@ export class LoadingScene extends Scene {
         this.load.image('bush1', '../assets/sprites/environment/room_decorations/bush1.png');
         this.load.image('bush2', '../assets/sprites/environment/room_decorations/bush2.png');
         this.load.image('bush3', '../assets/sprites/environment/room_decorations/bush3.png');
+        this.load.image('cart', '../assets/sprites/environment/room_decorations/cart.png');
     }
 
     private constructLoadingScrean(): void {

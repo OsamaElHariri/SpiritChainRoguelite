@@ -82,8 +82,8 @@ export class Room extends Phaser.GameObjects.Container {
         this.scene.getEmitter().emit(Signals.RoomStart, this);
     }
 
-    protected spawnPlayer() {
-        let playerPos = { x: 200, y: 200 };
+    protected spawnPlayer(x: number = 0, y: number = 0) {
+        let playerPos = { x, y };
         let player: Player;
         if (this.config.doorUsed) {
             const gridNode = this.getPlayerStartingPosition(this.config.doorUsed);

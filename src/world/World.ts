@@ -86,7 +86,10 @@ export class World extends Phaser.GameObjects.Container {
     startNewDungeon(config: { skipFadeOut?} = {}) {
         this.dungeonCount += 1;
         if (this.currentRoom) this.currentRoom.destroy();
-        if (this.player) this.player.destroy();
+        if (this.player) {
+            this.scene.cameras.main.stopFollow();
+            this.player.destroy();
+        }
         this.createDungeon();
 
         if (config.skipFadeOut) {
@@ -94,8 +97,9 @@ export class World extends Phaser.GameObjects.Container {
             this.createRoom(startingRoom);
             this.scene.cameras.main.fadeIn(250, 0, 0, 0);
         } else {
-            this.scene.cameras.main.fadeOut(500, 0, 0, 0, (cam, progress: number) => {
+            this.scene.cameras.main.fadeOut(500, 0, 0, 0, async (cam, progress: number) => {
                 if (progress === 1) {
+                    await Interval.milliseconds(200);
                     const startingRoom = this.getStartingRoom();
                     this.createRoom(startingRoom);
                     this.scene.cameras.main.fadeIn(250, 0, 0, 0);
