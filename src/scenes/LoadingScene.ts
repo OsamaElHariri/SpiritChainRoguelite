@@ -76,6 +76,9 @@ export class LoadingScene extends Scene {
         this.load.image('fence_corner', '../assets/sprites/environment/room_decorations/fence_corner.png');
         this.load.image('fence_block', '../assets/sprites/environment/room_decorations/fence_block.png');
         this.load.image('fence_edge', '../assets/sprites/environment/room_decorations/fence_edge.png');
+        this.load.image('bush1', '../assets/sprites/environment/room_decorations/bush1.png');
+        this.load.image('bush2', '../assets/sprites/environment/room_decorations/bush2.png');
+        this.load.image('bush3', '../assets/sprites/environment/room_decorations/bush3.png');
     }
 
     private constructLoadingScrean(): void {
