@@ -13,6 +13,7 @@ import { UpgradeRoom } from "./room_types/UpgradesRoom";
 import { MobsRoom } from "./room_types/MobsRoom";
 import { CartRoom } from "./room_types/CartRoom";
 import { BossRoom } from "./room_types/BossRoom";
+import { UpgradeUtil, Upgrade } from "../upgrades/Upgrade";
 
 export class World extends Phaser.GameObjects.Container {
 
@@ -25,6 +26,8 @@ export class World extends Phaser.GameObjects.Container {
     private roomConfigs: RoomConfig[] = [];
     private menuScene: Phaser.Scenes.ScenePlugin;
     private zoomOutCameraPosition: { x: number, y: number };
+
+    private upgradesHolder: Generator<Upgrade[], void, number>;
 
     constructor(public scene: Scene) {
         super(scene);
@@ -128,7 +131,7 @@ export class World extends Phaser.GameObjects.Container {
                 getEnd: () => -radians,
             },
             onComplete: () => {
-                this.menuScene = this.scene.scene.launch('MenuScene', { playerCanUpgrade: this.player.canUpgrade });
+                this.menuScene = this.scene.scene.launch('MenuScene', { world: this });
                 this.scene.scene.pause("MainScene");
             },
         });
@@ -215,7 +218,7 @@ export class World extends Phaser.GameObjects.Container {
         collections.next();
 
         rooms.forEach(roomType => {
-            const roomConfigs = collections.next(roomType.count).value || [];
+            const roomConfigs: FragmentCollection[] = collections.next(roomType.count).value || [];
             roomConfigs.forEach(collection => {
                 this.roomConfigs.push(new RoomConfig(roomType.factory, collection, roomType.flags));
             });
@@ -223,7 +226,16 @@ export class World extends Phaser.GameObjects.Container {
 
         this.dungeon = dungeon;
 
+        let activeUpgrades: Upgrade[] = [];
+        if (this.player) activeUpgrades = ArrayUtils.shuffle(this.player.upgradesHistory);
+        this.upgradesHolder = ArrayUtils.randomGroups(UpgradeUtil.getValidUpgrades(activeUpgrades))
+        this.upgradesHolder.next();
+
         this.scene.getEmitter().emit(Signals.DungeonConstruct, this.dungeon);
+    }
+
+    reserveUpgrades(numberToReserve: number) {
+        return this.upgradesHolder.next(numberToReserve).value || [];
     }
 
     getCurrentDungeon(): Dungeon {

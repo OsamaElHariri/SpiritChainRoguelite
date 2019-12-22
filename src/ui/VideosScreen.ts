@@ -1,28 +1,37 @@
 import { VideosScene } from "../scenes/VideosScene";
 import { CircularProgressBar } from "./CircularProgressBar";
 import { PhoneVideoPanel } from "./PhoneVideoPanel";
-import { PlayerUpgrade } from "../upgrades/PlayerUpgrade";
-import { PowerUp } from "../upgrades/PowerUp";
-import { MeleePowerUp } from "../upgrades/MeleePowerUps";
-import { UpgradeRequest } from "../actors/Player";
 import { Signals } from "../Signals";
 import { Interval } from "../utils/interval";
 import { StringUtils } from "../utils/StringUtils";
+import { Upgrade } from "../upgrades/Upgrade";
+import { World } from "../world/World";
 
 export class VideosScreen extends Phaser.GameObjects.Container {
     private limitIndicator: CircularProgressBar;
     private limitText: Phaser.GameObjects.Text;
     private videos: PhoneVideoPanel[] = [];
+    private maxBandwidth: number;
     private bandwidthRemaining: number;
     private infoHeight = 60;
     private showingInfo = false;
+    private upgrades: Upgrade[] = [];
 
-    constructor(public scene: VideosScene, x: number, y: number, private maxBandwidth: number) {
+    constructor(public scene: VideosScene, x: number, y: number, private world: World) {
         super(scene, x, y);
         scene.add.existing(this);
-        this.bandwidthRemaining = maxBandwidth;
-        this.addAlertDisclaimer();
+        this.upgrades = world.getCurrentRoom().config.reservedUpgrades;
+        this.maxBandwidth = this.getMaxBandwidth(this.upgrades);
+        this.bandwidthRemaining = this.maxBandwidth;
         this.addVideos();
+        this.consumeActiveUpgrades();
+        this.addAlertDisclaimer();
+    }
+
+    private getMaxBandwidth(upgrades: Upgrade[]) {
+        let total = 0;
+        upgrades.forEach(upgrade => total += upgrade.cost);
+        return total;
     }
 
     private addAlertDisclaimer() {
@@ -33,7 +42,7 @@ export class VideosScreen extends Phaser.GameObjects.Container {
             color: 0x8f1221,
             lineWidth: 12,
             circleWidth: 85,
-            initialProgress: 1,
+            initialProgress: this.bandwidthRemaining / this.maxBandwidth,
             backgroundColor: 0xf1f1f1,
         });
         const bandwidthText = StringUtils.numberToVideoMinutes(this.bandwidthRemaining);
@@ -65,32 +74,9 @@ export class VideosScreen extends Phaser.GameObjects.Container {
     }
 
     private addVideos() {
-        const upgrades: { description: string, cost: number, upgrade: UpgradeRequest }[] = [
-            {
-                description: "Increase your movement speed",
-                cost: 3,
-                upgrade: { playerUpgrade: PlayerUpgrade.doubleSpeed }
-            },
-            {
-                description: "Your spirit weapons can now pass through walls",
-                cost: 4,
-                upgrade: { weaponUpgrade: PowerUp.goThroughWalls }
-            },
-            {
-                description: "Your spirit weapon doubles in size",
-                cost: 1,
-                upgrade: { weaponUpgrade: PowerUp.doubleRadius }
-            },
-            {
-                description: "Spirit punch deals more damage",
-                cost: 1,
-                upgrade: { punchUpgrade: MeleePowerUp.doubleStrength }
-            },
-        ];
-
-        for (let i = 0; i < upgrades.length; i++) {
-            const upgrade = upgrades[i];
-            const panel = new PhoneVideoPanel(this.scene, 260, 105 + i * 110, upgrade.description, upgrade.upgrade, upgrade.cost);
+        for (let i = 0; i < this.upgrades.length; i++) {
+            const upgrade = this.upgrades[i];
+            const panel = new PhoneVideoPanel(this.scene, 260, 105 + i * 110, upgrade.description, upgrade, upgrade.cost);
             panel.on(Signals.UpgradePlayer, () => {
                 if (panel.consumed) {
                     this.displayInfo("You already have this!");
@@ -105,13 +91,22 @@ export class VideosScreen extends Phaser.GameObjects.Container {
                 this.limitText.text = StringUtils.numberToVideoMinutes(this.bandwidthRemaining);
                 panel.consume();
                 this.limitIndicator.setProgress(this.bandwidthRemaining / this.maxBandwidth)
-                this.scene.events.emit(Signals.UpgradePlayer, upgrade.upgrade);
+                this.scene.events.emit(Signals.UpgradePlayer, upgrade);
             });
 
             this.videos.push(panel);
         }
     }
 
+    private consumeActiveUpgrades() {
+        this.videos.forEach(video => {
+            const isActive = this.world.player.upgradesHistory.find(upgrade => upgrade.id == video.upgrade.id);
+            if (isActive) {
+                video.consumeSilenceAnimations();
+                this.bandwidthRemaining -= video.upgrade.cost;
+            }
+        });
+    }
 
     private async displayInfo(text: string) {
         if (this.showingInfo) return;

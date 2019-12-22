@@ -3,9 +3,10 @@ import { Interval } from "../utils/interval";
 import { PhoneAppIcon } from "../ui/PhoneAppIcon";
 import { PhoneHeaderBar } from "../ui/PhoneHeaderBar";
 import { Signals } from "../Signals";
+import { World } from "../world/World";
 
 export class MenuScene extends Scene {
-    sceneData: any = {};
+    sceneData: { world: World };
 
     private lockscreen: Phaser.GameObjects.Sprite;
     private headerBar: PhoneHeaderBar;
@@ -15,7 +16,7 @@ export class MenuScene extends Scene {
         super('MenuScene');
     }
 
-    create(sceneData): void {
+    create(sceneData: { world: World }): void {
         this.sceneData = sceneData;
         this.add.sprite(0, 0, 'phonebackground').setOrigin(0);
         this.constructIcons();

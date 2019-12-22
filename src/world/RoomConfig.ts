@@ -2,6 +2,7 @@ import { FragmentCollection } from "./dungeaon_generation/FragmentCollection";
 import { Room } from "./Room";
 import { World } from "./World";
 import { Door } from "./dungeaon_generation/Door";
+import { Upgrade } from "../upgrades/Upgrade";
 
 export type RoomConfigFlags = { isStartingRoom?: boolean, hasEnemies?: boolean };
 
@@ -10,6 +11,8 @@ export class RoomConfig {
     doorUsed: Door;
     isStartingRoom = false;
     isComplete = true;
+
+    reservedUpgrades: Upgrade[];
 
     roomSelectionRandom: number;
 

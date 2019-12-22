@@ -5,8 +5,13 @@ import { RestSpot } from "../terrain/RestSpot";
 
 export class UpgradeRoom extends Room {
     private restSpot: RestSpot;
+    private numberOfUpgrades = 4;
+
     constructor(world: World, x: number, y: number, config: RoomConfig) {
         super(world, x, y, config);
+        if (!config.reservedUpgrades) {
+            config.reservedUpgrades = world.reserveUpgrades(this.numberOfUpgrades);
+        }
     }
 
     protected onRoomConstruct() {

@@ -1,8 +1,8 @@
 import { Scene } from "../scenes/Scene";
-import { UpgradeRequest } from "../actors/Player";
 import { Signals } from "../Signals";
 import { ArrayUtils } from "../utils/ArrayUtils";
 import { StringUtils } from "../utils/StringUtils";
+import { Upgrade } from "../upgrades/Upgrade";
 
 export class PhoneVideoPanel extends Phaser.GameObjects.Container {
     public consumed = false;
@@ -11,7 +11,7 @@ export class PhoneVideoPanel extends Phaser.GameObjects.Container {
     private minutesText: Phaser.GameObjects.Text;
     private consumedIndicator: Phaser.GameObjects.Rectangle;
 
-    constructor(public scene: Scene, x: number, y: number, upgradeDescription: string, upgradeRequest: UpgradeRequest, cost: number) {
+    constructor(public scene: Scene, x: number, y: number, upgradeDescription: string, public upgrade: Upgrade, cost: number) {
         super(scene, x, y);
         this.setScale(0.6);
         scene.add.existing(this);
@@ -40,7 +40,7 @@ export class PhoneVideoPanel extends Phaser.GameObjects.Container {
         this.add(scene.add.text(230, 68, upgradeDescription, { color: '#4e4e4e', fontSize: '24px', wordWrap: { width: 520, useAdvancedWrap: true } }).setOrigin(0));
 
         const clickZone = scene.add.zone(0, 0, 800, 160).setOrigin(0).setInteractive({ cursor: 'pointer' });
-        clickZone.on('pointerdown', () => this.emit(Signals.UpgradePlayer, upgradeRequest));
+        clickZone.on('pointerdown', () => this.emit(Signals.UpgradePlayer, upgrade));
         this.add(clickZone);
     }
 
@@ -77,5 +77,12 @@ export class PhoneVideoPanel extends Phaser.GameObjects.Container {
                 getEnd: () => 0,
             }
         });
+    }
+
+    consumeSilenceAnimations() {
+        this.consumed = true;
+        this.consumedIndicator.scaleX = 1;
+        this.minutesBackground.alpha = 0;
+        this.minutesText.alpha = 0;
     }
 }

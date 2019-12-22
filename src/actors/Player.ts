@@ -7,24 +7,20 @@ import { Signals } from "../Signals";
 import { ActorType } from "./ActorType";
 import { SpiritFist } from "../weapons/spirit_fist/SpiritFist";
 import { Weapon } from "../weapons/Weapon";
-
-export type UpgradeRequest = {
-    weaponUpgrade?: (weapon: SpiritWeapon) => void,
-    punchUpgrade?: (weapon: SpiritFist) => void,
-    playerUpgrade?: (player: Player) => void,
-};
+import { Upgrade } from "../upgrades/Upgrade";
 
 export class Player extends Actor {
     cameraFollowPoint: Phaser.GameObjects.Ellipse;
     handsContainer: Phaser.GameObjects.Container;
+
     canUpgrade = false;
+    upgradesHistory: Upgrade[] = [];
 
     maxNumberOfWeapons: number = 1;
 
     private onClickListener: Phaser.Events.EventEmitter;
     private spiritFist: SpiritFist;
     private weapons: SpiritWeapon[] = [];
-    private upgradesHistory: UpgradeRequest[] = [];
     private phoneAndHands: Phaser.GameObjects.Sprite;
     private phoneAndHandsOriginalScale: number;
     private toCancel: { cancel: Function }[] = [];
@@ -50,8 +46,8 @@ export class Player extends Actor {
         this.toCancel.push(this.world.scene.getEmitter().onSignal(Signals.Pause, this.onPause, this));
         this.toCancel.push(this.world.scene.getEmitter().onSignal(Signals.Resume, this.onResume, this));
 
-        this.scene.scene.get('VideosScene').events.on(Signals.UpgradePlayer, (upgrades: UpgradeRequest) => {
-            this.handleUpgradeRequest(upgrades);
+        this.scene.scene.get('VideosScene').events.on(Signals.UpgradePlayer, (upgrade: Upgrade) => {
+            this.handleUpgradeRequest(upgrade);
         });
     }
 
@@ -78,9 +74,9 @@ export class Player extends Actor {
         });
     }
 
-    private handleUpgradeRequest(upgrades: UpgradeRequest) {
-        if (upgrades.playerUpgrade) upgrades.playerUpgrade(this);
-        this.upgradesHistory.push(upgrades);
+    private handleUpgradeRequest(upgrade: Upgrade) {
+        if (upgrade.playerUpgrade) upgrade.playerUpgrade(this);
+        this.upgradesHistory.push(upgrade);
     }
 
     private setupOnClickListener() {

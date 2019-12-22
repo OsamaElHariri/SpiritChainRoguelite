@@ -1,11 +1,11 @@
 import { Scene } from "./Scene";
-import { PhoneVideoPanel } from "../ui/PhoneVideoPanel";
 import { PhoneHeaderBar } from "../ui/PhoneHeaderBar";
 import { Interval } from "../utils/interval";
 import { VideosScreen } from "../ui/VideosScreen";
+import { World } from "../world/World";
 
 export class VideosScene extends Scene {
-    sceneData: any = {};
+    sceneData: { world: World };
 
     private infoContainer: Phaser.GameObjects.Container;
     private infoHeight = 60;
@@ -14,7 +14,7 @@ export class VideosScene extends Scene {
         super('VideosScene');
     }
 
-    create(sceneData): void {
+    create(sceneData: { world: World }): void {
         this.sceneData = sceneData;
         this.input.keyboard.on('keydown-P', event => this.scene.stop('VideosScene'));
 
@@ -27,8 +27,8 @@ export class VideosScene extends Scene {
         this.add.sprite(100, 64, 'trendingvideosicon').setOrigin(0, 0.5);
         this.add.text(144, 64, 'Trending', { color: '#4e4e4e', fontSize: '42px' }).setOrigin(0, 0.5);
 
-        if (this.sceneData.playerCanUpgrade) {
-            new VideosScreen(this, 0, 100, 3);
+        if (this.sceneData.world.player.canUpgrade) {
+            new VideosScreen(this, 0, 100, this.sceneData.world);
         } else {
             this.add.sprite(400, 300, 'notconnectedicon');
             this.add.text(400, 430, "Get yourself close to a WiFi spot to get access to all the amazingly useful content!", {
@@ -42,7 +42,7 @@ export class VideosScene extends Scene {
     }
 
     private displayInfo() {
-        const canUpgrade = this.sceneData.playerCanUpgrade;
+        const canUpgrade = this.sceneData.world.player.canUpgrade;
         const color = canUpgrade ? 0x128f21 : 0x8f1221;
         const text = canUpgrade ? "Connected" : "Not Connected";
         const infoContainer = this.add.container(400, 600);
@@ -64,7 +64,7 @@ export class VideosScene extends Scene {
                 getEnd: () => 600 - this.infoHeight,
             },
         });
-        if (!this.sceneData.playerCanUpgrade) return;
+        if (!this.sceneData.world.player.canUpgrade) return;
         await Interval.milliseconds(2500);
         this.add.tween({
             targets: [this.infoContainer],
