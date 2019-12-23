@@ -2,43 +2,59 @@ import { World } from "../world/World";
 import { Signals } from "../Signals";
 import { Dungeon } from "../world/dungeaon_generation/Dungeon";
 import { Room } from "../world/Room";
+import { Scene } from "../scenes/Scene";
 
 export class Minimap extends Phaser.GameObjects.Container {
-    private size = 32;
+    private size = 64;
     private onDungeonConstructListener: { cancel: Function };
     private onRoomConstructListener: { cancel: Function };
 
-    constructor(public world: World) {
-        super(world.scene, 400, 300);
+    constructor(scene: Scene, public world: World) {
+        super(scene, 400, 300);
         this.scene.add.existing(this);
-        this.setDepth(2000);
-        this.add(this.scene.add.rectangle(0, 0, 800, 600, 0));
-        this.scene.add.ellipse(400, 300, 5, 5, 0xffff12).setDepth(2000);
+        this.scene.add.sprite(400, 300, 'map_location_icon').setDepth(20);
         if (world.getCurrentDungeon()) {
-            this.drawDungeon(world.getCurrentDungeon());
+            this.drawDungeon();
             if (world.getCurrentRoom()) this.focusRoom(world.getCurrentRoom());
         }
         this.registerListeners();
-        this.setAlpha(0.4);
     }
 
     private registerListeners() {
         this.onDungeonConstructListener = this.world.scene.getEmitter()
-            .onSignal(Signals.DungeonConstruct, (dungeon: Dungeon) => this.drawDungeon(dungeon));
+            .onSignal(Signals.DungeonConstruct, (dungeon: Dungeon) => this.drawDungeon());
 
         this.onRoomConstructListener = this.world.scene.getEmitter()
             .onSignal(Signals.RoomConstruct, (room: Room) => this.focusRoom(room));
     }
 
-    drawDungeon(dungeon: Dungeon) {
+    drawDungeon() {
         const size = this.size;
-        dungeon.fragmentCollections.forEach(collection => {
-            this.add(this.scene.add.rectangle(collection.x * size, collection.y * size, collection.width * size, collection.height * size, Math.floor(Math.random() * 0xffffff)).setOrigin(0));
+        const margin = 2;
+        const currentConfig = this.world.getCurrentRoom().config;
+        this.world.roomConfigs.forEach(config => {
+            const isCurrentConfig = config == currentConfig;
+
+            const width = config.fragments.width * size;
+            const height = config.fragments.height * size;
+            const x = config.fragments.x * size + width / 2;
+            const y = config.fragments.y * size + height / 2
+            const rectangle = this.scene.add.rectangle(
+                x + margin, y + margin,
+                width - 2 * margin, height - 2 * margin, 0x398547)
+                .setOrigin(0.5)
+                .setAlpha(isCurrentConfig ? 1 : 0.7);
+            this.add(rectangle);
+
+            if (!isCurrentConfig && config.icon) {
+                this.add(
+                    this.scene.add.sprite(x, y, config.icon).setAlpha(0.9));
+            }
         });
     }
 
     focusRoom(room: Room) {
-        const collection = room.fragmentCollection;
+        const collection = room.config.fragments;
         const x = (collection.x + collection.width / 2) * this.size;
         const y = (collection.y + collection.height / 2) * this.size;
         this.x = 400 - x;

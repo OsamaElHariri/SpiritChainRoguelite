@@ -4,22 +4,24 @@ import { World } from "./World";
 import { Door } from "./dungeaon_generation/Door";
 import { Upgrade } from "../upgrades/Upgrade";
 
-export type RoomConfigFlags = { isStartingRoom?: boolean, hasEnemies?: boolean };
+export type RoomConfigOptions = { isStartingRoom?: boolean, hasEnemies?: boolean, icon?: string };
 
 export class RoomConfig {
     creationCount = 0;
     doorUsed: Door;
     isStartingRoom = false;
     isComplete = true;
+    icon: string;
 
     reservedUpgrades: Upgrade[];
 
     roomSelectionRandom: number;
 
-    constructor(public RoomFactory: typeof Room, public fragments: FragmentCollection, flags: RoomConfigFlags) {
-        if (!flags) flags = {};
-        this.isComplete = !flags.hasEnemies;
-        this.isStartingRoom = flags.isStartingRoom;
+    constructor(public RoomFactory: typeof Room, public fragments: FragmentCollection, options: RoomConfigOptions) {
+        if (!options) options = {};
+        this.isComplete = !options.hasEnemies;
+        this.isStartingRoom = options.isStartingRoom;
+        this.icon = options.icon;
         this.roomSelectionRandom = Math.random();
     }
 

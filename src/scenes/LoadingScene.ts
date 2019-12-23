@@ -35,6 +35,11 @@ export class LoadingScene extends Scene {
         this.load.image('videoicon', '../assets/sprites/phone/videoicon.png');
         this.load.image('chaticon', '../assets/sprites/phone/chaticon.png');
         this.load.image('snakesicon', '../assets/sprites/phone/snakesicon.png');
+        this.load.image('map_icon', '../assets/sprites/phone/map_icon.png');
+        this.load.image('map_location_icon', '../assets/sprites/phone/map_location_icon.png');
+        this.load.image('upgrade_location_icon', '../assets/sprites/phone/upgrade_location_icon.png');
+        this.load.image('boss_location_icon', '../assets/sprites/phone/boss_location_icon.png');
+        this.load.image('cart_location_icon', '../assets/sprites/phone/cart_location_icon.png');
         this.load.image('notconnectedicon', '../assets/sprites/phone/notconnectedicon.png');
         this.load.image('phoneinfoheader', '../assets/sprites/phone/infoheader.png');
         this.load.image('trendingvideosicon', '../assets/sprites/phone/trendingvideosicon.png');

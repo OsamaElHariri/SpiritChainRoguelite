@@ -6,6 +6,7 @@ import { VideosScene } from "./scenes/VideosScene";
 import { LoadingScene } from "./scenes/LoadingScene";
 import { SetupScene } from "./scenes/SetupScene";
 import { IntroLoopScene } from "./scenes/IntroLoopScene";
+import { MinimapScene } from "./scenes/MinimapScene";
 
 const config: Phaser.Types.Core.GameConfig = {
   width: 800,
@@ -21,6 +22,7 @@ const config: Phaser.Types.Core.GameConfig = {
     MainScene,
     MenuScene,
     SnakesScene,
+    MinimapScene,
     VideosScene
   ],
   physics: {

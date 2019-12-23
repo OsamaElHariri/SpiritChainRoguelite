@@ -4,11 +4,10 @@ import { Player } from "../actors/Player";
 import { Signals } from "../Signals";
 import { Interval } from "../utils/interval";
 import { Dungeon } from "./dungeaon_generation/Dungeon";
-import { Minimap } from "../ui/Minimap";
 import { FragmentCollection } from "./dungeaon_generation/FragmentCollection";
 import { ArrayUtils } from "../utils/ArrayUtils";
 import { Door } from "./dungeaon_generation/Door";
-import { RoomConfig, RoomConfigFlags } from "./RoomConfig";
+import { RoomConfig, RoomConfigOptions } from "./RoomConfig";
 import { UpgradeRoom } from "./room_types/UpgradesRoom";
 import { MobsRoom } from "./room_types/MobsRoom";
 import { CartRoom } from "./room_types/CartRoom";
@@ -19,11 +18,11 @@ export class World extends Phaser.GameObjects.Container {
 
     player: Player;
     dungeonCount = 0;
+    roomConfigs: RoomConfig[] = [];
 
     private id: number;
     private currentRoom: Room;
     private dungeon: Dungeon;
-    private roomConfigs: RoomConfig[] = [];
     private menuScene: Phaser.Scenes.ScenePlugin;
     private zoomOutCameraPosition: { x: number, y: number };
 
@@ -34,7 +33,6 @@ export class World extends Phaser.GameObjects.Container {
         this.id = scene.addObject(this);
         this.registerListeners();
         this.startNewDungeon({ skipFadeOut: true });
-        // new Minimap(this);
     }
 
     registerListeners() {
@@ -193,25 +191,26 @@ export class World extends Phaser.GameObjects.Container {
     createDungeon() {
         this.roomConfigs = [];
 
-        const rooms: { factory: typeof Room, count: number, flags?: RoomConfigFlags }[] = [
+        const rooms: { factory: typeof Room, count: number, options?: RoomConfigOptions }[] = [
             {
                 factory: CartRoom,
                 count: 1,
-                flags: { isStartingRoom: true },
+                options: { isStartingRoom: true, icon: 'cart_location_icon' },
             },
             {
                 factory: UpgradeRoom,
                 count: Math.random() < 0.8 ? 1 : 2,
+                options: { icon: 'upgrade_location_icon' },
             },
             {
                 factory: MobsRoom,
                 count: Math.random() < 0.6 ? 4 : 5,
-                flags: { hasEnemies: true },
+                options: { hasEnemies: true },
             },
             {
                 factory: BossRoom,
                 count: 1,
-                flags: { hasEnemies: true },
+                options: { hasEnemies: true, icon: 'boss_location_icon' },
             },
         ];
         let numberOfRooms = 0;
@@ -224,7 +223,7 @@ export class World extends Phaser.GameObjects.Container {
         rooms.forEach(roomType => {
             const roomConfigs: FragmentCollection[] = collections.next(roomType.count).value || [];
             roomConfigs.forEach(collection => {
-                this.roomConfigs.push(new RoomConfig(roomType.factory, collection, roomType.flags));
+                this.roomConfigs.push(new RoomConfig(roomType.factory, collection, roomType.options));
             });
         });
 

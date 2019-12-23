@@ -39,6 +39,7 @@ export class MenuScene extends Scene {
         const apps = [{ name: 'Settings', icon: 'settingsicon', scene: 'SnakesScene' },
         { name: 'Videos', icon: 'videoicon', scene: 'VideosScene' },
         { name: 'Chat', icon: 'chaticon', scene: 'SnakesScene' },
+        { name: 'Map', icon: 'map_icon', scene: 'MinimapScene' },
         { name: 'Snakes', icon: 'snakesicon', scene: 'SnakesScene' }];
         let x = xMin;
         let y = yMin;
