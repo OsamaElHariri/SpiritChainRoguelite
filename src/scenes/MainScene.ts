@@ -16,12 +16,16 @@ export class MainScene extends Scene {
     create(): void {
         this.resetEmitter()
         InputKeys.setKeyboard(this.input.keyboard);
+        this.scene.launch('HudScene', { world: this }).moveAbove("MainScene");
         this.setupListeners();
         this.world = new World(this);
     }
 
     private setupListeners() {
-        this.getEmitter().on(Signals.PlayerDeath, async () => {
+        const emitter = this.getEmitter();
+
+        emitter.on(Signals.PlayerDeath, async () => {
+            this.scene.stop('HudScene');
             this.cameras.main.stopFollow();
             this.cameras.main.zoom = 1;
             this.cameras.main.useBounds = false;
@@ -44,8 +48,16 @@ export class MainScene extends Scene {
 
             this.world.destroy();
             this.scene.start('IntroLoopScene');
-
         });
+
+        emitter.on(Signals.Pause, () => {
+            this.scene.get("HudScene").events.emit(Signals.Pause);
+        });
+
+        emitter.on(Signals.Resume, () => {
+            this.scene.get("HudScene").events.emit(Signals.Resume);
+        });
+
     }
 
     update(time: number, delta: number): void {

@@ -8,6 +8,7 @@ import { SetupScene } from "./scenes/SetupScene";
 import { IntroLoopScene } from "./scenes/IntroLoopScene";
 import { MinimapScene } from "./scenes/MinimapScene";
 import { IntroScene } from "./scenes/IntroScene";
+import { HudScene } from "./scenes/HudScene";
 
 const config: Phaser.Types.Core.GameConfig = {
   width: 800,
@@ -22,6 +23,7 @@ const config: Phaser.Types.Core.GameConfig = {
     IntroScene,
     IntroLoopScene,
     MainScene,
+    HudScene,
     MenuScene,
     SnakesScene,
     MinimapScene,
