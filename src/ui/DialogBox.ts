@@ -1,7 +1,11 @@
 import { Scene } from "../scenes/Scene";
 import { Interval } from "../utils/interval";
 
-type DialogConfig = { text: string, dialogFace: string, dialogFaceOnTheRight: boolean };
+export type DialogConfig = {
+    text: string,
+    dialogFace: string,
+    dialogFaceOnTheRight: boolean
+};
 
 export class DialogBox extends Phaser.GameObjects.Container {
     private text: Phaser.GameObjects.Text;
@@ -20,14 +24,17 @@ export class DialogBox extends Phaser.GameObjects.Container {
         }).setOrigin(0, 0.5);
 
         this.add([background, dialogFace, this.text]);
-        this.unconverText();
     }
 
-    private async unconverText() {
+    public async unconverText() {
         for (let i = 0; i < this.config.text.length; i++) {
-            await Interval.milliseconds(40);
-            this.text.text = this.config.text.substr(0, i);
+            await Interval.milliseconds(20);
+            this.text.text = this.config.text.substr(0, i + 1);
         }
     }
 
+    destroy() {
+        this.removeAll(true);
+        super.destroy();
+    }
 }

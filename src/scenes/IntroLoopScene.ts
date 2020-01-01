@@ -1,4 +1,5 @@
 import { Scene } from "./Scene";
+import { SlideShowWithDialog } from "../ui/slide_shows/SlideShowWithDialog";
 
 export class IntroLoopScene extends Scene {
     constructor() {
@@ -6,8 +7,12 @@ export class IntroLoopScene extends Scene {
     }
 
     create() {
-        this.add.rectangle(0, 0, 800, 600, 0xa923b1).setOrigin(0);
-        this.add.text(400, 300, "Press Any key to start").setOrigin(0.5);
+        this.playIntro();
+    }
+
+    private async playIntro() {
+        const slideShow = new SlideShowWithDialog(this);
+        await slideShow.startIntroLoopSlideShow();
         this.input.keyboard.on('keyup', () => {
             this.scene.start('MainScene');
         });
