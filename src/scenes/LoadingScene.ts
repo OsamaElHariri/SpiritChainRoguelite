@@ -85,6 +85,16 @@ export class LoadingScene extends Scene {
         this.load.image('bush2', '../assets/sprites/environment/room_decorations/bush2.png');
         this.load.image('bush3', '../assets/sprites/environment/room_decorations/bush3.png');
         this.load.image('cart', '../assets/sprites/environment/room_decorations/cart.png');
+        this.load.image('dialog_box', '../assets/sprites/intro/dialog_box.png');
+        this.load.image('park_entrance', '../assets/sprites/intro/park_entrance.png');
+        this.load.image('park_manager_close_up', '../assets/sprites/intro/park_manager_close_up.png');
+        this.load.image('magic_set', '../assets/sprites/intro/magic_set.png');
+        this.load.image('park_entrance_meeting', '../assets/sprites/intro/park_entrance_meeting.png');
+        this.load.image('player_close_up', '../assets/sprites/intro/player_close_up.png');
+        this.load.image('old_man_dialog_face', '../assets/sprites/intro/old_man_dialog_face.png');
+        this.load.image('woman_dialog_face', '../assets/sprites/intro/woman_dialog_face.png');
+        this.load.image('player_dialog_face', '../assets/sprites/intro/player_dialog_face.png');
+        this.load.image('park_manager_dialog_face', '../assets/sprites/intro/park_manager_dialog_face.png');
     }
 
     private constructLoadingScrean(): void {
@@ -200,7 +210,7 @@ export class LoadingScene extends Scene {
         await Interval.milliseconds(1500);
         this.cameras.main.fade(500, 0, 0, 0, false, (camera, progress) => {
             if (progress == 1) {
-                this.scene.start('IntroLoopScene');
+                this.scene.start('IntroScene');
             }
         });
     }
