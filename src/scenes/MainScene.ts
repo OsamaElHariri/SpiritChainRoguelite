@@ -16,9 +16,9 @@ export class MainScene extends Scene {
     create(): void {
         this.resetEmitter()
         InputKeys.setKeyboard(this.input.keyboard);
-        this.scene.launch('HudScene', { world: this }).moveAbove("MainScene");
         this.setupListeners();
         this.world = new World(this);
+        this.scene.launch('HudScene', { world: this.world }).moveAbove("MainScene");
     }
 
     private setupListeners() {

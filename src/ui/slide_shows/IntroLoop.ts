@@ -10,6 +10,11 @@ export const introLoop: SlideShowWithDialogConfig[] = [
                 text: "(This tutorial is super helpful)",
             },
             {
+                dialogFace: 'old_man_dialog_face',
+                dialogFaceOnTheRight: true,
+                text: "Hey, are you ready?",
+            },
+            {
                 dialogFace: 'player_dialog_face',
                 dialogFaceOnTheRight: false,
                 text: "Yup, I'm ready to go",
