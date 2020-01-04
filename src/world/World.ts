@@ -28,22 +28,47 @@ export class World extends Phaser.GameObjects.Container {
 
     private upgradesHolder: Generator<Upgrade[], void, number>;
 
+    private menuShortcuts: { [id: string]: string[] } = {
+        "MainMenu": ["keydown-P", "keydown-ESC"],
+        "VideosScene": ["keydown-U"],
+        "MinimapScene": ["keydown-M"],
+    }
+
     constructor(public scene: Scene) {
         super(scene);
         this.id = scene.addObject(this);
+        this.setupMenuActions();
         this.registerListeners();
         this.startNewDungeon({ skipFadeOut: true });
     }
 
-    registerListeners() {
+    private setupMenuActions() {
+        for (const scene in this.menuShortcuts) {
+            if (this.menuShortcuts.hasOwnProperty(scene)) {
+                const shortcuts = this.menuShortcuts[scene];
+                shortcuts.forEach(shortcut => {
+                    this.scene.input.keyboard.on(shortcut, event => {
+                        if (!this.player || !this.scene.canTakePauseAction) return;
+                        else this.pause(scene);
+                    });
+                });
+            }
+        }
+    }
+
+    private pause(deepLink?: string) {
+        this.scene.getEmitter().emit(Signals.Pause, deepLink)
+    }
+
+    private registerListeners() {
         const emitter = this.scene.getEmitter();
 
         emitter.on(Signals.DungeonComplete, () => {
             this.startNewDungeon();
         });
 
-        emitter.on(Signals.Pause, () => {
-            this.onScenePause();
+        emitter.on(Signals.Pause, (deepLink: string) => {
+            this.onScenePause(deepLink);
         });
 
         emitter.on(Signals.Resume, () => {
@@ -51,7 +76,7 @@ export class World extends Phaser.GameObjects.Container {
         });
 
         this.scene.scene.get("MenuScene").events.on(Signals.CloseMenu, () => {
-            this.scene.unpause();
+            this.scene.getEmitter().emit(Signals.Resume);
         });
 
         emitter.on(Signals.RoomComplete, (currentFragmentCollection: FragmentCollection, doorUsed: Door) => {
@@ -81,7 +106,7 @@ export class World extends Phaser.GameObjects.Container {
         return true;
     }
 
-    startNewDungeon(config: { skipFadeOut?} = {}) {
+    private startNewDungeon(config: { skipFadeOut?: boolean } = {}) {
         this.dungeonCount += 1;
         if (this.currentRoom) this.currentRoom.destroy();
         if (this.player) {
@@ -111,7 +136,7 @@ export class World extends Phaser.GameObjects.Container {
         return startingRoom || ArrayUtils.random(this.roomConfigs);
     }
 
-    onScenePause() {
+    private onScenePause(deepLink: string) {
         this.scene.cameras.main.useBounds = false;
         this.scene.cameras.main.stopFollow();
         this.zoomOutCameraPosition = { x: this.player.x, y: this.player.y }
@@ -133,13 +158,13 @@ export class World extends Phaser.GameObjects.Container {
                 getEnd: () => -radians,
             },
             onComplete: () => {
-                this.menuScene = this.scene.scene.launch('MenuScene', { world: this });
+                this.menuScene = this.scene.scene.launch('MenuScene', { world: this, deepLink: deepLink });
                 this.scene.scene.pause("MainScene");
             },
         });
     }
 
-    onSceneResume() {
+    private onSceneResume() {
         this.scene.cameras.main.useBounds = true;
 
         this.scene.scene.resume("MainScene");
@@ -166,11 +191,11 @@ export class World extends Phaser.GameObjects.Container {
         });
     }
 
-    getRoomConfigForFragment(fragments: FragmentCollection) {
+    private getRoomConfigForFragment(fragments: FragmentCollection) {
         return this.roomConfigs.find((config, i) => config.fragments == fragments);
     }
 
-    async goToNextRoom(config: RoomConfig, doorUsed: Door) {
+    private async goToNextRoom(config: RoomConfig, doorUsed: Door) {
         if (this.currentRoom) this.currentRoom.destroy();
         this.player.destroy();
         await Interval.milliseconds(100);
@@ -179,7 +204,7 @@ export class World extends Phaser.GameObjects.Container {
         this.scene.cameras.main.fadeIn(150, 0, 0, 0);
     }
 
-    createRoom(config: RoomConfig) {
+    private createRoom(config: RoomConfig) {
         const room = config.createRoom(this, 0, 0);
         this.onRoomConstruct(room);
     }
@@ -188,7 +213,7 @@ export class World extends Phaser.GameObjects.Container {
         return this.currentRoom;
     }
 
-    createDungeon() {
+    private createDungeon() {
         this.roomConfigs = [];
 
         const rooms: { factory: typeof Room, count: number, options?: RoomConfigOptions }[] = [

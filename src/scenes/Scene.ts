@@ -2,6 +2,7 @@ import { Signals } from "../Signals";
 
 export class Scene extends Phaser.Scene {
     pauseAnimationTime = 500;
+    canTakePauseAction = true;
     paused = false;
 
     private lastPauseToggleTime = 0;
@@ -13,18 +14,8 @@ export class Scene extends Phaser.Scene {
     getEmitter() {
         if (!this.emitter) {
             this.emitter = new SceneEventEmitter(this);
-
-            this.input.keyboard.on('keydown-P', event => {
-                const currentTimeStamp = new Date().getTime();
-                if (this.paused || currentTimeStamp - this.lastPauseToggleTime < this.pauseAnimationTime) return;
-                this.lastPauseToggleTime = currentTimeStamp;
-                this.paused = true;
-                this.emitter.emit(Signals.Pause);
-            });
-
-            this.input.keyboard.on('keydown-P', event => {
-                this.unpause();
-            });
+            this.emitter.on(Signals.Pause, () => this.pause());
+            this.emitter.on(Signals.Resume, () => this.unpause());
         }
         return this.emitter;
     }
@@ -36,12 +27,16 @@ export class Scene extends Phaser.Scene {
         }
     }
 
+    pause() {
+        if (this.paused || !this.canTakePauseAction) return;
+        this.lastPauseToggleTime = new Date().getTime();
+        this.paused = true;
+    }
+
     unpause() {
-        const currentTimeStamp = new Date().getTime();
-        if (!this.paused || currentTimeStamp - this.lastPauseToggleTime < this.pauseAnimationTime) return;
-        this.lastPauseToggleTime = currentTimeStamp;
+        if (!this.paused || !this.canTakePauseAction) return;
+        this.lastPauseToggleTime = new Date().getTime();
         this.paused = false;
-        this.emitter.emit(Signals.Resume);
     }
 
     addObject(object: Phaser.GameObjects.GameObject) {
@@ -51,6 +46,9 @@ export class Scene extends Phaser.Scene {
     }
 
     update(time: number, delta: number) {
+        const currentTimeStamp = new Date().getTime();
+        this.canTakePauseAction = currentTimeStamp - this.pauseAnimationTime > this.lastPauseToggleTime;
+
         for (const id in this.objects) {
             if (this.objects.hasOwnProperty(id)) {
                 const gameObject = this.objects[id];

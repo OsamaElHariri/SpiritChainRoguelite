@@ -111,6 +111,7 @@ export class LoadingScene extends Scene {
     }
 
     create(): void {
+        this.scene.launch('PhoneLockScreenScene');
         this.input.keyboard.on('keyup', () => {
             if (this.loadingRatio < 1 || this.transitioning) return;
             this.transitioning = true;
