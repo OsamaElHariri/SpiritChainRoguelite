@@ -126,7 +126,7 @@ export class ChatScreen extends Phaser.GameObjects.Container {
         const diff = Math.max(Math.abs(chatHeight) - yYnitial, 0);
         background.setInteractive();
         background.on('wheel', (pointer) => {
-            chatContainer.y = NumberUtils.clamp(chatContainer.y + pointer.deltaY * 20, 400, 400 + diff);
+            chatContainer.y = NumberUtils.clamp(chatContainer.y - pointer.deltaY * 20, 400, 400 + diff);
         });
     }
 

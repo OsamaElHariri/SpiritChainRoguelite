@@ -6,9 +6,6 @@ import { World } from "../world/World";
 export class HudScene extends Scene {
     sceneData: { world: World };
     heart: Phaser.GameObjects.Sprite;
-    activeSound: Phaser.GameObjects.Sprite;
-    muteSound: Phaser.GameObjects.Sprite;
-    burgerMenu: Phaser.GameObjects.Sprite;
 
     private hud: Phaser.GameObjects.Container;
     private showing = true;
@@ -27,12 +24,8 @@ export class HudScene extends Scene {
 
         this.setupListeners();
         this.hud = this.add.container(0, 0);
-        const menuBackground = this.add.rectangle(800, 0, 140, 64, 0x000000, 0.3).setOrigin(1, 0);
         this.heart = this.add.sprite(58, 52, 'heart');
-        this.activeSound = this.add.sprite(700, 36, 'active_sound');
-        this.muteSound = this.add.sprite(700, 36, 'mute_sound').setAlpha(0);
-        this.burgerMenu = this.add.sprite(760, 36, 'burger_menu');
-        this.hud.add([menuBackground, this.heart, this.burgerMenu, this.activeSound, this.muteSound]);
+        this.hud.add(this.heart);
         this.pulseHeartIcon(this.heart);
     }
 
@@ -144,5 +137,53 @@ export class HudScene extends Scene {
         }
     }
 
+    private async showNotification(sender: string, message: string) {
+        const notificationContainer = this.add.container(0, 0);
+        const background = this.add.sprite(400, -100, 'notification_panel');
+        background.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
+            this.sceneData.world.pause("ChatScene")
+        });
+        const clickForInfoText = this.add.text(620, -120, "(Click to view)", {
+            color: '#4a4a4a',
+            fontSize: '14px',
+        }).setOrigin(1).setAlpha(0.7);
+        const senderText = this.add.text(180, -100, sender, {
+            color: '#4a4a4a',
+            fontSize: '30px',
+        }).setOrigin(0, 1);
+        const messageText = this.add.text(180, -70, message.substr(0, 26) + "...", {
+            color: '#4a4a4a',
+            fontSize: '22px',
+            wordWrap: { width: 400 },
+        }).setOrigin(0, 1);
+        notificationContainer.add([background, clickForInfoText, senderText, messageText]);
+        this.hud.add(notificationContainer);
+
+        await this.moveNotificationPanel({
+            targets: [notificationContainer],
+            duration: 400,
+            y: {
+                getStart: () => 0,
+                getEnd: () => 160,
+            },
+        });
+
+        await this.moveNotificationPanel({
+            targets: [notificationContainer],
+            delay: 5000,
+            duration: 400,
+            y: {
+                getStart: () => 160,
+                getEnd: () => 0,
+            },
+        });
+        notificationContainer.destroy();
+    }
+
+    private moveNotificationPanel(tweenConfigs) {
+        return new Promise((resolve, _) => {
+            this.add.tween({ ...tweenConfigs, onComplete: () => resolve() });
+        });
+    }
 
 }

@@ -21,7 +21,6 @@ export class ChatScene extends Scene {
             this.scene.stop('ChatScene');
         });
         new PhoneHeaderBar(this, 0, 0);
-
     }
 
 }

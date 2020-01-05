@@ -97,6 +97,7 @@ export class LoadingScene extends Scene {
         this.load.image('park_manager_dialog_face', '../assets/sprites/intro/park_manager_dialog_face.png');
         this.load.image('heart', '../assets/sprites/ui/heart.png');
         this.load.image('mute_sound', '../assets/sprites/ui/mute_sound.png');
+        this.load.image('notification_panel', '../assets/sprites/ui/notification_panel.png');
         this.load.image('active_sound', '../assets/sprites/ui/active_sound.png');
         this.load.image('burger_menu', '../assets/sprites/ui/burger_menu.png');
     }
