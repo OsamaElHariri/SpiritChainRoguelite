@@ -10,6 +10,7 @@ import { MinimapScene } from "./scenes/MinimapScene";
 import { IntroScene } from "./scenes/IntroScene";
 import { HudScene } from "./scenes/HudScene";
 import { PhoneLockScreenScene } from "./scenes/PhoneLockScreenScene";
+import { ChatScene } from "./scenes/ChatScene";
 
 const config: Phaser.Types.Core.GameConfig = {
   width: 800,
@@ -29,6 +30,7 @@ const config: Phaser.Types.Core.GameConfig = {
     SnakesScene,
     MinimapScene,
     VideosScene,
+    ChatScene,
     PhoneLockScreenScene,
   ],
   physics: {

@@ -6,6 +6,14 @@ import { World } from "../world/World";
 export class MenuScene extends Scene {
     sceneData: { world: World, deepLink: string };
 
+    private appConfig = [
+        { name: 'Settings', icon: 'settingsicon', scene: 'SnakesScene' },
+        { name: 'Videos', icon: 'videoicon', scene: 'VideosScene' },
+        { name: 'Chat', icon: 'chaticon', scene: 'ChatScene' },
+        { name: 'Map', icon: 'map_icon', scene: 'MinimapScene' },
+        { name: 'Snakes', icon: 'snakesicon', scene: 'SnakesScene' },
+    ];
+
     private apps: PhoneAppIcon[] = [];
 
     constructor() {
@@ -30,14 +38,9 @@ export class MenuScene extends Scene {
 
         const yMin = 50;
         const yStep = 200;
-        const apps = [{ name: 'Settings', icon: 'settingsicon', scene: 'SnakesScene' },
-        { name: 'Videos', icon: 'videoicon', scene: 'VideosScene' },
-        { name: 'Chat', icon: 'chaticon', scene: 'SnakesScene' },
-        { name: 'Map', icon: 'map_icon', scene: 'MinimapScene' },
-        { name: 'Snakes', icon: 'snakesicon', scene: 'SnakesScene' }];
         let x = xMin;
         let y = yMin;
-        apps.forEach(app => {
+        this.appConfig.forEach(app => {
             const phoneApp = new PhoneAppIcon(this, x, y, app.name, app.icon, () => this.launchScene(app.scene));
             this.apps.push(phoneApp);
             if (this.sceneData.deepLink == app.scene) phoneApp.launch();
@@ -50,6 +53,10 @@ export class MenuScene extends Scene {
     }
 
     private launchScene(scene: string) {
+        for (let i = 0; i < this.appConfig.length; i++) {
+            const config = this.appConfig[i];
+            if (this.scene.isActive(config.scene)) return;
+        }
         this.scene.launch(scene, this.sceneData)
     }
 }

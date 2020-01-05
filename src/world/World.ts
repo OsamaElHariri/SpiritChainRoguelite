@@ -31,6 +31,7 @@ export class World extends Phaser.GameObjects.Container {
     private menuShortcuts: { [id: string]: string[] } = {
         "MainMenu": ["keydown-P", "keydown-ESC"],
         "VideosScene": ["keydown-U"],
+        "ChatScene": ["keydown-C"],
         "MinimapScene": ["keydown-M"],
     }
 
@@ -56,7 +57,7 @@ export class World extends Phaser.GameObjects.Container {
         }
     }
 
-    private pause(deepLink?: string) {
+    pause(deepLink?: string) {
         this.scene.getEmitter().emit(Signals.Pause, deepLink)
     }
 
