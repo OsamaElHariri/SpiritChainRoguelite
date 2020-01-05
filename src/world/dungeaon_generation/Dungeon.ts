@@ -2,11 +2,14 @@ import { RoomFragment } from "./RoomFragment";
 import { FragmentCollection } from "./FragmentCollection";
 import { ArrayUtils } from "../../utils/ArrayUtils";
 
+/**
+ * A Dungeon is many FragmentCollections. These FragmentCollections are used to define the Rooms in the Dungeon
+ */
 export class Dungeon {
     roomFragments: { [id: string]: RoomFragment } = {};
     fragmentCollections: FragmentCollection[] = [];
 
-    constructor(numberOfRooms, public minWidth: number = 11, public minHeight: number = 9) {
+    constructor(public numberOfRooms: number, public minWidth: number = 11, public minHeight: number = 9) {
         const initialCollection = new FragmentCollection(this, new RoomFragment(this, 0, 0));
 
         this.registerFragmentCollection(initialCollection);

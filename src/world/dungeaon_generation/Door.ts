@@ -1,19 +1,33 @@
 import { FragmentCollection } from "./FragmentCollection";
 import { RoomFragment } from "./RoomFragment";
 
+/**
+ * A Door represents a link between two RoomFragments that belong to different FragmentCollections.
+ */
 export class Door {
     constructor(public roomFragment1: RoomFragment, public roomFragment2: RoomFragment) { }
 
+    /**
+     * @param currentCollection A FragmentCollection for a RoomFragment in this Door
+     * @returns the FragmentCollection of the other RoomFragment
+     */
     getOtherCollection(currentCollection: FragmentCollection) {
         if (currentCollection == this.roomFragment1.fragmentCollection) return this.roomFragment2.fragmentCollection;
         if (currentCollection == this.roomFragment2.fragmentCollection) return this.roomFragment1.fragmentCollection;
     }
 
+    /**
+     * Check if this Door and the other Door link the same RoomFragments
+     */
     equal(other: Door) {
         return (other.roomFragment1 == this.roomFragment1 && other.roomFragment2 == this.roomFragment2)
             || (other.roomFragment1 == this.roomFragment2 && other.roomFragment2 == this.roomFragment1);
     }
 
+    /**
+     * Get the DoorLocations of this Door in the RoomFragment that belongs to fragmentCollection.
+     * @param fragmentCollection The FragmentCollection of the RoomFragment
+     */
     getDoorFor(fragmentCollection: FragmentCollection): DoorLocations {
         let roomFragment: RoomFragment;
         let otherFragment: RoomFragment;
@@ -38,6 +52,13 @@ export class Door {
     }
 }
 
+/**
+ * DoorLocations define where on the Grid is the Door located. Notice that this is 
+ * a Grid location, meaning it can be used to lookup the exact position of the Door
+ * in the Room.
+ * 
+ * While the DoorLocations type has four properties, only one will be filled, and all the others will always be null.
+ */
 export type DoorLocations = {
     xTop?: number,
     xBottom?: number,
