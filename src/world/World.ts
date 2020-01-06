@@ -33,7 +33,7 @@ export class World extends Phaser.GameObjects.Container {
 
     private menuShortcuts: { [id: string]: string[] } = {
         "MainMenu": ["keydown-P", "keydown-ESC"],
-        "VideosScene": ["keydown-U", "keydown-U"],
+        "VideosScene": ["keydown-U", "keydown-V"],
         "ChatScene": ["keydown-C"],
         "MinimapScene": ["keydown-M"],
     }

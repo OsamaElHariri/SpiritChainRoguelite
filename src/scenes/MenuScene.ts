@@ -26,8 +26,10 @@ export class MenuScene extends Scene {
         this.constructIcons();
 
         this.scene.get("PhoneLockScreenScene").events.emit(Signals.MenuInitialized);
-        this.input.keyboard.on('keydown-P', () => {
-            this.events.emit(Signals.CloseMenu);
+        ['keydown-P', 'keydown-ESC'].forEach((key) => {
+            this.input.keyboard.on(key, () => {
+                this.events.emit(Signals.CloseMenu);
+            });
         });
     }
 

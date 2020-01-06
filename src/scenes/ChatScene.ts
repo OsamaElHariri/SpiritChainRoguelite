@@ -13,7 +13,11 @@ export class ChatScene extends Scene {
 
     create(sceneData: { world: World, data?: ChatMessage }): void {
         this.sceneData = sceneData;
-        this.input.keyboard.on('keydown-P', event => this.scene.stop('ChatScene'));
+        ['keydown-P', 'keydown-ESC', 'keydown-C'].forEach((key) => {
+            this.input.keyboard.on(key, () => {
+                this.scene.stop('ChatScene');
+            });
+        });
 
         this.add.rectangle(0, 0, 800, 600, 0xffffff).setOrigin(0);
 
