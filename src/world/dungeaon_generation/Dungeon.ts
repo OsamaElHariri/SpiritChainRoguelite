@@ -9,7 +9,19 @@ export class Dungeon {
     roomFragments: { [id: string]: RoomFragment } = {};
     fragmentCollections: FragmentCollection[] = [];
 
-    constructor(public numberOfRooms: number, public minWidth: number = 11, public minHeight: number = 9) {
+    constructor(public minWidth: number, public minHeight: number) { }
+
+    constructFirstDungeon() {
+        const initialCollection = new FragmentCollection(this, new RoomFragment(this, 0, 0), 0);
+        this.registerFragmentCollection(initialCollection);
+        const secondRoom = new FragmentCollection(this, initialCollection.getEmptyRight()[0], 0);
+        this.registerFragmentCollection(secondRoom);
+        const thirdRoom = new FragmentCollection(this, secondRoom.getEmptyRight()[0], 0);
+        this.registerFragmentCollection(thirdRoom);
+        return this;
+    }
+
+    constructRandomDungeon(numberOfRooms: number) {
         const initialCollection = new FragmentCollection(this, new RoomFragment(this, 0, 0));
 
         this.registerFragmentCollection(initialCollection);
@@ -38,6 +50,8 @@ export class Dungeon {
             this.registerFragmentCollection(newCollection);
             frontier.unshift(newCollection);
         }
+
+        return this;
     }
 
     registerFragmentCollection(collection: FragmentCollection) {

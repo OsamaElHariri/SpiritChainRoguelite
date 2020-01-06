@@ -258,8 +258,31 @@ export class World extends Phaser.GameObjects.Container {
     }
 
     private createDungeon() {
-        this.roomConfigs = [];
+        if (this.dungeonCount == 1) {
+            this.dungeon = this.createFirstDungeon();
+        } else {
+            this.dungeon = this.createRandomDungeon();
+        }
 
+        let activeUpgrades: Upgrade[] = [];
+        if (this.player) activeUpgrades = ArrayUtils.shuffle(this.player.upgradesHistory);
+        this.upgradesHolder = ArrayUtils.randomGroups(UpgradeUtil.getValidUpgrades(activeUpgrades))
+        this.upgradesHolder.next();
+
+        this.scene.getEmitter().emit(Signals.DungeonConstruct, this.dungeon);
+    }
+
+    private createFirstDungeon() {
+        this.roomConfigs = [];
+        const dungeon = new Dungeon(11, 9).constructFirstDungeon();
+        this.roomConfigs.push(new RoomConfig(CartRoom, dungeon.fragmentCollections[0], { isStartingRoom: true, icon: 'cart_location_icon' }));
+        this.roomConfigs.push(new RoomConfig(UpgradeRoom, dungeon.fragmentCollections[1], { icon: 'upgrade_location_icon' }));
+        this.roomConfigs.push(new RoomConfig(MobsRoom, dungeon.fragmentCollections[2], { hasEnemies: true }));
+        return dungeon;
+    }
+
+    private createRandomDungeon() {
+        this.roomConfigs = [];
         const rooms: { factory: typeof Room, count: number, options?: RoomConfigOptions }[] = [
             {
                 factory: CartRoom,
@@ -285,7 +308,7 @@ export class World extends Phaser.GameObjects.Container {
         let numberOfRooms = 0;
         rooms.forEach(roomType => numberOfRooms += roomType.count);
 
-        const dungeon = new Dungeon(numberOfRooms);
+        const dungeon = new Dungeon(11, 9).constructRandomDungeon(numberOfRooms);
         const collections = ArrayUtils.randomGroups(dungeon.fragmentCollections);
         collections.next();
 
@@ -296,14 +319,7 @@ export class World extends Phaser.GameObjects.Container {
             });
         });
 
-        this.dungeon = dungeon;
-
-        let activeUpgrades: Upgrade[] = [];
-        if (this.player) activeUpgrades = ArrayUtils.shuffle(this.player.upgradesHistory);
-        this.upgradesHolder = ArrayUtils.randomGroups(UpgradeUtil.getValidUpgrades(activeUpgrades))
-        this.upgradesHolder.next();
-
-        this.scene.getEmitter().emit(Signals.DungeonConstruct, this.dungeon);
+        return dungeon;
     }
 
     reserveUpgrades(numberToReserve: number) {
