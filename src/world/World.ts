@@ -15,6 +15,7 @@ import { BossRoom } from "./room_types/BossRoom";
 import { UpgradeUtil, Upgrade } from "../upgrades/Upgrade";
 import { ChatContacts } from "../ui/chat/ChatContacts";
 import { ChatMessage } from "../ui/chat/ChatMessage";
+import { FallingLeaves } from "./terrain/FallingLeaves";
 
 export class World extends Phaser.GameObjects.Container {
     static worldCount = 0;
@@ -28,6 +29,7 @@ export class World extends Phaser.GameObjects.Container {
     private dungeon: Dungeon;
     private menuScene: Phaser.Scenes.ScenePlugin;
     private zoomOutCameraPosition: { x: number, y: number };
+    private leaves: FallingLeaves;
 
     private upgradesHolder: Generator<Upgrade[], void, number>;
 
@@ -45,6 +47,7 @@ export class World extends Phaser.GameObjects.Container {
         this.setupMenuActions();
         this.registerListeners();
         this.startNewDungeon({ skipFadeOut: true });
+        this.leaves = new FallingLeaves(scene);
     }
 
     private setupMenuActions() {
@@ -316,6 +319,7 @@ export class World extends Phaser.GameObjects.Container {
         this.scene.scene.get("MenuScene").events.removeListener(Signals.CloseMenu);
         this.scene.getEmitter().removeAllListeners();
         this.scene.stopUpdating(this.id);
+        this.leaves.destroy();
         super.destroy();
     }
 }

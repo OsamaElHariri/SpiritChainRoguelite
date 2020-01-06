@@ -56,6 +56,7 @@ export class LoadingScene extends Scene {
         this.load.image('grass2', '../assets/sprites/environment/grass2.png');
         this.load.image('grass3', '../assets/sprites/environment/grass3.png');
         this.load.image('grass4', '../assets/sprites/environment/grass4.png');
+        this.load.image('leaf', '../assets/sprites/environment/leaf.png');
         this.load.image('restspot', '../assets/sprites/environment/restspot.png');
         this.load.image('restspotbench', '../assets/sprites/environment/restspotbench.png');
         this.load.image('restspottrash', '../assets/sprites/environment/restspottrash.png');
