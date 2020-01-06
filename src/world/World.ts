@@ -13,8 +13,11 @@ import { MobsRoom } from "./room_types/MobsRoom";
 import { CartRoom } from "./room_types/CartRoom";
 import { BossRoom } from "./room_types/BossRoom";
 import { UpgradeUtil, Upgrade } from "../upgrades/Upgrade";
+import { ChatContacts } from "../ui/chat/ChatContacts";
+import { ChatMessage } from "../ui/chat/ChatMessage";
 
 export class World extends Phaser.GameObjects.Container {
+    static worldCount = 0;
 
     player: Player;
     dungeonCount = 0;
@@ -30,7 +33,7 @@ export class World extends Phaser.GameObjects.Container {
 
     private menuShortcuts: { [id: string]: string[] } = {
         "MainMenu": ["keydown-P", "keydown-ESC"],
-        "VideosScene": ["keydown-U"],
+        "VideosScene": ["keydown-U", "keydown-U"],
         "ChatScene": ["keydown-C"],
         "MinimapScene": ["keydown-M"],
     }
@@ -38,6 +41,7 @@ export class World extends Phaser.GameObjects.Container {
     constructor(public scene: Scene) {
         super(scene);
         this.id = scene.addObject(this);
+        World.worldCount += 1;
         this.setupMenuActions();
         this.registerListeners();
         this.startNewDungeon({ skipFadeOut: true });
@@ -57,8 +61,8 @@ export class World extends Phaser.GameObjects.Container {
         }
     }
 
-    pause(deepLink?: string) {
-        this.scene.getEmitter().emit(Signals.Pause, deepLink)
+    pause(deepLink?: string, data?: any) {
+        this.scene.getEmitter().emit(Signals.Pause, deepLink, data)
     }
 
     private registerListeners() {
@@ -68,8 +72,8 @@ export class World extends Phaser.GameObjects.Container {
             this.startNewDungeon();
         });
 
-        emitter.on(Signals.Pause, (deepLink: string) => {
-            this.onScenePause(deepLink);
+        emitter.on(Signals.Pause, (deepLink: string, data) => {
+            this.onScenePause(deepLink, data);
         });
 
         emitter.on(Signals.Resume, () => {
@@ -94,6 +98,42 @@ export class World extends Phaser.GameObjects.Container {
     onPlayerSpawn(player: Player) {
         this.player = player;
         this.scene.cameras.main.startFollow(player, true, 0.1);
+        player.on(Signals.PlayerRestSpotStatusChange, (isOnRestSpot: boolean) => {
+            if (isOnRestSpot) this.onRestSpotAction();
+        });
+    }
+
+    private onRestSpotAction() {
+        if (!this.player.chatFlags.hasReceivedWeaponTutorial
+            && !this.allRoomsComplete()
+            && this.dungeonCount == 1) {
+            this.player.chatFlags.hasReceivedWeaponTutorial = true;
+            const message1 = new ChatMessage(ChatContacts.Ismail,
+                "Hey, here's a quick reminder, just in case you need it.");
+            const message2 = new ChatMessage(ChatContacts.Ismail,
+                "You can fire your spirit weapon with the LEFT MOUSE BUTTON");
+            const message3 = new ChatMessage(ChatContacts.Ismail,
+                "And you can fire your spirit fist with the RIGHT MOUSE BUTTON");
+            const message4 = new ChatMessage(ChatContacts.Ismail,
+                "Also, you should be able to view the map on your phone by pressing the M KEY");
+            this.player.chats[ChatContacts.Ismail].push(message1, message2, message3, message4);
+            this.emit(Signals.NewChatMessage, message1);
+
+        }
+        if (!this.player.chatFlags.hasReceivedUpgradeTutorial
+            && this.allRoomsComplete()) {
+            this.player.chatFlags.hasReceivedUpgradeTutorial = true;
+            const message1 = new ChatMessage(ChatContacts.CrazyGeorge,
+                "Heyoooo! It's George the park manager, I got your number from Ismail");
+            const message2 = new ChatMessage(ChatContacts.CrazyGeorge,
+                "We have free WiFi, so you can work with your gadgets and doodads and watch your videos");
+            const message3 = new ChatMessage(ChatContacts.CrazyGeorge,
+                "Ismail tells me the videos help you improve. You can watch your videos by pressing the V KEY");
+            const message4 = new ChatMessage(ChatContacts.CrazyGeorge,
+                "We do have a limit on the bandwidth, though. Park budget has been pretty bad lately");
+            this.player.chats[ChatContacts.CrazyGeorge].push(message1, message2, message3, message4);
+            this.emit(Signals.NewChatMessage, message1);
+        }
     }
 
     onRoomConstruct(room: Room) {
@@ -137,7 +177,7 @@ export class World extends Phaser.GameObjects.Container {
         return startingRoom || ArrayUtils.random(this.roomConfigs);
     }
 
-    private onScenePause(deepLink: string) {
+    private onScenePause(deepLink: string, data: any) {
         this.scene.cameras.main.useBounds = false;
         this.scene.cameras.main.stopFollow();
         this.zoomOutCameraPosition = { x: this.player.x, y: this.player.y }
@@ -159,7 +199,7 @@ export class World extends Phaser.GameObjects.Container {
                 getEnd: () => -radians,
             },
             onComplete: () => {
-                this.menuScene = this.scene.scene.launch('MenuScene', { world: this, deepLink: deepLink });
+                this.menuScene = this.scene.scene.launch('MenuScene', { world: this, deepLink: deepLink, data: data });
                 this.scene.scene.pause("MainScene");
             },
         });

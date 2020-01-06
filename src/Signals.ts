@@ -1,8 +1,9 @@
 export enum Signals {
-    PlayerSpawn = 'playerSpawn',
-    PlayerDeath = 'playerDeath',
+    PlayerSpawn = 'player_spawn',
+    PlayerDeath = 'player_death',
+    PlayerRestSpotStatusChange = 'player_upgrade_status_change',
     Pause = 'pause',
-    Resume = 'resum',
+    Resume = 'resume',
     UpgradePlayer = 'upgrade_player',
     MenuInitialized = 'menu_init',
     CloseMenu = 'close_menu',
@@ -13,4 +14,5 @@ export enum Signals {
     RoomDestroy = 'room_destroy',
     DungeonConstruct = 'dungeon_construct',
     DungeonComplete = 'dungeon_complete',
+    NewChatMessage = 'new_chat_message',
 }

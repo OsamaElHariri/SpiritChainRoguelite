@@ -1,6 +1,8 @@
-import { World } from "../world/World";
-import { ChatScene } from "../scenes/ChatScene";
-import { NumberUtils } from "../utils/NumberUtils";
+import { World } from "../../world/World";
+import { ChatScene } from "../../scenes/ChatScene";
+import { NumberUtils } from "../../utils/NumberUtils";
+import { ChatMessage } from "./ChatMessage";
+import { ChatContacts } from "./ChatContacts";
 
 export class ChatScreen extends Phaser.GameObjects.Container {
 
@@ -8,11 +10,16 @@ export class ChatScreen extends Phaser.GameObjects.Container {
     private chatArea: Phaser.GameObjects.Container;
     private selectedContact: string;
 
-    constructor(public scene: ChatScene, x: number, y: number, private world: World) {
+    constructor(public scene: ChatScene, x: number, y: number, private world: World, initialMessage?: ChatMessage) {
         super(scene, x, y);
         scene.add.existing(this);
         this.chatContactsPanel = this.scene.add.container(0, 120);
         this.chatArea = this.scene.add.container(240, 100);
+
+        if (initialMessage) {
+            this.selectedContact = initialMessage.sender;
+        }
+
         this.refresh();
     }
 
@@ -29,7 +36,10 @@ export class ChatScreen extends Phaser.GameObjects.Container {
         });
         this.chatContactsPanel.add(text);
 
-        const contacts = ['Fiona Work', 'Ismail Work', '❤ Baby Cakes ❤', 'Crazy Park Guy', 'Mum'];
+
+
+
+        const contacts = Object.keys(this.world.player.chats);
         for (let i = 0; i < contacts.length; i++) {
             const contact = contacts[i];
             const chatContact = this.constructChatContact(0, 72 + i * 60, contact);
@@ -69,55 +79,26 @@ export class ChatScreen extends Phaser.GameObjects.Container {
     }
 
     private constructChatArea() {
-        const chat = [
-            {
-                sender: "Me",
-                message: "Some message1 sdkjfdsj k shkd"
-            },
-            {
-                sender: "Them",
-                message: "Some message2 asjd ajskd kjas hdkjah dkjashd kjh"
-            },
-            {
-                sender: "Them",
-                message: "Some message2 asjd ajskd kjas hdkjah dkjashd kjh"
-            },
-            {
-                sender: "Them",
-                message: "Some message2 asjd ajskd kjas hdkjah dkjashd kjh"
-            },
-            {
-                sender: "Me",
-                message: "Some message3 sds fd"
-            },
-            {
-                sender: "Them",
-                message: "Some message4"
-            },
-            {
-                sender: "Them",
-                message: "Some message4"
-            },
-        ]
+        const chat = this.world.player.chats[this.selectedContact] || [];
         this.chatArea.removeAll(true);
         const background = this.scene.add.rectangle(0, 0, 800, 600, 0xfafafa).setOrigin(0);
 
         this.chatArea.add(background);
-        const chatContainer = this.scene.add.container(40, 400);
+        const chatContainer = this.scene.add.container(10, 400);
         let chatHeight = 0;
-        const chatWidth = 220;
+        const chatWidth = 240;
         const boxPadding = 12;
         const boxMargin = 8;
         for (let i = chat.length - 1; i >= 0; i--) {
             const message = chat[i];
-            const isSender = message.sender == "Me";
+            const isSender = message.sender == ChatContacts.Me;
             const xChat = isSender ? chatWidth + 40 : 0;
-            const text = this.scene.add.text(boxPadding + xChat, chatHeight - boxPadding, message.message, {
+            const text = this.scene.add.text(boxPadding + xChat, chatHeight - boxPadding, message.text, {
                 color: '#4a4a4a',
                 fontSize: '22px',
                 wordWrap: { width: chatWidth, useAdvancedWrap: true },
             }).setOrigin(0, 1);
-            const background = this.scene.add.rectangle(xChat, chatHeight, text.width + 2 * boxPadding, text.height + 2 * boxPadding, isSender ? 0xaafafa : 0xaafaaa).setOrigin(0, 1);
+            const background = this.scene.add.rectangle(xChat, chatHeight, text.width + 2 * boxPadding, text.height + 2 * boxPadding, isSender ? 0xaafafa : 0x9aea9a).setOrigin(0, 1);
             chatContainer.add([background, text]);
             chatHeight -= background.height + boxMargin;
         }

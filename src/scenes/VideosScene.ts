@@ -27,7 +27,7 @@ export class VideosScene extends Scene {
         this.add.sprite(100, 64, 'trendingvideosicon').setOrigin(0, 0.5);
         this.add.text(144, 64, 'Trending', { color: '#4e4e4e', fontSize: '42px' }).setOrigin(0, 0.5);
 
-        if (this.sceneData.world.player.canUpgrade) {
+        if (this.sceneData.world.player.isOnRestSpot) {
             new VideosScreen(this, 0, 100, this.sceneData.world);
         } else {
             this.add.sprite(400, 300, 'notconnectedicon');
@@ -42,7 +42,7 @@ export class VideosScene extends Scene {
     }
 
     private displayInfo() {
-        const canUpgrade = this.sceneData.world.player.canUpgrade;
+        const canUpgrade = this.sceneData.world.player.isOnRestSpot;
         const color = canUpgrade ? 0x128f21 : 0x8f1221;
         const text = canUpgrade ? "Connected" : "Not Connected";
         const infoContainer = this.add.container(400, 600);
@@ -64,7 +64,7 @@ export class VideosScene extends Scene {
                 getEnd: () => 600 - this.infoHeight,
             },
         });
-        if (!this.sceneData.world.player.canUpgrade) return;
+        if (!this.sceneData.world.player.isOnRestSpot) return;
         await Interval.milliseconds(2500);
         this.add.tween({
             targets: [this.infoContainer],

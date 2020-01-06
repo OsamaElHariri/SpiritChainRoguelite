@@ -38,10 +38,10 @@ export class RestSpot extends Phaser.GameObjects.Sprite {
 
             let isOverlapping = false;
             this.world.scene.physics.overlap(this, this.world.player, () => {
-                this.world.player.canUpgrade = true;
+                this.world.player.setIsOnRestSpot(true);
                 isOverlapping = true;
             });
-            if (!isOverlapping) this.world.player.canUpgrade = false;
+            if (!isOverlapping) this.world.player.setIsOnRestSpot(false);
         }
     }
 

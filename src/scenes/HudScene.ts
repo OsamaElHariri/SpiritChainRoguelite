@@ -2,6 +2,7 @@ import { Scene } from "./Scene";
 import { Signals } from "../Signals";
 import { Interval } from "../utils/interval";
 import { World } from "../world/World";
+import { ChatMessage } from "../ui/chat/ChatMessage";
 
 export class HudScene extends Scene {
     sceneData: { world: World };
@@ -27,6 +28,10 @@ export class HudScene extends Scene {
         this.heart = this.add.sprite(58, 52, 'heart');
         this.hud.add(this.heart);
         this.pulseHeartIcon(this.heart);
+
+        sceneData.world.on(Signals.NewChatMessage, (message: ChatMessage) => {
+            this.showNotification(message);
+        });
     }
 
     private setupListeners() {
@@ -137,23 +142,23 @@ export class HudScene extends Scene {
         }
     }
 
-    private async showNotification(sender: string, message: string) {
+    private async showNotification(message: ChatMessage) {
         const notificationContainer = this.add.container(0, 0);
         const background = this.add.sprite(400, -100, 'notification_panel');
         background.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
-            this.sceneData.world.pause("ChatScene")
+            this.sceneData.world.pause("ChatScene", message);
         });
         const clickForInfoText = this.add.text(620, -120, "(Click to view)", {
             color: '#4a4a4a',
             fontSize: '14px',
         }).setOrigin(1).setAlpha(0.7);
-        const senderText = this.add.text(180, -100, sender, {
+        const senderText = this.add.text(180, -100, message.sender, {
             color: '#4a4a4a',
             fontSize: '30px',
         }).setOrigin(0, 1);
-        const messageText = this.add.text(180, -70, message.substr(0, 26) + "...", {
+        const messageText = this.add.text(180, -70, message.text.substr(0, 32) + "...", {
             color: '#4a4a4a',
-            fontSize: '22px',
+            fontSize: '18px',
             wordWrap: { width: 400 },
         }).setOrigin(0, 1);
         notificationContainer.add([background, clickForInfoText, senderText, messageText]);

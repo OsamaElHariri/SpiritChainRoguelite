@@ -8,15 +8,22 @@ import { ActorType } from "./ActorType";
 import { SpiritFist } from "../weapons/spirit_fist/SpiritFist";
 import { Weapon } from "../weapons/Weapon";
 import { Upgrade } from "../upgrades/Upgrade";
+import { ChatMessage } from "../ui/chat/ChatMessage";
 
 export class Player extends Actor {
     cameraFollowPoint: Phaser.GameObjects.Ellipse;
     handsContainer: Phaser.GameObjects.Container;
 
-    canUpgrade = false;
+    isOnRestSpot = false;
     upgradesHistory: Upgrade[] = [];
 
     maxNumberOfWeapons: number = 1;
+
+    chats: { [sender: string]: ChatMessage[]; };
+    chatFlags = {
+        hasReceivedWeaponTutorial: false,
+        hasReceivedUpgradeTutorial: false,
+    };
 
     private onClickListener: Phaser.Events.EventEmitter;
     private spiritFist: SpiritFist;
@@ -41,6 +48,7 @@ export class Player extends Actor {
         this.container.add(this.handsContainer);
         this.phoneAndHandsOriginalScale = this.phoneAndHands.scaleY;
         this.phoneAndHands.scaleY = 0;
+        this.chats = ChatMessage.getInitialChats();
 
         this.setupOnClickListener();
         this.toCancel.push(this.world.scene.getEmitter().onSignal(Signals.Pause, this.onPause, this));
@@ -138,6 +146,14 @@ export class Player extends Actor {
         ]);
     }
 
+    setIsOnRestSpot(newValue: boolean) {
+        const shouldSignal = newValue != this.isOnRestSpot;
+        this.isOnRestSpot = newValue;
+
+        if (shouldSignal)
+            this.emit(Signals.PlayerRestSpotStatusChange, newValue);
+    }
+
     protected faceMoveDirection(rotation: number) {
         super.faceMoveDirection(rotation);
         this.handsContainer.setRotation(rotation);
@@ -172,6 +188,8 @@ export class Player extends Actor {
         const newPlayer = new Player(this.world, x, y);
         newPlayer.setHealth(this.healthPoints);
         this.upgradesHistory.forEach(upgrade => newPlayer.handleUpgradeRequest(upgrade));
+        newPlayer.chatFlags = this.chatFlags;
+        newPlayer.chats = this.chats;
         return newPlayer;
     }
 
