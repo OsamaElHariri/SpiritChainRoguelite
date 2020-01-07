@@ -301,7 +301,7 @@ export class World extends Phaser.GameObjects.Container {
             },
             {
                 factory: BossRoom,
-                count: 1,
+                count: this.dungeonCount % 3 == 0 ? 1 : 0,
                 options: { hasEnemies: true, icon: 'boss_location_icon' },
             },
         ];
