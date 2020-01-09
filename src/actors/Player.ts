@@ -12,6 +12,7 @@ import { ChatMessage } from "../ui/chat/ChatMessage";
 import { InputKeys } from "../inputs/InputKeys";
 import { DashMoveEngine } from "../move_engines/DashMoveEngine";
 import { Interval } from "../utils/interval";
+import { SpiritClone } from "./SpiritClone";
 
 export class Player extends Actor {
     cameraFollowPoint: Phaser.GameObjects.Ellipse;
@@ -21,7 +22,8 @@ export class Player extends Actor {
     upgradesHistory: Upgrade[] = [];
 
     maxNumberOfWeapons: number = 1;
-    dashTime = 120;
+    cloneDuration: number = 3000;
+    dashTime = 90;
     dashCooldown = 200;
     dashSpeed = 9;
 
@@ -217,6 +219,7 @@ export class Player extends Actor {
         if (this.isDashing || !this.canDash) return;
         this.canDash = false;
         this.isDashing = true;
+        this.spawnSpiritClone(this.x, this.y);
         const engine = this.moveEngine;
         this.moveWith(new DashMoveEngine(this.moveEngine.getHorizontalAxis(), this.moveEngine.getVerticalAxis()));
         await Interval.milliseconds(this.dashTime);
@@ -224,6 +227,13 @@ export class Player extends Actor {
         this.isDashing = false;
         await Interval.milliseconds(this.dashCooldown);
         this.canDash = true;
+    }
+
+    spawnSpiritClone(x: number, y: number) {
+        const clone = new SpiritClone(this.world, x, y, this.cloneDuration);
+        clone.setSpriteRotation(this.mainSprite.rotation);
+        this.upgradesHistory.forEach(upgrade => clone.handleUpgradeRequest(upgrade));
+        return clone;
     }
 
     protected move() {

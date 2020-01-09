@@ -35,8 +35,6 @@ export class Actor extends Phaser.GameObjects.Ellipse {
     private canSlideBottomLeft: boolean = false;
     private canSlideBottomRight: boolean = false;
 
-
-
     constructor(public world: World, public x: number, public y: number, spriteKey: string) {
         super(world.scene, x, y, 40, 40);
         this.id = world.scene.addObject(this);
@@ -112,6 +110,10 @@ export class Actor extends Phaser.GameObjects.Ellipse {
 
     protected faceMoveDirection(rotation: number) {
         this.facingRotation = rotation;
+    }
+
+    setSpriteRotation(rotation) {
+        this.mainSprite.rotation = rotation;
     }
 
     onNegativeHealth() {

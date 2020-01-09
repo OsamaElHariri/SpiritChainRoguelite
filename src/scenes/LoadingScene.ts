@@ -101,6 +101,8 @@ export class LoadingScene extends Scene {
         this.load.image('notification_panel', '../assets/sprites/ui/notification_panel.png');
         this.load.image('active_sound', '../assets/sprites/ui/active_sound.png');
         this.load.image('burger_menu', '../assets/sprites/ui/burger_menu.png');
+        this.load.image('spirit_clone', '../assets/sprites/actor/spirit_clone/spirit_clone.png');
+        this.load.image('spirit_clone_aura', '../assets/sprites/actor/spirit_clone/spirit_clone_aura.png');
     }
 
     private constructLoadingScrean(): void {
