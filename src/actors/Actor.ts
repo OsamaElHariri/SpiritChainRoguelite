@@ -23,7 +23,7 @@ export class Actor extends Phaser.GameObjects.Ellipse {
 
     protected mainSprite: Phaser.GameObjects.Sprite;
 
-    private moveEngine: MoveEngine = new EmptyMoveEngine();
+    protected moveEngine: MoveEngine = new EmptyMoveEngine();
 
     private collisionSlideAddition: number = 0.75;
     private topLeftOverlapChecker: Phaser.GameObjects.Rectangle;
@@ -76,7 +76,7 @@ export class Actor extends Phaser.GameObjects.Ellipse {
         return this;
     }
 
-    update(time, delta: number) {
+    update(time: number, delta: number) {
         if (this.healthPoints <= 0) {
             this.onNegativeHealth();
             return;

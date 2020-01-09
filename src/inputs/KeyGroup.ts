@@ -1,39 +1,68 @@
 export class KeyGroup {
     keys: Phaser.Input.Keyboard.Key[] = [];
 
-    lastTimeJustPressed = 0;
     lastTimePressed = 0;
+    lastTimeJustPressed = 0;
+    lastTimeDoubleTapPressed = 0;
+
+    private sceneFrameCount = 0;
+    private previousResponse: {
+        pressed: boolean,
+        justPressed: boolean,
+        doubleTapped: boolean,
+    };
+
+    private doubleTapTimeFrame = 400;
 
     constructor(keys?: Phaser.Input.Keyboard.Key[] | Phaser.Input.Keyboard.Key) {
         if (keys)
             this.keys = this.keys.concat(keys);
     }
 
-    hasKeyDown(): boolean {
-        return this.checkKeysAndUpdateTimestamps().pressed;
+    hasKeyDown(sceneFrameCount: number): boolean {
+        if (sceneFrameCount != this.sceneFrameCount) this.previousResponse = this.checkKeysAndUpdateTimestamps(sceneFrameCount);
+        return this.previousResponse.pressed;
     }
 
-    hasKeyJustPressed(): boolean {
-        return this.checkKeysAndUpdateTimestamps().justPressed;
+    hasKeyJustPressed(sceneFrameCount: number): boolean {
+        if (sceneFrameCount != this.sceneFrameCount) this.previousResponse = this.checkKeysAndUpdateTimestamps(sceneFrameCount);
+        return this.previousResponse.justPressed;
     }
 
-    private checkKeysAndUpdateTimestamps() {
+    hasKeyJustDoubleTapped(sceneFrameCount: number): boolean {
+        if (sceneFrameCount != this.sceneFrameCount) this.previousResponse = this.checkKeysAndUpdateTimestamps(sceneFrameCount);
+        return this.previousResponse.doubleTapped;
+    }
+
+    private checkKeysAndUpdateTimestamps(sceneFrameCount: number) {
+        this.sceneFrameCount = sceneFrameCount;
+        const timestamp = new Date().getTime();
         let pressed = false;
         let justPressed = false;
+        let doubleTapped = false;
         for (let i = 0; i < this.keys.length; i++) {
             if (this.keys[i].isDown) {
-                this.lastTimePressed = new Date().getTime();
-                if (Phaser.Input.Keyboard.JustDown(this.keys[i])) {
-                    this.lastTimeJustPressed = new Date().getTime();
+                this.lastTimePressed = timestamp;
+                const keyJustPressed = Phaser.Input.Keyboard.JustDown(this.keys[i]);
+                if (keyJustPressed &&
+                    timestamp - this.lastTimeDoubleTapPressed > this.doubleTapTimeFrame &&
+                    timestamp - this.lastTimeJustPressed < this.doubleTapTimeFrame) {
+                    doubleTapped = true;
+                } else if (keyJustPressed) {
                     justPressed = true;
                 }
                 pressed = true;
                 break;
             }
         }
+
+        if (justPressed) this.lastTimeJustPressed = timestamp;
+        if (doubleTapped) this.lastTimeDoubleTapPressed = timestamp;
+
         return {
             pressed,
             justPressed,
+            doubleTapped,
         };
     }
 

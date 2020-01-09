@@ -9,6 +9,9 @@ import { SpiritFist } from "../weapons/spirit_fist/SpiritFist";
 import { Weapon } from "../weapons/Weapon";
 import { Upgrade } from "../upgrades/Upgrade";
 import { ChatMessage } from "../ui/chat/ChatMessage";
+import { InputKeys } from "../inputs/InputKeys";
+import { DashMoveEngine } from "../move_engines/DashMoveEngine";
+import { Interval } from "../utils/interval";
 
 export class Player extends Actor {
     cameraFollowPoint: Phaser.GameObjects.Ellipse;
@@ -18,6 +21,9 @@ export class Player extends Actor {
     upgradesHistory: Upgrade[] = [];
 
     maxNumberOfWeapons: number = 1;
+    dashTime = 120;
+    dashCooldown = 200;
+    dashSpeed = 9;
 
     chats: { [sender: string]: ChatMessage[]; };
     chatFlags = {
@@ -32,6 +38,9 @@ export class Player extends Actor {
     private phoneAndHandsOriginalScale: number;
     private toCancel: { cancel: Function }[] = [];
     private isInvulnerable = false;
+    private keys = InputKeys.getInstance();
+    private isDashing = false;
+    private canDash = true;
 
     private clickListenerFunction: Function;
 
@@ -39,7 +48,7 @@ export class Player extends Actor {
         super(world, x, y, 'topdownplayer');
         this.actorType = ActorType.Friendly;
         world.scene.getEmitter().emit(Signals.PlayerSpawn, this);
-        this.moveWith(InputsMoveEngine.getInstance());
+        this.moveWith(new InputsMoveEngine());
         this.phoneAndHands = world.scene.add.sprite(0, 0, 'holdingphone').setOrigin(0.5, 1).setScale(0.03);
         this.cameraFollowPoint = world.scene.add.ellipse(-0.1, -39.2, 1, 1);
         this.handsContainer = new Phaser.GameObjects.Container(world.scene);
@@ -160,7 +169,7 @@ export class Player extends Actor {
     }
 
     takeDamage(actor: Actor, weapon: Weapon) {
-        if (this.isInvulnerable) return;
+        if (this.isInvulnerable || this.isDashing) return;
         const damageTaken = super.takeDamage(actor, weapon);
         if (damageTaken) {
             this.isInvulnerable = true;
@@ -191,6 +200,37 @@ export class Player extends Actor {
         newPlayer.chatFlags = this.chatFlags;
         newPlayer.chats = this.chats;
         return newPlayer;
+    }
+
+    update(time: number, delta: number) {
+        super.update(time, delta);
+        if (this.keys.downJustDoubleTapped() ||
+            this.keys.upJustDoubleTapped() ||
+            this.keys.leftJustDoubleTapped() ||
+            this.keys.rightJustDoubleTapped()
+        ) {
+            this.dash();
+        }
+    }
+
+    private async dash() {
+        if (this.isDashing || !this.canDash) return;
+        this.canDash = false;
+        this.isDashing = true;
+        const engine = this.moveEngine;
+        this.moveWith(new DashMoveEngine(this.moveEngine.getHorizontalAxis(), this.moveEngine.getVerticalAxis()));
+        await Interval.milliseconds(this.dashTime);
+        this.moveWith(engine);
+        this.isDashing = false;
+        await Interval.milliseconds(this.dashCooldown);
+        this.canDash = true;
+    }
+
+    protected move() {
+        super.move();
+        if (this.isDashing) {
+            this.body.setVelocity(this.body.velocity.x * this.dashSpeed, this.body.velocity.y * this.dashSpeed);
+        }
     }
 
     destroy() {

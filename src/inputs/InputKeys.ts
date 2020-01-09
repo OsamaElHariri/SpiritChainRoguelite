@@ -134,11 +134,31 @@ export class InputKeys {
         return this.checkKeyGroupJustPressed(this.left);
     }
 
+    upJustDoubleTapped(): boolean {
+        return this.checkKeyGroupJustDoubleTapped(this.up);
+    }
+
+    downJustDoubleTapped(): boolean {
+        return this.checkKeyGroupJustDoubleTapped(this.down);
+    }
+
+    rightJustDoubleTapped(): boolean {
+        return this.checkKeyGroupJustDoubleTapped(this.right);
+    }
+
+    leftJustDoubleTapped(): boolean {
+        return this.checkKeyGroupJustDoubleTapped(this.left);
+    }
+
     private checkKeyGroupPressed(keyGroup: KeyGroup): boolean {
-        return !this.isDisabled && keyGroup.hasKeyDown();
+        return !this.isDisabled && keyGroup.hasKeyDown(this.keyboard.game.getFrame());
     }
 
     private checkKeyGroupJustPressed(keyGroup: KeyGroup): boolean {
-        return !this.isDisabled && keyGroup.hasKeyJustPressed();
+        return !this.isDisabled && keyGroup.hasKeyJustPressed(this.keyboard.game.getFrame());
+    }
+
+    private checkKeyGroupJustDoubleTapped(keyGroup: KeyGroup): boolean {
+        return !this.isDisabled && keyGroup.hasKeyJustDoubleTapped(this.keyboard.game.getFrame());
     }
 }
