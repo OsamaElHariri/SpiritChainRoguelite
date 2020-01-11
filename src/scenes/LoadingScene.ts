@@ -20,8 +20,13 @@ export class LoadingScene extends Scene {
     }
 
     preload() {
+        this.loadHtml();
         this.loadAssets();
         this.constructLoadingScrean();
+    }
+
+    private loadHtml() {
+        this.load.html('text_input', 'dom_html/text_input.html');
     }
 
     private loadAssets() {
@@ -103,6 +108,12 @@ export class LoadingScene extends Scene {
         this.load.image('burger_menu', '../assets/sprites/ui/burger_menu.png');
         this.load.image('spirit_clone', '../assets/sprites/actor/spirit_clone/spirit_clone.png');
         this.load.image('spirit_clone_aura', '../assets/sprites/actor/spirit_clone/spirit_clone_aura.png');
+        this.load.image('gf_chat_icon', '../assets/sprites/phone/chat_icons/gf_chat_icon.png');
+        this.load.image('mum_chat_icon', '../assets/sprites/phone/chat_icons/mum_chat_icon.png');
+        this.load.image('ismail_chat_icon', '../assets/sprites/phone/chat_icons/ismail_chat_icon.png');
+        this.load.image('crazy_park_chat_icon', '../assets/sprites/phone/chat_icons/crazy_park_chat_icon.png');
+        this.load.image('fiona_chat_icon', '../assets/sprites/phone/chat_icons/fiona_chat_icon.png');
+        this.load.image('send_button', '../assets/sprites/phone/chat_icons/send_button.png');
     }
 
     private constructLoadingScrean(): void {

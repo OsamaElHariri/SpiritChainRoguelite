@@ -3,48 +3,89 @@ import { ChatScene } from "../../scenes/ChatScene";
 import { NumberUtils } from "../../utils/NumberUtils";
 import { ChatMessage } from "./ChatMessage";
 import { ChatContacts } from "./ChatContacts";
+import { Interval } from "../../utils/interval";
 
 export class ChatScreen extends Phaser.GameObjects.Container {
 
+    private chatHeader: Phaser.GameObjects.Container;
     private chatContactsPanel: Phaser.GameObjects.Container;
     private chatArea: Phaser.GameObjects.Container;
+    private chatInput: Phaser.GameObjects.Container;
     private selectedContact: string;
+    private screenHeader: Phaser.GameObjects.Rectangle;
+    private chatInputDom: Phaser.GameObjects.DOMElement;
 
     constructor(public scene: ChatScene, x: number, y: number, private world: World, initialMessage?: ChatMessage) {
         super(scene, x, y);
         scene.add.existing(this);
-        this.chatContactsPanel = this.scene.add.container(0, 120);
-        this.chatArea = this.scene.add.container(240, 100);
+        this.chatContactsPanel = this.scene.add.container(0, 36);
+        this.chatArea = this.scene.add.container(240, 36);
+        this.chatHeader = this.scene.add.container(240, 36);
+        this.chatInput = this.scene.add.container(240, 520);
 
         if (initialMessage) {
             this.selectedContact = initialMessage.sender;
         }
 
+        this.constructHtmlTextInput();
+
         this.refresh();
     }
 
+    private async constructHtmlTextInput() {
+        await Interval.milliseconds(500);
+        if (this.active) {
+            this.chatInputDom = this.scene.add.dom(260, 540).createFromCache('text_input').setOrigin(0);
+            this.scene.input.keyboard.on('keydown-ENTER', () => {
+                this.sendChatMessage();
+            });
+        }
+    }
+
+    private sendChatMessage() {
+        if (!this.selectedContact) return;
+        const textInput: any = this.chatInputDom.getChildByID('text_input');
+        if (textInput && textInput.value) {
+            this.world.player.chats[this.selectedContact].push(new ChatMessage(ChatContacts.Me, textInput.value));
+            textInput.value = "";
+            this.refresh();
+        }
+    }
+
     private refresh() {
+        this.constructChatHeader();
         this.constructChatArea();
         this.constructChatContactsPanel();
+        this.constructScreenHeader();
+        this.constructChatInput();
+    }
+
+    private constructChatHeader() {
+        this.chatHeader.removeAll(true);
+        const background = this.scene.add.rectangle(0, 0, 800, 80, 0xfefefe).setOrigin(0);
+        const backgroundShadow = this.scene.add.rectangle(0, 4, 800, 80, 0, 0.1).setOrigin(0);
+        const chatIcon = this.scene.add.sprite(48, 40, ChatContacts.icons()[this.selectedContact] || ChatContacts.defaultIcon);
+        const name = this.scene.add.text(88, 40, this.selectedContact, {
+            color: '#4a4a4a',
+            fontSize: '22px',
+        }).setOrigin(0, 0.5);
+        this.chatHeader.add([backgroundShadow, background, chatIcon, name]);
     }
 
     private constructChatContactsPanel() {
         this.chatContactsPanel.removeAll(true);
-        const text = this.scene.add.text(4, 0, "Chats", {
+        const background = this.scene.add.rectangle(0, 0, 240, 600, 0xf9f9f9).setOrigin(0);
+        const text = this.scene.add.text(16, 12, "Chats", {
             color: '#398547',
             fontSize: '32px',
         });
-        this.chatContactsPanel.add(text);
-
-
-
+        this.chatContactsPanel.add([background, text]);
 
         const contacts = Object.keys(this.world.player.chats);
         for (let i = 0; i < contacts.length; i++) {
             const contact = contacts[i];
-            const chatContact = this.constructChatContact(0, 72 + i * 60, contact);
+            const chatContact = this.constructChatContact(12, 72 + i * 60, contact);
             this.chatContactsPanel.add(chatContact);
-
         }
     }
 
@@ -81,10 +122,11 @@ export class ChatScreen extends Phaser.GameObjects.Container {
     private constructChatArea() {
         const chat = this.world.player.chats[this.selectedContact] || [];
         this.chatArea.removeAll(true);
-        const background = this.scene.add.rectangle(0, 0, 800, 600, 0xfafafa).setOrigin(0);
+        const background = this.scene.add.rectangle(0, 0, 800, 600, 0xefefef).setOrigin(0);
 
         this.chatArea.add(background);
-        const chatContainer = this.scene.add.container(10, 400);
+        const chatContainerHeight = 480;
+        const chatContainer = this.scene.add.container(10, chatContainerHeight);
         let chatHeight = 0;
         const chatWidth = 240;
         const boxPadding = 12;
@@ -107,13 +149,28 @@ export class ChatScreen extends Phaser.GameObjects.Container {
         const diff = Math.max(Math.abs(chatHeight) - yYnitial, 0);
         background.setInteractive();
         background.on('wheel', (pointer) => {
-            chatContainer.y = NumberUtils.clamp(chatContainer.y - pointer.deltaY * 20, 400, 400 + diff);
+            chatContainer.y = NumberUtils.clamp(chatContainer.y - pointer.deltaY * 20, chatContainerHeight, chatContainerHeight + diff + 100);
         });
     }
 
+    private constructScreenHeader() {
+        if (this.screenHeader) this.screenHeader.destroy();
+        this.screenHeader = this.scene.add.rectangle(0, 0, 800, 36, 0xffffff).setOrigin(0);
+    }
+
+    private constructChatInput() {
+        this.chatInput.removeAll(true);
+        const background = this.scene.add.rectangle(0, 0, 600, 200, 0xffffff).setOrigin(0);
+        const chatButton = this.scene.add.sprite(512, 36, 'send_button');
+        chatButton.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => this.sendChatMessage());
+        this.chatInput.add([background, chatButton]);
+    }
+
     destroy() {
+        this.screenHeader.destroy();
         this.chatArea.destroy();
         this.chatContactsPanel.destroy();
+        this.chatHeader.destroy();
         super.destroy();
     }
 }

@@ -28,6 +28,7 @@ export class MenuScene extends Scene {
         this.scene.get("PhoneLockScreenScene").events.emit(Signals.MenuInitialized);
         ['keydown-P', 'keydown-ESC'].forEach((key) => {
             this.input.keyboard.on(key, () => {
+                if (this.scene.isActive("ChatScene")) return;
                 this.events.emit(Signals.CloseMenu);
             });
         });

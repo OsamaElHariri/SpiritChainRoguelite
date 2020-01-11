@@ -3,12 +3,14 @@ import { Signals } from "../Signals";
 import { Interval } from "../utils/interval";
 import { World } from "../world/World";
 import { ChatMessage } from "../ui/chat/ChatMessage";
+import { ChatContacts } from "../ui/chat/ChatContacts";
 
 export class HudScene extends Scene {
     sceneData: { world: World };
     heart: Phaser.GameObjects.Sprite;
 
     private hud: Phaser.GameObjects.Container;
+    private notificationDuration = 5000;
     private showing = true;
 
     constructor() {
@@ -147,21 +149,31 @@ export class HudScene extends Scene {
         const background = this.add.sprite(400, -100, 'notification_panel');
         background.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
             this.sceneData.world.pause("ChatScene", message);
+            this.add.tween({
+                targets: [notificationContainer],
+                duration: 500,
+                alpha: {
+                    getStart: () => 1,
+                    getEnd: () => 0,
+                },
+            });
         });
+
+        const chatIcon = this.add.sprite(220, -100, ChatContacts.icons()[message.sender] || ChatContacts.defaultIcon);
         const clickForInfoText = this.add.text(620, -120, "(Click to view)", {
             color: '#4a4a4a',
             fontSize: '14px',
         }).setOrigin(1).setAlpha(0.7);
-        const senderText = this.add.text(180, -100, message.sender, {
+        const senderText = this.add.text(268, -100, message.sender, {
             color: '#4a4a4a',
-            fontSize: '30px',
+            fontSize: '22px',
         }).setOrigin(0, 1);
-        const messageText = this.add.text(180, -70, message.text.substr(0, 32) + "...", {
+        const messageText = this.add.text(268, -80, message.text.substr(0, 32) + "...", {
             color: '#4a4a4a',
-            fontSize: '18px',
+            fontSize: '16px',
             wordWrap: { width: 400 },
         }).setOrigin(0, 1);
-        notificationContainer.add([background, clickForInfoText, senderText, messageText]);
+        notificationContainer.add([background, chatIcon, clickForInfoText, senderText, messageText]);
         this.hud.add(notificationContainer);
 
         await this.moveNotificationPanel({
@@ -175,7 +187,7 @@ export class HudScene extends Scene {
 
         await this.moveNotificationPanel({
             targets: [notificationContainer],
-            delay: 5000,
+            delay: this.notificationDuration,
             duration: 400,
             y: {
                 getStart: () => 160,
