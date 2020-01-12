@@ -42,7 +42,8 @@ export class NullifyField extends Phaser.GameObjects.Sprite {
     }
 
     update(time: number, delta: number) {
-        const weapons = this.world.player.getActiveWeapons();
+        let weapons = this.world.player.getActiveWeapons();
+        this.world.player.getClones().forEach(clone => weapons = weapons.concat(clone.getActiveWeapons()))
         weapons.forEach(weapon => {
             this.scene.physics.overlap(this, weapon.terrainCollider, () => {
                 weapon.destroy();

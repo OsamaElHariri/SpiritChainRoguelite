@@ -43,6 +43,7 @@ export class Player extends Actor {
     private keys = InputKeys.getInstance();
     private isDashing = false;
     private canDash = true;
+    private clones: SpiritClone[] = [];
 
     private clickListenerFunction: Function;
 
@@ -219,7 +220,7 @@ export class Player extends Actor {
         if (this.isDashing || !this.canDash) return;
         this.canDash = false;
         this.isDashing = true;
-        this.spawnSpiritClone(this.x, this.y);
+        this.clones.push(this.spawnSpiritClone(this.x, this.y));
         const engine = this.moveEngine;
         this.moveWith(new DashMoveEngine(this.moveEngine.getHorizontalAxis(), this.moveEngine.getVerticalAxis()));
         await Interval.milliseconds(this.dashTime);
@@ -234,6 +235,11 @@ export class Player extends Actor {
         clone.setSpriteRotation(this.mainSprite.rotation);
         this.upgradesHistory.forEach(upgrade => clone.handleUpgradeRequest(upgrade));
         return clone;
+    }
+
+    getClones() {
+        this.clones = this.clones.filter(clone => clone.active);
+        return this.clones;
     }
 
     protected move() {
