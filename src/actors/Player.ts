@@ -44,6 +44,7 @@ export class Player extends Actor {
     private isDashing = false;
     private canDash = true;
     private clones: SpiritClone[] = [];
+    private pauseStun = false;
 
     private clickListenerFunction: Function;
 
@@ -72,6 +73,7 @@ export class Player extends Actor {
     }
 
     private onPause() {
+        this.pauseStun = true;
         this.scene.add.tween({
             targets: [this.phoneAndHands],
             duration: this.world.scene.pauseAnimationTime * 0.8,
@@ -83,6 +85,7 @@ export class Player extends Actor {
     }
 
     private onResume() {
+        this.pauseStun = false;
         this.scene.add.tween({
             targets: [this.phoneAndHands],
             delay: this.world.scene.pauseAnimationTime / 2,
@@ -172,7 +175,7 @@ export class Player extends Actor {
     }
 
     takeDamage(actor: Actor, weapon: Weapon) {
-        if (this.isInvulnerable || this.isDashing) return;
+        if (this.isInvulnerable || this.isDashing || this.pauseStun) return;
         const damageTaken = super.takeDamage(actor, weapon);
         if (damageTaken) {
             this.isInvulnerable = true;
@@ -243,6 +246,10 @@ export class Player extends Actor {
     }
 
     protected move() {
+        if (this.pauseStun) {
+            this.body.setVelocity(0);
+            return;
+        }
         super.move();
         if (this.isDashing) {
             this.body.setVelocity(this.body.velocity.x * this.dashSpeed, this.body.velocity.y * this.dashSpeed);
