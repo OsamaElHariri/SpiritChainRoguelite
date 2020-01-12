@@ -51,6 +51,7 @@ export class NullifyField extends Phaser.GameObjects.Sprite {
     }
 
     destroy() {
+        if (!this.active) return;
         this.world.scene.stopUpdating(this.id);
         this.effect.destroy();
         super.destroy();

@@ -11,6 +11,7 @@ import { Door } from "./dungeaon_generation/Door";
 import { RoomConfig } from "./RoomConfig";
 import { Player } from "../actors/Player";
 import { RoomEntrance } from "./terrain/RoomEntrance";
+import { RoomLayout } from "./room_generation/room_layouts/RoomLayout";
 
 export class Room extends Phaser.GameObjects.Container {
     scene: Scene;
@@ -26,6 +27,7 @@ export class Room extends Phaser.GameObjects.Container {
 
     protected spawnPoints: GridNode[] = [];
     protected partitioner: RoomPartitioner;
+    protected roomLayout: RoomLayout;
     protected hasSpawnedMobs = false;
 
     private id: number;
