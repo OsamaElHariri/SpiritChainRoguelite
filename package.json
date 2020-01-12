@@ -8,10 +8,8 @@
         "testWithCoverage": "nyc -r lcov -e .ts -x \"*.test.ts\" mocha -r ts-node/register tests/**/*.test.ts && nyc report",
         "dev": "parcel index.html",
         "build": "parcel build index.html --out-dir build",
-        "copyAssets": "cpx \"src/assets/**\" \"dist/assets\"",
-        "copyHtml": "cpx \"src/dom_html/**\" \"dist/dom_html\"",
-        "copyAssetsBuild": "cpx \"src/assets/**\" \"build/assets\"",
-        "copyHtmlBuild": "cpx \"src/dom_html/**\" \"build/dom_html\""
+        "copyAssets": "cpx \"src/assets/**\" \"dist/assets\" && cpx \"src/dom_html/**\" \"dist/dom_html\"",
+        "copyAssetsBuild": "cpx \"src/assets/**\" \"build/assets\" && cpx \"src/dom_html/**\" \"build/dom_html\""
     },
     "author": "Osama El Hariri",
     "license": "ISC",
