@@ -8,4 +8,12 @@ export class PlayerUpgrade {
     static increaseMaxWeapons(player: Player) {
         player.maxNumberOfWeapons += 1;
     }
+
+    static increaseCloneCount(player: Player) {
+        player.maxCloneCount += 1;
+    }
+
+    static dash(player: Player) {
+        player.canDash = true;
+    }
 }

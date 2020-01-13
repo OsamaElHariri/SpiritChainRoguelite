@@ -22,6 +22,9 @@ export class UpgradeUtil {
     static readonly upgrades: Upgrade[] = [
         { id: 'player_increase_speed', cost: 3, playerUpgrade: PlayerUpgrade.doubleSpeed, description: "Increase your movement speed" },
         { id: 'player_increase_weapons', cost: 3, playerUpgrade: PlayerUpgrade.increaseMaxWeapons, description: "Increase number of weapons" },
+        { id: 'player_dash', cost: 3, playerUpgrade: PlayerUpgrade.dash, description: "Double tap a direction to dash. You are invulnerable while dashing" },
+        { id: 'player_increase_clone_count', cost: 5, playerUpgrade: PlayerUpgrade.increaseCloneCount, description: "Leave a spirit clone behind when you dash. The spirit clones copies your attacks" },
+        { id: 'player_increase_clone_count_again', cost: 5, playerUpgrade: PlayerUpgrade.increaseCloneCount, description: "Increase the maximum number of active clones at a time" },
         { id: 'weapon_through_walls', cost: 5, weaponUpgrade: PowerUp.goThroughWalls, description: "Your spirit weapon can now pass through walls" },
         { id: 'weapon_increase_size', cost: 2, weaponUpgrade: PowerUp.doubleRadius, description: "Your spirit weapon doubles in size" },
         { id: 'weapon_decrease_hold', cost: 1, weaponUpgrade: PowerUp.halfHoldTime, description: "Shorter hold time" },
@@ -39,6 +42,11 @@ export class UpgradeUtil {
         'player_increase_speed': {
             'player_increase_weapons': {},
         },
+        'player_dash': {
+            'player_increase_clone_count': {
+                'player_increase_clone_count_again': {},
+            }
+        },
         'weapon_increase_size': {
             'weapon_increase_hold': {},
             'weapon_stun': {},
@@ -55,7 +63,6 @@ export class UpgradeUtil {
             },
             'fist_pulse_count_increase_again': {},
         },
-
     }
 
     static getValidUpgrades(activeUpgrades: Upgrade[]) {

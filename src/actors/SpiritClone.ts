@@ -17,7 +17,7 @@ export class SpiritClone extends Actor {
     dashCooldown = 200;
     dashSpeed = 9;
 
-    private shouldImitatePlayer = true;
+    isImitatingPlayer = true;
 
     private spiritFist: SpiritFist;
     private weapons: SpiritWeapon[] = [];
@@ -56,7 +56,7 @@ export class SpiritClone extends Actor {
     private async startDeathTimer(deathDelay: number) {
         await Interval.milliseconds(deathDelay);
         if (!this.active) return;
-        this.shouldImitatePlayer = false;
+        this.isImitatingPlayer = false;
         this.scene.add.tween({
             targets: [this.mainSprite, this.auraSprite],
             duration: 3000,
@@ -76,7 +76,7 @@ export class SpiritClone extends Actor {
 
         this.clickListenerFunction = (pointer) => {
             this.removeInactiveWeapons();
-            if (!this.shouldImitatePlayer) return;
+            if (!this.isImitatingPlayer) return;
             const isRightClick = pointer.button == 2;
             const isLeftClick = pointer.button == 0;
             if (isLeftClick && this.weapons.length < this.maxNumberOfWeapons) {

@@ -27,6 +27,9 @@ export class Player extends Actor {
     dashCooldown = 200;
     dashSpeed = 9;
 
+    canDash = false;
+    maxCloneCount = 0;
+
     chats: { [sender: string]: ChatMessage[]; };
     chatFlags = {
         hasReceivedWeaponTutorial: false,
@@ -42,7 +45,6 @@ export class Player extends Actor {
     private isInvulnerable = false;
     private keys = InputKeys.getInstance();
     private isDashing = false;
-    private canDash = true;
     private clones: SpiritClone[] = [];
     private pauseStun = false;
 
@@ -223,7 +225,7 @@ export class Player extends Actor {
         if (this.isDashing || !this.canDash) return;
         this.canDash = false;
         this.isDashing = true;
-        this.clones.push(this.spawnSpiritClone(this.x, this.y));
+        this.spawnSpiritClone(this.x, this.y);
         const engine = this.moveEngine;
         this.moveWith(new DashMoveEngine(this.moveEngine.getHorizontalAxis(), this.moveEngine.getVerticalAxis()));
         await Interval.milliseconds(this.dashTime);
@@ -234,10 +236,12 @@ export class Player extends Actor {
     }
 
     spawnSpiritClone(x: number, y: number) {
+        const clones = this.getClones().filter(clone => clone.isImitatingPlayer);
+        if (clones.length >= this.maxCloneCount) return;
         const clone = new SpiritClone(this.world, x, y, this.cloneDuration);
         clone.setSpriteRotation(this.mainSprite.rotation);
         this.upgradesHistory.forEach(upgrade => clone.handleUpgradeRequest(upgrade));
-        return clone;
+        this.clones.push(clone);
     }
 
     getClones() {
