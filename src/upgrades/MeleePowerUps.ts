@@ -12,4 +12,8 @@ export class MeleePowerUp {
     static increasePulseExplosionSize(weapon: SpiritFist) {
         weapon.pulseSize *= 1.5;
     }
+
+    static increasePulseExplosionStrength(weapon: SpiritFist) {
+        weapon.pulseStrength *= 1.5;
+    }
 }

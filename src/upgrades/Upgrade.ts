@@ -35,7 +35,8 @@ export class UpgradeUtil {
         { id: 'fist_increase_strength', cost: 2, punchUpgrade: MeleePowerUp.doubleStrength, description: "Spirit punch deals more damage" },
         { id: 'fist_pulse_count_increase', cost: 5, punchUpgrade: MeleePowerUp.increasePulseExplosionCount, description: "Spirit punch emits a pulse" },
         { id: 'fist_pulse_count_increase_again', cost: 5, punchUpgrade: MeleePowerUp.increasePulseExplosionCount, description: "Spirit punch emits another pulse" },
-        { id: 'fist_pulse_size_increase', cost: 2, punchUpgrade: MeleePowerUp.increasePulseExplosionSize, description: "Increase the size of the pulse emitted by your spirit punch" },
+        { id: 'fist_pulse_increase_strength', cost: 2, punchUpgrade: MeleePowerUp.increasePulseExplosionStrength, description: "The pulse emitted by your spirit fist deals more damage" },
+        { id: 'fist_pulse_increase_size', cost: 2, punchUpgrade: MeleePowerUp.increasePulseExplosionSize, description: "Increase the size of the pulse emitted by your spirit punch" },
     ];
 
     static readonly upgradeTree: UpgradeTree = {
@@ -59,7 +60,8 @@ export class UpgradeUtil {
         },
         'fist_increase_strength': {
             'fist_pulse_count_increase': {
-                'fist_pulse_size_increase': {},
+                'fist_pulse_increase_strength': {},
+                'fist_pulse_increase_size': {},
             },
             'fist_pulse_count_increase_again': {},
         },

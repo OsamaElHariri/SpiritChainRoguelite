@@ -11,6 +11,7 @@ export class SpiritFist extends Phaser.GameObjects.Container implements Weapon {
 
     spawnPulseCount = 0;
     pulseSize = 120;
+    pulseStrength = 200;
 
     onOtherHit: ((weapon: SpiritFist, enemy: Actor) => void)[] = [];
     onDestroy: ((weapon: SpiritFist) => void)[] = [];
@@ -82,7 +83,7 @@ export class SpiritFist extends Phaser.GameObjects.Container implements Weapon {
         for (let i = 0; i < this.spawnPulseCount; i++) {
             const xPulse = this.x + (this.pulseSize * i + 64 + this.maxDistance) * this.direction.x;
             const yPulse = this.y + (this.pulseSize * i + 64 + this.maxDistance) * this.direction.y;
-            new PulseExplosion(this.source, xPulse, yPulse, this.pulseSize);
+            new PulseExplosion(this.source, xPulse, yPulse, this.pulseSize, this.pulseStrength);
         }
     }
 

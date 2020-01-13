@@ -2,7 +2,6 @@ import { Weapon } from "../Weapon";
 import { Actor } from "../../actors/Actor";
 
 export class PulseExplosion extends Phaser.GameObjects.Ellipse implements Weapon {
-    strength: number = 200;
 
     body: Phaser.Physics.Arcade.Body;
 
@@ -11,7 +10,7 @@ export class PulseExplosion extends Phaser.GameObjects.Ellipse implements Weapon
     private sprite: Phaser.GameObjects.Sprite;
     private enemiesHit = {};
 
-    constructor(public source: Actor, x: number, y: number, size: number) {
+    constructor(public source: Actor, x: number, y: number, size: number, public strength: number) {
         super(source.world.scene, x, y, size, size);
         this.id = source.world.scene.addObject(this);
         source.world.scene.physics.world.enable(this);
