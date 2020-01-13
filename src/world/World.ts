@@ -116,10 +116,8 @@ export class World extends Phaser.GameObjects.Container {
             const message2 = new ChatMessage(ChatContacts.Ismail,
                 "You can fire your spirit weapon with the LEFT MOUSE BUTTON");
             const message3 = new ChatMessage(ChatContacts.Ismail,
-                "And you can fire your spirit fist with the RIGHT MOUSE BUTTON");
-            const message4 = new ChatMessage(ChatContacts.Ismail,
                 "Also, you should be able to view the map on your phone by pressing the M KEY");
-            this.player.chats[ChatContacts.Ismail].push(message1, message2, message3, message4);
+            this.player.chats[ChatContacts.Ismail].push(message1, message2, message3);
             this.emit(Signals.NewChatMessage, message1);
 
         }
