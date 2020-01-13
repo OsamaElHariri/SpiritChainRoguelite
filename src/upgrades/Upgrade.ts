@@ -30,6 +30,9 @@ export class UpgradeUtil {
         { id: 'weapon_increase_travel_damage', cost: 4, weaponUpgrade: PowerUp.doubleDamageWhenTraveling, description: "Weapon deals more damage as it travels" },
         { id: 'weapon_stun', cost: 3, weaponUpgrade: PowerUp.stun, description: "Weapon stuns enemies it touches" },
         { id: 'fist_increase_strength', cost: 2, punchUpgrade: MeleePowerUp.doubleStrength, description: "Spirit punch deals more damage" },
+        { id: 'fist_pulse_count_increase', cost: 5, punchUpgrade: MeleePowerUp.increasePulseExplosionCount, description: "Spirit punch emits a pulse" },
+        { id: 'fist_pulse_count_increase_again', cost: 5, punchUpgrade: MeleePowerUp.increasePulseExplosionCount, description: "Spirit punch emits another pulse" },
+        { id: 'fist_pulse_size_increase', cost: 2, punchUpgrade: MeleePowerUp.increasePulseExplosionSize, description: "Increase the size of the pulse emitted by your spirit punch" },
     ];
 
     static readonly upgradeTree: UpgradeTree = {
@@ -46,7 +49,12 @@ export class UpgradeUtil {
                 'weapon_through_walls': {},
             },
         },
-        'fist_increase_strength': {},
+        'fist_increase_strength': {
+            'fist_pulse_count_increase': {
+                'fist_pulse_size_increase': {},
+            },
+            'fist_pulse_count_increase_again': {},
+        },
 
     }
 

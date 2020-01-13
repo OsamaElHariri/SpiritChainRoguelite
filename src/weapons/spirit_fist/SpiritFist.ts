@@ -2,11 +2,15 @@ import { World } from "../../world/World"
 import { Weapon } from "../Weapon";
 import { Actor } from "../../actors/Actor";
 import { Interval } from "../../utils/interval";
+import { PulseExplosion } from "./PulseExplosion";
 
 export class SpiritFist extends Phaser.GameObjects.Container implements Weapon {
     strength = 250;
     speed = 7;
     maxDistance = 65;
+
+    spawnPulseCount = 0;
+    pulseSize = 120;
 
     onOtherHit: ((weapon: SpiritFist, enemy: Actor) => void)[] = [];
     onDestroy: ((weapon: SpiritFist) => void)[] = [];
@@ -26,7 +30,7 @@ export class SpiritFist extends Phaser.GameObjects.Container implements Weapon {
         this.id = world.scene.addObject(this);
         const xDif = target.x - source.x;
         const yDif = target.y - source.y;
-        this.direction = new Phaser.Math.Vector2(xDif, yDif);
+        this.direction = new Phaser.Math.Vector2(xDif, yDif).normalize();
 
         this.sprite = this.scene.add.sprite(0, this.offset, 'spiritfist').setOrigin(0.5, 0.4).setAngle(180);
         this.add(this.sprite);
@@ -67,11 +71,19 @@ export class SpiritFist extends Phaser.GameObjects.Container implements Weapon {
     private async onReachMaxDistance() {
         if (this.isAtMaxDistance) return;
         this.isAtMaxDistance = true;
+        this.spawnPulses();
         await Interval.milliseconds(this.holdTime);
         if (!this.active) return;
         this.onDestroy.forEach((onHit) => onHit(this));
         this.destroy();
+    }
 
+    private spawnPulses() {
+        for (let i = 0; i < this.spawnPulseCount; i++) {
+            const xPulse = this.x + (this.pulseSize * i + 64 + this.maxDistance) * this.direction.x;
+            const yPulse = this.y + (this.pulseSize * i + 64 + this.maxDistance) * this.direction.y;
+            new PulseExplosion(this.source, xPulse, yPulse, this.pulseSize);
+        }
     }
 
     destroy() {
