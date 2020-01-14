@@ -20,11 +20,12 @@ export class Actor extends Phaser.GameObjects.Ellipse {
     speed: number = 160;
     stunRemoveTime: number = 0;
     isDead = false;
-
+    
     protected mainSprite: Phaser.GameObjects.Sprite;
-
+    
     protected moveEngine: MoveEngine = new EmptyMoveEngine();
-
+    
+    protected isCollidingWithTerrain = false;
     private collisionSlideAddition: number = 0.75;
     private topLeftOverlapChecker: Phaser.GameObjects.Rectangle;
     private topRightOverlapChecker: Phaser.GameObjects.Rectangle;
@@ -149,12 +150,13 @@ export class Actor extends Phaser.GameObjects.Ellipse {
     }
 
     private collideWithTerrain() {
+        this.isCollidingWithTerrain = false;
         this.canSlideTopLeft = true;
         this.canSlideTopRight = true;
         this.canSlideBottomLeft = true;
         this.canSlideBottomRight = true;
         this.world.getCurrentRoom().getCollidables().forEach(terrain => {
-            this.world.scene.physics.collide(this, terrain);
+            this.world.scene.physics.collide(this, terrain, (_, __) => this.isCollidingWithTerrain = true);
 
             this.world.scene.physics.overlap(this.topLeftOverlapChecker, terrain, (_, __) => this.canSlideTopLeft = false);
             this.world.scene.physics.overlap(this.topRightOverlapChecker, terrain, (_, __) => this.canSlideTopRight = false);

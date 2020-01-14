@@ -74,6 +74,7 @@ export class LoadingScene extends Scene {
         this.load.image('topdownplayer', '../assets/sprites/actor/topdownplayer.png');
         this.load.image('topdownenemy', '../assets/sprites/actor/topdownenemy.png');
         this.load.image('puddle_enemy', '../assets/sprites/actor/puddle_enemy.png');
+        this.load.image('charge_enemy', '../assets/sprites/actor/charge_enemy.png');
         this.load.image('puddle_boss', '../assets/sprites/actor/puddle_boss/puddle_boss.png');
         this.load.image('puddle_boss_crazy', '../assets/sprites/actor/puddle_boss/puddle_boss_crazy.png');
         this.load.image('magician_hat', '../assets/sprites/actor/hands_boss/magician_hat.png');
@@ -84,6 +85,7 @@ export class LoadingScene extends Scene {
         this.load.image('evil_puddle_bubble', '../assets/sprites/enemy_attacks/evil_puddle/evil_puddle_bubble.png');
         this.load.image('nullify_field', '../assets/sprites/enemy_attacks/nullify_field/nullify_field.png');
         this.load.image('nullify_field_effect', '../assets/sprites/enemy_attacks/nullify_field/nullify_field_effect.png');
+        this.load.image('charge_anticipation', '../assets/sprites/enemy_attacks/charge_enemy_effects/charge_anticipation.png');
         this.load.image('fence', '../assets/sprites/environment/room_decorations/fence.png');
         this.load.image('fence_corner', '../assets/sprites/environment/room_decorations/fence_corner.png');
         this.load.image('fence_block', '../assets/sprites/environment/room_decorations/fence_block.png');

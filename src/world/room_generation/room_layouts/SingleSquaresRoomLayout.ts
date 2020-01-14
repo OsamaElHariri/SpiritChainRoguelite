@@ -6,6 +6,7 @@ import { Enemy } from "../../../actors/Enemy";
 import { NullifyEnemy } from "../../../actors/NullifyEnemy";
 import { LaserEnemy } from "../../../actors/LaserEnemy";
 import { PuddleEnemy } from "../../../actors/PuddleEnemy";
+import { ChargeEnemy } from "../../../actors/ChargeEnemy";
 
 export class SingleSquaresRoomLayout extends RoomLayout {
 
@@ -89,6 +90,11 @@ export class SingleSquaresRoomLayout extends RoomLayout {
                     minFloor: 2,
                     maxFloor: 100,
                     generator: (world: World, x: number, y: number) => new PuddleEnemy(world, x, y)
+                },
+                {
+                    minFloor: 6,
+                    maxFloor: 100,
+                    generator: (world: World, x: number, y: number) => new ChargeEnemy(world, x, y)
                 },
             ],
             canApply: (grid: Grid) => {

@@ -6,6 +6,7 @@ import { World } from "../../World";
 import { NullifyEnemy } from "../../../actors/NullifyEnemy";
 import { LaserEnemy } from "../../../actors/LaserEnemy";
 import { RoomLayout, LayoutConfig, SpawnPointConfig } from "./RoomLayout";
+import { ChargeEnemy } from "../../../actors/ChargeEnemy";
 
 export class RoomStairsLayout extends RoomLayout {
     layout: LayoutConfig[] = [
@@ -99,6 +100,11 @@ export class RoomStairsLayout extends RoomLayout {
                     maxFloor: 100,
                     generator: (world: World, x: number, y: number) => new NullifyEnemy(world, x, y)
                 },
+                {
+                    minFloor: 6,
+                    maxFloor: 100,
+                    generator: (world: World, x: number, y: number) => new ChargeEnemy(world, x, y)
+                },
             ],
             canApply: (grid: Grid) => {
                 const gridWidth = grid.width - 1;
@@ -132,6 +138,11 @@ export class RoomStairsLayout extends RoomLayout {
                     minFloor: 2,
                     maxFloor: 100,
                     generator: (world: World, x: number, y: number) => new LaserEnemy(world, x, y)
+                },
+                {
+                    minFloor: 6,
+                    maxFloor: 100,
+                    generator: (world: World, x: number, y: number) => new ChargeEnemy(world, x, y)
                 },
             ],
             canApply: (grid: Grid) => {
