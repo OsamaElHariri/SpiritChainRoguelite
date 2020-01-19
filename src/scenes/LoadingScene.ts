@@ -73,6 +73,8 @@ export class LoadingScene extends Scene {
         this.load.image('pulse_explosion_effect', '../assets/sprites/weapon/pulse_explosion_effect.png');
         this.load.image('topdownplayer', '../assets/sprites/actor/topdownplayer.png');
         this.load.image('topdownenemy', '../assets/sprites/actor/topdownenemy.png');
+        this.load.image('ninja_enemy', '../assets/sprites/actor/ninja_enemy.png');
+        this.load.image('reaper_enemy', '../assets/sprites/actor/reaper_enemy.png');
         this.load.image('puddle_enemy', '../assets/sprites/actor/puddle_enemy.png');
         this.load.image('charge_enemy', '../assets/sprites/actor/charge_enemy.png');
         this.load.image('puddle_boss', '../assets/sprites/actor/puddle_boss/puddle_boss.png');
@@ -81,6 +83,10 @@ export class LoadingScene extends Scene {
         this.load.image('evil_spirit_hand', '../assets/sprites/actor/hands_boss/evil_spirit_hand.png');
         this.load.image('spirit_laser', '../assets/sprites/enemy_attacks/spirit_laser/spirit_laser.png');
         this.load.image('spirit_laser_impact', '../assets/sprites/enemy_attacks/spirit_laser/spirit_laser_impact.png');
+        this.load.image('ninja_shadow', '../assets/sprites/enemy_attacks/ninja_enemy_attacks/ninja_shadow.png');
+        this.load.image('ninja_shadow_effect', '../assets/sprites/enemy_attacks/ninja_enemy_attacks/ninja_shadow_effect.png');
+        this.load.image('shuriken', '../assets/sprites/enemy_attacks/ninja_enemy_attacks/shuriken.png');
+        this.load.image('reaper_scythe', '../assets/sprites/enemy_attacks/reaper_enemy_attacks/reaper_scythe.png');
         this.load.image('evil_puddle', '../assets/sprites/enemy_attacks/evil_puddle/evil_puddle.png');
         this.load.image('evil_puddle_bubble', '../assets/sprites/enemy_attacks/evil_puddle/evil_puddle_bubble.png');
         this.load.image('nullify_field', '../assets/sprites/enemy_attacks/nullify_field/nullify_field.png');
