@@ -3,6 +3,7 @@ import { World } from "../World";
 import { RoomConfig } from "../RoomConfig";
 import { HandsBoss } from "../../actors/HandsBoss";
 import { PuddleBoss } from "../../actors/PuddleBoss";
+import { EvilRabbitBoss } from "../../actors/EvilRabbitBoss";
 
 export class BossRoom extends Room {
 
@@ -17,15 +18,17 @@ export class BossRoom extends Room {
     }
 
     private spawnBoss() {
-        if (this.config.roomSelectionRandom < 0.5) {
+        if (this.config.roomSelectionRandom < 0.33) {
             this.actors.push(new HandsBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2))
-        } else {
+        } else if (this.config.roomSelectionRandom < 0.66) {
             this.actors.push(new PuddleBoss(this.world, this.grid.xWorld + 2 * this.grid.xLocalMax / 3,
                 this.grid.yWorld + this.grid.yLocalMax / 2,
                 { isCrazy: false, initialDelay: 2000 }));
             this.actors.push(new PuddleBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 3,
                 this.grid.yWorld + this.grid.yLocalMax / 2,
-                { isCrazy: true, initialDelay: 6500 }));
+                { isCrazy: true, initialDelay: 4500 }));
+        } else {
+            this.actors.push(new EvilRabbitBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2))
         }
     }
 }

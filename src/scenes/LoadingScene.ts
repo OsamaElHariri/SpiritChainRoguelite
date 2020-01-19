@@ -79,6 +79,9 @@ export class LoadingScene extends Scene {
         this.load.image('charge_enemy', '../assets/sprites/actor/charge_enemy.png');
         this.load.image('puddle_boss', '../assets/sprites/actor/puddle_boss/puddle_boss.png');
         this.load.image('puddle_boss_crazy', '../assets/sprites/actor/puddle_boss/puddle_boss_crazy.png');
+        this.load.image('evil_rabbit', '../assets/sprites/actor/evil_rabbit_boss/evil_rabbit.png');
+        this.load.image('evil_rabbit_paw', '../assets/sprites/actor/evil_rabbit_boss/evil_rabbit_paw.png');
+        this.load.image('evil_rabbit_pulse', '../assets/sprites/actor/evil_rabbit_boss/evil_rabbit_pulse.png');
         this.load.image('magician_hat', '../assets/sprites/actor/hands_boss/magician_hat.png');
         this.load.image('evil_spirit_hand', '../assets/sprites/actor/hands_boss/evil_spirit_hand.png');
         this.load.image('spirit_laser', '../assets/sprites/enemy_attacks/spirit_laser/spirit_laser.png');

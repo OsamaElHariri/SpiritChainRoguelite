@@ -84,7 +84,7 @@ export class Room extends Phaser.GameObjects.Container {
         this.scene.getEmitter().emit(Signals.RoomStart, this);
     }
 
-    protected spawnPlayer(x: number = 0, y: number = 0) {
+    protected spawnPlayer(x: number = 400, y: number = 300) {
         let playerPos = { x, y };
         let player: Player;
         if (this.config.doorUsed) {
@@ -196,6 +196,10 @@ export class Room extends Phaser.GameObjects.Container {
         for (let i = 0; i < this.actors.length; i++)
             if (!this.actors[i].isDead) return false;
         return true;
+    }
+
+    getActiveEnemies() {
+        return this.actors.filter(actor => !actor.isDead);
     }
 
     private getEnemyCount() {
