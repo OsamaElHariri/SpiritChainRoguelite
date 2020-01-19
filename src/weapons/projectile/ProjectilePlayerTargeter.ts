@@ -5,7 +5,7 @@ import { Signals } from "../../Signals";
 
 export class ProjectilePlayerTargeter {
     initialDelay: number = 1500;
-    interval: number = 5000;
+    interval: number = 3500;
 
     private indicator = 0;
     private isActive = false;

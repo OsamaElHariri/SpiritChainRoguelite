@@ -62,7 +62,7 @@ export class Actor extends Phaser.GameObjects.Ellipse {
     }
 
     protected constructHealthBar() {
-        return new SimpleLifeBar(this.world.scene, 0, 25, 40, 5);
+        return new SimpleLifeBar(this.world.scene, 0, 30, 40, 5);
     }
 
     setSpeed(speed: number) {

@@ -14,7 +14,7 @@ export class Projectile extends Phaser.GameObjects.Ellipse implements Weapon {
     private room: Room;
 
     constructor(public source: Actor, direction: Phaser.Math.Vector2) {
-        super(source.world.getCurrentRoom().scene, source.x, source.y, 10, 10, 0xaa12bf);
+        super(source.world.scene, source.x, source.y, 10, 10, 0xaa12bf);
         this.room = source.world.getCurrentRoom();
         this.id = this.room.scene.addObject(this);
         this.room.scene.physics.world.enable(this);
