@@ -108,9 +108,10 @@ export class Player extends Actor {
         this.clickListenerFunction = (pointer) => {
             this.removeInactiveWeapons();
             const isLeftClick = pointer.button == 0;
+            const isRightClick = pointer.button == 2;
             if (isLeftClick && this.weapons.length < this.maxNumberOfWeapons) {
                 this.fireSpiritWeapon(pointer);
-            } else if (isLeftClick && (!this.spiritFist || !this.spiritFist.active)) {
+            } else if ((isLeftClick || isRightClick) && (!this.spiritFist || !this.spiritFist.active)) {
                 this.fireSpiritFist(pointer);
             }
         };

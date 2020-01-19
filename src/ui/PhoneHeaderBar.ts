@@ -21,6 +21,7 @@ export class PhoneHeaderBar extends Phaser.GameObjects.Container {
     }
 
     destroy() {
+        if (!this.active) return;
         this.scene.stopUpdating(this.id);
         this.header.destroy();
         this.time.destroy();
