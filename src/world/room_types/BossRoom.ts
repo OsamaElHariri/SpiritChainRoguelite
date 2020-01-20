@@ -4,6 +4,8 @@ import { RoomConfig } from "../RoomConfig";
 import { HandsBoss } from "../../actors/HandsBoss";
 import { PuddleBoss } from "../../actors/PuddleBoss";
 import { EvilRabbitBoss } from "../../actors/EvilRabbitBoss";
+import { Signals } from "../../Signals";
+import { Interval } from "../../utils/interval";
 
 export class BossRoom extends Room {
 
@@ -14,21 +16,43 @@ export class BossRoom extends Room {
     startRoom() {
         super.startRoom();
         if (this.config.creationCount > 1) return;
-        else this.spawnBoss();
+        else {
+            this.hasSpawnedMobs = false;
+            this.spawnBoss();
+        }
     }
 
-    private spawnBoss() {
+    private async spawnBoss() {
+        let bossChoice: { introSpriteKey: string, spawn: Function };
         if (this.config.roomSelectionRandom < 0.33) {
-            this.actors.push(new HandsBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2))
+            bossChoice = {
+                introSpriteKey: 'hands_boss_intro',
+                spawn: () =>
+                    this.actors.push(new HandsBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2))
+            }
         } else if (this.config.roomSelectionRandom < 0.66) {
-            this.actors.push(new PuddleBoss(this.world, this.grid.xWorld + 2 * this.grid.xLocalMax / 3,
-                this.grid.yWorld + this.grid.yLocalMax / 2,
-                { isCrazy: false, initialDelay: 2000 }));
-            this.actors.push(new PuddleBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 3,
-                this.grid.yWorld + this.grid.yLocalMax / 2,
-                { isCrazy: true, initialDelay: 4500 }));
+            bossChoice = {
+                introSpriteKey: 'puddles_intro',
+                spawn: () => {
+                    this.actors.push(new PuddleBoss(this.world, this.grid.xWorld + 2 * this.grid.xLocalMax / 3,
+                        this.grid.yWorld + this.grid.yLocalMax / 2,
+                        { isCrazy: false, initialDelay: 2000 }));
+                    this.actors.push(new PuddleBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 3,
+                        this.grid.yWorld + this.grid.yLocalMax / 2,
+                        { isCrazy: true, initialDelay: 4500 }));
+                }
+            }
         } else {
-            this.actors.push(new EvilRabbitBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2))
+            bossChoice = {
+                introSpriteKey: 'evil_rabbit_intro',
+                spawn: () =>
+                    this.actors.push(new EvilRabbitBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2))
+            }
         }
+
+        this.scene.scene.get("HudScene").events.emit(Signals.BossRoomStart, bossChoice.introSpriteKey);
+        await Interval.milliseconds(3000);
+        bossChoice.spawn();
+        this.hasSpawnedMobs = true;
     }
 }

@@ -11,7 +11,6 @@ export class HudScene extends Scene {
 
     private hud: Phaser.GameObjects.Container;
     private notificationDuration = 5000;
-    private showing = true;
 
     constructor() {
         super('HudScene');
@@ -19,7 +18,6 @@ export class HudScene extends Scene {
 
     create(sceneData: { world: World }): void {
         this.sceneData = sceneData;
-        this.showing = true;
         if (this.hud) {
             this.hud.removeAll(true);
             this.hud.destroy();
@@ -39,7 +37,6 @@ export class HudScene extends Scene {
     private setupListeners() {
         this.events.removeListener(Signals.Pause);
         this.events.on(Signals.Pause, () => {
-            this.showing = false;
             if (this.hud) {
                 this.add.tween({
                     targets: [this.hud],
@@ -54,7 +51,6 @@ export class HudScene extends Scene {
 
         this.events.removeListener(Signals.Resume);
         this.events.on(Signals.Resume, () => {
-            this.showing = true;
             if (this.hud) {
                 this.add.tween({
                     targets: [this.hud],
@@ -65,6 +61,66 @@ export class HudScene extends Scene {
                         getEnd: () => 1,
                     }
                 });
+            }
+        });
+        this.events.removeListener(Signals.BossRoomStart);
+        this.events.on(Signals.BossRoomStart, (spriteKey: string) => {
+            if (this.hud) {
+                this.showBossIntro(spriteKey)
+            }
+        });
+    }
+
+
+    private async showBossIntro(spriteKey: string) {
+        const background = this.add.sprite(-400, 300, 'boss_intro_background').setAlpha(0.9);
+        const bossImage = this.add.sprite(-300, 300, spriteKey);
+        this.hud.add([background, bossImage]);
+        this.add.tween({
+            targets: [background],
+            duration: 400,
+            x: {
+                getStart: () => -400,
+                getEnd: () => 300,
+            },
+        });
+        this.add.tween({
+            targets: [bossImage],
+            duration: 450,
+            ease: Phaser.Math.Easing.Back.Out,
+            x: {
+                getStart: () => -300,
+                getEnd: () => 250,
+            },
+        });
+
+        await Interval.milliseconds(2000);
+        if (!this.scene.isActive('HudScene')) return;
+
+        this.add.tween({
+            targets: [background],
+            duration: 400,
+            ease: Phaser.Math.Easing.Quadratic.In,
+            x: {
+                getStart: () => 300,
+                getEnd: () => -400,
+            },
+            onComplete: () => {
+                this.hud.remove(background);
+                if (background.active) background.destroy();
+            }
+        });
+        this.add.tween({
+            targets: [bossImage],
+            duration: 200,
+            ease: Phaser.Math.Easing.Quadratic.In,
+            x: {
+                getStart: () => 250,
+                getEnd: () => -300,
+            },
+            onComplete: () => {
+                this.hud.remove(bossImage);
+                if (bossImage.active) bossImage.destroy();
             }
         });
     }

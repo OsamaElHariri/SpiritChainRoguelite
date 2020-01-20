@@ -18,6 +18,7 @@ export class PuddleBoss extends Actor {
         super(world, x, y, config.isCrazy ? 'puddle_boss_crazy' : 'puddle_boss');
         this.initialPuddleSpawnDelay = config.initialDelay;
         this.setMaxHealth(2000);
+        this.healthBar.y += 30;
         this.actorType = ActorType.Enemy;
 
         if (config.isCrazy) {
