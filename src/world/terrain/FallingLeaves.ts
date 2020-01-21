@@ -35,6 +35,7 @@ export class FallingLeaves extends Phaser.GameObjects.GameObject {
     }
 
     destroy() {
+        if (!this.active) return;
         this.scene.stopUpdating(this.id);
         this.fallingLeavesManager.destroy();
         super.destroy();

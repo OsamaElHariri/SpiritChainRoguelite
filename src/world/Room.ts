@@ -229,6 +229,7 @@ export class Room extends Phaser.GameObjects.Container {
     }
 
     destroy() {
+        if (!this.active) return;
         this.scene.getEmitter().emit(Signals.RoomDestroy);
         this.world.scene.stopUpdating(this.id);
         this.terrain.forEach((terrain => terrain.destroy()));

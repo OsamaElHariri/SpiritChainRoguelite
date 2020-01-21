@@ -198,6 +198,7 @@ export class Actor extends Phaser.GameObjects.Ellipse {
     }
 
     destroy() {
+        if (!this.active) return;
         this.mainSprite.destroy();
         this.healthBar.destroy();
         this.container.destroy();

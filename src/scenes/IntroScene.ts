@@ -1,5 +1,6 @@
 import { Scene } from "./Scene";
 import { SlideShowWithDialog } from "../ui/slide_shows/SlideShowWithDialog";
+import { CameraUtils } from "../utils/CameraUtils";
 
 export class IntroScene extends Scene {
     constructor() {
@@ -13,8 +14,7 @@ export class IntroScene extends Scene {
     private async playIntro() {
         const slideShow = new SlideShowWithDialog(this);
         await slideShow.startIntroSlideShow();
-        this.input.keyboard.on('keyup', () => {
-            this.scene.start('IntroLoopScene');
-        });
+        await CameraUtils.fadeOut(this.cameras.main, 500);
+        this.scene.start('IntroLoopScene');
     }
 }

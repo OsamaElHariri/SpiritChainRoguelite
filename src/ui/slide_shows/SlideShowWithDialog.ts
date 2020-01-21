@@ -12,9 +12,18 @@ export type SlideShowWithDialogConfig = {
 
 export class SlideShowWithDialog {
 
+    shouldFastForward: boolean = false;
+
     private background: Phaser.GameObjects.Sprite;
 
-    constructor(public scene: Scene) { }
+    constructor(public scene: Scene) {
+        scene.input.on('pointerdown', (pointer) => {
+            const isLeftClick = pointer.button == 0;
+            if (isLeftClick) {
+                this.shouldFastForward = true;
+            }
+        });
+    }
 
     public async startIntroSlideShow() {
         return this.startSlideShow(intro);
@@ -39,10 +48,23 @@ export class SlideShowWithDialog {
                 const dialog = slideShow.dialogs[j];
 
                 if (dialogBox) dialogBox.destroy();
-                dialogBox = new DialogBox(this.scene, 50, 90, dialog);
-                await Interval.milliseconds(800);
+                dialogBox = new DialogBox(this.scene, 50, 90, dialog, this);
+
+                const startOfTextWaitTime = 800;
+                const startWaitTimeSlices = 10
+                for (let i = 0; i < startWaitTimeSlices && !this.shouldFastForward; i++)
+                    await Interval.milliseconds(startOfTextWaitTime / startWaitTimeSlices);
+
+                dialogBox.letterInterval = this.shouldFastForward ? 12 : 20;
+                this.shouldFastForward = false;
+
                 await dialogBox.unconverText();
-                await Interval.milliseconds(2000);
+
+                const endOfTextWaitTime = 5000;
+                const waitTimeSlices = 30
+                for (let i = 0; i < waitTimeSlices && !this.shouldFastForward; i++)
+                    await Interval.milliseconds(endOfTextWaitTime / waitTimeSlices);
+                this.shouldFastForward = false;
 
             }
             if (dialogBox) dialogBox.destroy();

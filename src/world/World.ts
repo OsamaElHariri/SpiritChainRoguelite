@@ -329,6 +329,7 @@ export class World extends Phaser.GameObjects.Container {
     }
 
     destroy() {
+        if (!this.active) return;
         this.currentRoom.destroy();
         this.scene.scene.get("MenuScene").events.removeListener(Signals.CloseMenu);
         this.scene.getEmitter().removeAllListeners();

@@ -83,6 +83,7 @@ export class RoomEntrance extends Phaser.GameObjects.Rectangle {
     }
 
     destroy() {
+        if (!this.active) return;
         this.room.scene.stopUpdating(this.id);
         this.toDestroy.forEach(item => item.destroy());
         super.destroy();
