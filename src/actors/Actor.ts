@@ -55,7 +55,7 @@ export class Actor extends Phaser.GameObjects.Ellipse {
     }
 
     private constructOverlapChecker() {
-        const checker = this.world.scene.add.rectangle(0, 0, 1, 1, 0xff0000);
+        const checker = this.world.scene.add.rectangle(0, 0, 1, 1);
         this.world.scene.physics.world.enable(checker);
         (checker.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
         return checker;

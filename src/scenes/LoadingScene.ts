@@ -126,6 +126,7 @@ export class LoadingScene extends Scene {
         this.load.image('crazy_park_chat_icon', '../assets/sprites/phone/chat_icons/crazy_park_chat_icon.png');
         this.load.image('fiona_chat_icon', '../assets/sprites/phone/chat_icons/fiona_chat_icon.png');
         this.load.image('send_button', '../assets/sprites/phone/chat_icons/send_button.png');
+        this.load.image('phone_action_bar', '../assets/sprites/phone/phone_action_bar.png');
         this.load.image('boss_intro_background', '../assets/sprites/ui/boss_intro/boss_intro_background.png');
         this.load.image('evil_rabbit_intro', '../assets/sprites/ui/boss_intro/evil_rabbit_intro.png');
         this.load.image('puddles_intro', '../assets/sprites/ui/boss_intro/puddles_intro.png');

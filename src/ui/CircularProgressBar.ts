@@ -70,6 +70,7 @@ export class CircularProgressBar extends Phaser.GameObjects.Graphics {
     }
 
     destroy() {
+        if (!this.active) return;
         this.scene.stopUpdating(this.id);
         super.destroy();
     }

@@ -2,6 +2,8 @@ import { Scene } from "./Scene";
 import { Interval } from "../utils/interval";
 import { NumberUtils } from "../utils/NumberUtils";
 import { ArrayUtils } from "../utils/ArrayUtils";
+import { PhoneActionBar } from "../ui/PhoneActionBar";
+import { PhoneHeaderBar } from "../ui/PhoneHeaderBar";
 
 export class SnakesScene extends Scene {
 
@@ -29,18 +31,19 @@ export class SnakesScene extends Scene {
         const width = this.xCount * this.segmentWidth;
         const height = this.yCount * this.segmentWidth;
         this.xOffset = (800 - width) / 2;
-        this.yOffset = (600 - height) / 2;
+        this.yOffset = (600 - height) / 2 - 20;
+        this.add.rectangle(0, 0, 800, 600, 0x202568).setOrigin(0);
         this.add.rectangle(this.xOffset, this.yOffset, width, height, 0x101512).setOrigin(0);
         this.endGameText = this.add.text(400, 330, '', { fontFamily: 'Consolas', fontSize: '16px', color: '#fff' }).setOrigin(0.5).setZ(20);
         this.pressToStart = this.add.text(400, 270, 'Press R To Start', { fontFamily: 'Consolas', fontSize: '18px', color: '#fff' }).setOrigin(0.5).setZ(20);
-        this.add.text(20, 580, 'Press E To Exit', { fontFamily: 'Consolas', fontSize: '16px', color: '#fff' }).setOrigin(0, 1).setZ(20);
         this.input.keyboard.on('keydown-W', event => this.currentDirection.y !== 1 ? this.direction = { x: 0, y: -1 } : null);
         this.input.keyboard.on('keydown-S', event => this.currentDirection.y !== -1 ? this.direction = { x: 0, y: 1 } : null);
         this.input.keyboard.on('keydown-A', event => this.currentDirection.x !== 1 ? this.direction = { x: -1, y: 0 } : null);
         this.input.keyboard.on('keydown-D', event => this.currentDirection.x !== -1 ? this.direction = { x: 1, y: 0 } : null);
         this.input.keyboard.on('keydown-R', event => this.gameIsRunning ? null : this.startGame());
         this.input.keyboard.on('keydown-P', event => this.onSceneExit());
-        this.input.keyboard.on('keydown-E', event => this.onSceneExit());
+        new PhoneHeaderBar(this)
+        new PhoneActionBar(this);
     }
 
     onSceneExit() {
@@ -133,6 +136,7 @@ export class SnakesScene extends Scene {
 
 
     update(time: number, delta: number): void {
+        super.update(time, delta);
         this.endGameText.setVisible(!this.gameIsRunning);
         this.pressToStart.setVisible(!this.gameIsRunning);
     }

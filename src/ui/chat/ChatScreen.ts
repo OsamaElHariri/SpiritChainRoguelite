@@ -21,11 +21,16 @@ export class ChatScreen extends Phaser.GameObjects.Container {
         this.chatContactsPanel = this.scene.add.container(0, 36);
         this.chatArea = this.scene.add.container(240, 36);
         this.chatHeader = this.scene.add.container(240, 36);
-        this.chatInput = this.scene.add.container(240, 520);
+        this.chatInput = this.scene.add.container(240, 450);
 
         if (initialMessage) {
             this.selectedContact = initialMessage.sender;
+        } else {
+            this.selectedContact = this.scene.data.get('contact');
         }
+
+        if (!this.selectedContact) this.selectedContact = ChatContacts.Linette;
+        this.scene.data.set('contact', this.selectedContact);
 
         this.constructHtmlTextInput();
 
@@ -35,7 +40,7 @@ export class ChatScreen extends Phaser.GameObjects.Container {
     private async constructHtmlTextInput() {
         await Interval.milliseconds(500);
         if (this.active) {
-            this.chatInputDom = this.scene.add.dom(260, 540).createFromCache('text_input').setOrigin(0);
+            this.chatInputDom = this.scene.add.dom(260, 470).createFromCache('text_input').setOrigin(0);
             this.scene.input.keyboard.on('keydown-ENTER', () => {
                 this.sendChatMessage();
             });
@@ -109,6 +114,7 @@ export class ChatScreen extends Phaser.GameObjects.Container {
         const clickZone = this.scene.add.zone(0, 0, 240, 52).setOrigin(0).setInteractive({ cursor: 'pointer' });
         clickZone.on('pointerdown', () => {
             this.selectedContact = contact;
+            this.scene.data.set('contact', this.selectedContact);
             this.refresh();
         });
         contactContainer.add(clickZone);
@@ -125,7 +131,7 @@ export class ChatScreen extends Phaser.GameObjects.Container {
         const background = this.scene.add.rectangle(0, 0, 800, 600, 0xefefef).setOrigin(0);
 
         this.chatArea.add(background);
-        const chatContainerHeight = 480;
+        const chatContainerHeight = 400;
         const chatContainer = this.scene.add.container(10, chatContainerHeight);
         let chatHeight = 0;
         const chatWidth = 240;
@@ -134,13 +140,13 @@ export class ChatScreen extends Phaser.GameObjects.Container {
         for (let i = chat.length - 1; i >= 0; i--) {
             const message = chat[i];
             const isSender = message.sender == ChatContacts.Me;
-            const xChat = isSender ? chatWidth + 40 : 0;
-            const text = this.scene.add.text(boxPadding + xChat, chatHeight - boxPadding, message.text, {
+            const xChat = isSender ? 2 * chatWidth + 40 : 0;
+            const text = this.scene.add.text(xChat + boxPadding * (isSender ? -1 : 1), chatHeight - boxPadding, message.text, {
                 color: '#4a4a4a',
                 fontSize: '22px',
                 wordWrap: { width: chatWidth, useAdvancedWrap: true },
-            }).setOrigin(0, 1);
-            const background = this.scene.add.rectangle(xChat, chatHeight, text.width + 2 * boxPadding, text.height + 2 * boxPadding, isSender ? 0xaafafa : 0x9aea9a).setOrigin(0, 1);
+            }).setOrigin(isSender ? 1 : 0, 1);
+            const background = this.scene.add.rectangle(xChat, chatHeight, text.width + 2 * boxPadding, text.height + 2 * boxPadding, isSender ? 0xaafafa : 0x9aea9a).setOrigin(isSender ? 1 : 0, 1);
             chatContainer.add([background, text]);
             chatHeight -= background.height + boxMargin;
         }

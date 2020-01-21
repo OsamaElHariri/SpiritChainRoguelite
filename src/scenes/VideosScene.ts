@@ -3,6 +3,7 @@ import { PhoneHeaderBar } from "../ui/PhoneHeaderBar";
 import { Interval } from "../utils/interval";
 import { VideosScreen } from "../ui/VideosScreen";
 import { World } from "../world/World";
+import { PhoneActionBar } from "../ui/PhoneActionBar";
 
 export class VideosScene extends Scene {
     sceneData: { world: World };
@@ -24,18 +25,12 @@ export class VideosScene extends Scene {
 
         this.add.rectangle(0, 0, 800, 600, 0xffffff).setOrigin(0);
         this.add.rectangle(0, 0, 800, 100, 0xffffff).setOrigin(0);
-        this.add.sprite(36.5, 64, 'phonebackicon').setOrigin(0, 0.5).setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
-            this.scene.stop('VideosScene');
-        });
-        new PhoneHeaderBar(this, 0, 0);
-        this.add.sprite(100, 64, 'trendingvideosicon').setOrigin(0, 0.5);
-        this.add.text(144, 64, 'Trending', { color: '#4e4e4e', fontSize: '42px' }).setOrigin(0, 0.5);
 
         if (this.sceneData.world.player.isOnRestSpot) {
-            new VideosScreen(this, 0, 100, this.sceneData.world);
+            new VideosScreen(this, 0, 30, this.sceneData.world);
         } else {
-            this.add.sprite(400, 300, 'notconnectedicon');
-            this.add.text(400, 430, "Get yourself close to a WiFi spot to get access to all the amazingly useful content!", {
+            this.add.sprite(400, 260, 'notconnectedicon');
+            this.add.text(400, 390, "Get yourself close to a WiFi spot to get access to all the amazingly useful content!", {
                 wordWrap: { width: 520, useAdvancedWrap: true },
                 align: 'center',
                 color: 0x4a4a4a,
@@ -43,6 +38,8 @@ export class VideosScene extends Scene {
         }
 
         this.displayInfo();
+        new PhoneHeaderBar(this, true);
+        new PhoneActionBar(this);
     }
 
     private displayInfo() {
@@ -58,14 +55,14 @@ export class VideosScene extends Scene {
         this.animateInfoContainer();
     }
 
-    private async  animateInfoContainer() {
+    private async animateInfoContainer() {
         await Interval.milliseconds(200);
         this.add.tween({
             targets: [this.infoContainer],
             duration: 500,
             y: {
-                getStart: () => 600,
-                getEnd: () => 600 - this.infoHeight,
+                getStart: () => 530,
+                getEnd: () => 530 - this.infoHeight,
             },
         });
         if (!this.sceneData.world.player.isOnRestSpot) return;
@@ -74,8 +71,8 @@ export class VideosScene extends Scene {
             targets: [this.infoContainer],
             duration: 500,
             y: {
-                getStart: () => 600 - this.infoHeight,
-                getEnd: () => 600,
+                getStart: () => 530 - this.infoHeight,
+                getEnd: () => 530,
             },
         });
     }

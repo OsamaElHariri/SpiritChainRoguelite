@@ -35,10 +35,10 @@ export class VideosScreen extends Phaser.GameObjects.Container {
     }
 
     private addAlertDisclaimer() {
-        const limitContainer = this.scene.add.container(30, 0);
+        const limitContainer = this.scene.add.container(30, 30);
         this.limitIndicator = new CircularProgressBar(this.scene, {
             x: 130,
-            y: 190,
+            y: 150,
             color: 0x8f1221,
             lineWidth: 12,
             circleWidth: 85,
@@ -76,7 +76,7 @@ export class VideosScreen extends Phaser.GameObjects.Container {
     private addVideos() {
         for (let i = 0; i < this.upgrades.length; i++) {
             const upgrade = this.upgrades[i];
-            const panel = new PhoneVideoPanel(this.scene, 260, 105 + i * 110, upgrade.description, upgrade, upgrade.cost);
+            const panel = new PhoneVideoPanel(this.scene, 260, 65 + i * 110, upgrade.description, upgrade, upgrade.cost);
             panel.on(Signals.UpgradePlayer, () => {
                 if (panel.consumed) {
                     this.displayInfo("You already have this!");
@@ -125,8 +125,8 @@ export class VideosScreen extends Phaser.GameObjects.Container {
             targets: [infoContainer],
             duration: 200,
             y: {
-                getStart: () => 600,
-                getEnd: () => 600 - this.infoHeight,
+                getStart: () => 530,
+                getEnd: () => 530 - this.infoHeight,
             },
         });
         await Interval.milliseconds(1800);
@@ -136,8 +136,8 @@ export class VideosScreen extends Phaser.GameObjects.Container {
             targets: [infoContainer],
             duration: 200,
             y: {
-                getStart: () => 600 - this.infoHeight,
-                getEnd: () => 600,
+                getStart: () => 530 - this.infoHeight,
+                getEnd: () => 530,
             },
             onComplete: () => {
                 if (this.active) infoContainer.destroy();

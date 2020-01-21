@@ -41,9 +41,9 @@ export class Minimap extends Phaser.GameObjects.Container {
             const y = config.fragments.y * size + height / 2
             const rectangle = this.scene.add.rectangle(
                 x + margin, y + margin,
-                width - 2 * margin, height - 2 * margin, 0x398547)
+                width - 2 * margin, height - 2 * margin, config.creationCount > 0 ? 0x54a072 : 0x398547)
                 .setOrigin(0.5)
-                .setAlpha(isCurrentConfig ? 1 : 0.7);
+                .setAlpha(1);
             this.add(rectangle);
 
             if (!isCurrentConfig && config.icon) {
