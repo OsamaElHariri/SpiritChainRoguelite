@@ -74,6 +74,8 @@ export class Player extends Actor {
         });
     }
 
+    protected poof() { }
+
     private onPause() {
         this.pauseStun = true;
         this.scene.add.tween({

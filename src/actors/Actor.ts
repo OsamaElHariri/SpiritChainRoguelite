@@ -20,11 +20,11 @@ export class Actor extends Phaser.GameObjects.Ellipse {
     speed: number = 160;
     stunRemoveTime: number = 0;
     isDead = false;
-    
+
     protected mainSprite: Phaser.GameObjects.Sprite;
-    
+
     protected moveEngine: MoveEngine = new EmptyMoveEngine();
-    
+
     protected isCollidingWithTerrain = false;
     private collisionSlideAddition: number = 0.75;
     private topLeftOverlapChecker: Phaser.GameObjects.Rectangle;
@@ -52,6 +52,21 @@ export class Actor extends Phaser.GameObjects.Ellipse {
         this.bottomRightOverlapChecker = this.constructOverlapChecker();
 
         this.mainSprite = this.scene.add.sprite(this.x, this.y, spriteKey).setScale(0.5).setDepth(11);
+        this.poof();
+    }
+
+    protected poof() {
+        const poof = this.scene.add.sprite(this.x, this.y, 'spawn_poof').setDepth(200);
+        const poofSize = poof.height;
+        poof.setScale(this.mainSprite.height / poofSize)
+        this.scene.add.tween({
+            targets: [poof],
+            duration: 300,
+            alpha: {
+                getStart: () => 1,
+                getEnd: () => 0,
+            },
+        });
     }
 
     private constructOverlapChecker() {
@@ -119,6 +134,7 @@ export class Actor extends Phaser.GameObjects.Ellipse {
 
     onNegativeHealth() {
         this.isDead = true;
+        this.poof();
         this.destroy();
     }
 

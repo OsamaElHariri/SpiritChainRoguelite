@@ -71,6 +71,7 @@ export class LoadingScene extends Scene {
         this.load.image('spiritfist', '../assets/sprites/weapon/spiritfist.png');
         this.load.image('weaponshadow', '../assets/sprites/weapon/weaponshadow.png');
         this.load.image('pulse_explosion_effect', '../assets/sprites/weapon/pulse_explosion_effect.png');
+        this.load.image('spawn_poof', '../assets/sprites/actor/spawn_poof.png');
         this.load.image('topdownplayer', '../assets/sprites/actor/topdownplayer.png');
         this.load.image('topdownenemy', '../assets/sprites/actor/topdownenemy.png');
         this.load.image('ninja_enemy', '../assets/sprites/actor/ninja_enemy.png');
