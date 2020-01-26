@@ -24,13 +24,8 @@ export class BossRoom extends Room {
 
     private async spawnBoss() {
         let bossChoice: { introSpriteKey: string, spawn: Function };
-        if (this.config.roomSelectionRandom < 0.33) {
-            bossChoice = {
-                introSpriteKey: 'hands_boss_intro',
-                spawn: () =>
-                    this.actors.push(new HandsBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2))
-            }
-        } else if (this.config.roomSelectionRandom < 0.66) {
+
+        if (!this.world.bossesEncountered.includes('puddles_intro')) {
             bossChoice = {
                 introSpriteKey: 'puddles_intro',
                 spawn: () => {
@@ -42,14 +37,20 @@ export class BossRoom extends Room {
                         { isCrazy: true, initialDelay: 4500 }));
                 }
             }
-        } else {
+        } else if (!this.world.bossesEncountered.includes('evil_rabbit_intro')) {
             bossChoice = {
                 introSpriteKey: 'evil_rabbit_intro',
                 spawn: () =>
                     this.actors.push(new EvilRabbitBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2))
             }
+        } else {
+            bossChoice = {
+                introSpriteKey: 'hands_boss_intro',
+                spawn: () =>
+                    this.actors.push(new HandsBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2))
+            }
         }
-
+        this.world.bossesEncountered.push(bossChoice.introSpriteKey);
         this.scene.scene.get("HudScene").events.emit(Signals.BossRoomStart, bossChoice.introSpriteKey);
         await Interval.milliseconds(3000);
         bossChoice.spawn();

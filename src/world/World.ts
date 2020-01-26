@@ -24,6 +24,8 @@ export class World extends Phaser.GameObjects.Container {
     dungeonCount = 0;
     roomConfigs: RoomConfig[] = [];
 
+    bossesEncountered: string[] = [];
+
     private id: number;
     private currentRoom: Room;
     private dungeon: Dungeon;

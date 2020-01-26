@@ -15,14 +15,11 @@ export class RoomConfig {
 
     reservedUpgrades: Upgrade[];
 
-    roomSelectionRandom: number;
-
     constructor(public RoomFactory: typeof Room, public fragments: FragmentCollection, options: RoomConfigOptions) {
         if (!options) options = {};
         this.isComplete = !options.hasEnemies;
         this.isStartingRoom = options.isStartingRoom;
         this.icon = options.icon;
-        this.roomSelectionRandom = Math.random();
     }
 
     createRoom(world: World, x: number, y: number) {
