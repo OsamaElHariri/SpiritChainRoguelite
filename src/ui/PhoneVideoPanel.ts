@@ -15,9 +15,9 @@ export class PhoneVideoPanel extends Phaser.GameObjects.Container {
         super(scene, x, y);
         this.setScale(0.6);
         scene.add.existing(this);
-        this.add(scene.add.rectangle(0, -4, 800, 168, 0xa4a4a4).setOrigin(0));
-        this.add(scene.add.rectangle(4, 0, 792, 160, 0xfffffff).setOrigin(0));
-        const thumbnailContainer = scene.add.container(120, 80);
+        this.add(scene.add.rectangle(0, -4, 800, 136, 0xa4a4a4).setOrigin(0));
+        this.add(scene.add.rectangle(4, 0, 792, 128, 0xfffffff).setOrigin(0));
+        const thumbnailContainer = scene.add.container(92, 64);
         this.add(thumbnailContainer);
 
 
@@ -36,10 +36,10 @@ export class PhoneVideoPanel extends Phaser.GameObjects.Container {
             this.consumedIndicator,
         ]);
 
-        this.add(scene.add.text(230, 20, this.getRandomVideoTitle(), { color: '#4e4e4e', fontSize: '30px' }).setOrigin(0));
-        this.add(scene.add.text(230, 68, upgradeDescription, { color: '#4e4e4e', fontSize: '24px', wordWrap: { width: 520, useAdvancedWrap: true } }).setOrigin(0));
+        this.add(scene.add.text(190, 20, this.getRandomVideoTitle(), { color: '#4e4e4e', fontSize: '30px' }).setOrigin(0));
+        this.add(scene.add.text(190, 68, upgradeDescription, { color: '#4e4e4e', fontSize: '24px', wordWrap: { width: 560, useAdvancedWrap: true } }).setOrigin(0));
 
-        const clickZone = scene.add.zone(0, 0, 800, 160).setOrigin(0).setInteractive({ cursor: 'pointer' });
+        const clickZone = scene.add.zone(0, 0, 800, 128).setOrigin(0).setInteractive({ cursor: 'pointer' });
         clickZone.on('pointerdown', () => this.emit(Signals.UpgradePlayer, upgrade));
         this.add(clickZone);
     }

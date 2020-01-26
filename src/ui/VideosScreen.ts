@@ -23,6 +23,7 @@ export class VideosScreen extends Phaser.GameObjects.Container {
         this.upgrades = world.getCurrentRoom().config.reservedUpgrades;
         this.maxBandwidth = this.getMaxBandwidth(this.upgrades);
         this.bandwidthRemaining = this.maxBandwidth;
+        this.scene.add.text(260, 78, 'Upgrades', { fontSize: 30, color: '#4a4a4a' }).setOrigin(0, 0.5).setDepth(1000);
         this.addVideos();
         this.consumeActiveUpgrades();
         this.addAlertDisclaimer();
@@ -76,7 +77,7 @@ export class VideosScreen extends Phaser.GameObjects.Container {
     private addVideos() {
         for (let i = 0; i < this.upgrades.length; i++) {
             const upgrade = this.upgrades[i];
-            const panel = new PhoneVideoPanel(this.scene, 260, 65 + i * 110, upgrade.description, upgrade, upgrade.cost);
+            const panel = new PhoneVideoPanel(this.scene, 260, 115 + i * 95, upgrade.description, upgrade, upgrade.cost);
             panel.on(Signals.UpgradePlayer, () => {
                 if (panel.consumed) {
                     this.displayInfo("You already have this!");
