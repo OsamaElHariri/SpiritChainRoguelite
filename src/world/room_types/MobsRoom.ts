@@ -7,9 +7,10 @@ import { PuddleEnemy } from "../../actors/PuddleEnemy";
 import { NullifyEnemy } from "../../actors/NullifyEnemy";
 import { Interval } from "../../utils/interval";
 import { Actor } from "../../actors/Actor";
-import { RoomStairsLayout } from "../room_generation/room_layouts/RoomStairsLayout";
+import { StairsRoomLayout } from "../room_generation/room_layouts/StairsRoomLayout";
 import { SingleSquaresRoomLayout } from "../room_generation/room_layouts/SingleSquaresRoomLayout";
 import { ArrayUtils } from "../../utils/ArrayUtils";
+import { SectionsRoomLayout } from "../room_generation/room_layouts/SectionsRoomLayout";
 
 export class MobsRoom extends Room {
     static readonly enemyGeneratorsByDifficulty: ((world: World, x: number, y: number) => Actor)[] = [
@@ -27,7 +28,8 @@ export class MobsRoom extends Room {
         super.onRoomConstruct();
         let validLayoutGenerator = [
             () => new SingleSquaresRoomLayout(this),
-            () => new RoomStairsLayout(this),
+            () => new SectionsRoomLayout(this),
+            () => new StairsRoomLayout(this),
         ];
         if (this.world.dungeonCount <= 1) validLayoutGenerator = [() => new SingleSquaresRoomLayout(this)];
         this.roomLayout = ArrayUtils.random(validLayoutGenerator)();

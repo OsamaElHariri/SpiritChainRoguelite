@@ -291,7 +291,7 @@ export class World extends Phaser.GameObjects.Container {
             },
             {
                 factory: UpgradeRoom,
-                count: Math.random() < 0.8 ? 1 : 2,
+                count: 1,
                 options: { icon: 'upgrade_location_icon' },
             },
             {

@@ -42,20 +42,21 @@ export class UpgradeUtil {
     static readonly upgradeTree: UpgradeTree = {
         'player_increase_speed': {
             'player_increase_weapons': {},
-        },
-        'player_dash': {
-            'player_increase_clone_count': {
-                'player_increase_clone_count_again': {},
-            }
+            'player_dash': {
+                'player_increase_clone_count': {
+                    'player_increase_clone_count_again': {},
+                }
+            },
         },
         'weapon_increase_size': {
-            'weapon_increase_hold': {},
-            'weapon_stun': {},
+            'weapon_increase_hold': {
+                'weapon_stun': {},
+                'weapon_through_walls': {},
+            },
         },
         'weapon_increase_speed': {
-            'weapon_decrease_hold': {},
-            'weapon_increase_travel_damage': {
-                'weapon_through_walls': {},
+            'weapon_decrease_hold': {
+                'weapon_increase_travel_damage': {},
             },
         },
         'fist_increase_strength': {

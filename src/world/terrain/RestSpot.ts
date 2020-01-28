@@ -15,10 +15,8 @@ export class RestSpot extends Phaser.GameObjects.Sprite {
 
         const restSpotBench2 = world.scene.add.sprite(x + 100, y, 'restspotbench').setDepth(10).setAngle(90);
         world.scene.physics.world.enable(restSpotBench2, Phaser.Physics.Arcade.STATIC_BODY);
-        const body = (restSpotBench2.body as Phaser.Physics.Arcade.Body);
-        const tempHeight = body.height;
-        body.height = body.width;
-        body.width = tempHeight;
+        const body = restSpotBench2.body as Phaser.Physics.Arcade.Body;
+        body.setSize(body.height, body.width);
         body.x = restSpotBench2.x - body.width / 2;
         body.y = restSpotBench2.y - body.height / 2;
         this.toDestroy.push(restSpotBench2);

@@ -35,10 +35,10 @@ export class FragmentCollection {
     /** The number of RoomFragments along the y-axis that belong to this FragmentCollection */
     height: number;
 
-    private expansionChance = 0.25;
+    private expansionChance = 0.15;
 
 
-    constructor(public dungeon: Dungeon, public initial: RoomFragment, private maxNumberOfExpansions: number = 3) {
+    constructor(public dungeon: Dungeon, public initial: RoomFragment, private maxNumberOfExpansions: number = 2) {
         this.x = initial.x;
         this.y = initial.y;
         this.width = 1;
