@@ -1,5 +1,6 @@
 import { Scene } from "./Scene";
 import { SlideShowWithDialog } from "../ui/slide_shows/SlideShowWithDialog";
+import { SceneTraversalButton } from "../ui/SceneTraversalButton";
 
 export class IntroLoopScene extends Scene {
     constructor() {
@@ -13,8 +14,8 @@ export class IntroLoopScene extends Scene {
     private async playIntro() {
         const slideShow = new SlideShowWithDialog(this);
         await slideShow.startIntroLoopSlideShow();
-        this.input.keyboard.on('keyup', () => {
+        new SceneTraversalButton(this, 700, 550, "START", () => {
             this.scene.start('MainScene');
-        });
+        }, 0x4a4a4a);
     }
 }

@@ -1,5 +1,6 @@
 import { Scene } from "./Scene";
 import { Interval } from "../utils/interval";
+import { SceneTraversalButton } from "../ui/SceneTraversalButton";
 
 export class LoadingScene extends Scene {
     private transitioning = false;
@@ -145,11 +146,7 @@ export class LoadingScene extends Scene {
 
     create(): void {
         this.scene.launch('PhoneLockScreenScene');
-        this.input.keyboard.on('keyup', () => {
-            if (this.loadingRatio < 1 || this.transitioning) return;
-            this.transitioning = true;
-            this.fadeToOtherScene();
-        });
+        new SceneTraversalButton(this, 400, 400, "PLAY", () => this.fadeToOtherScene());
     }
 
     private setupLoadingScreen() {
