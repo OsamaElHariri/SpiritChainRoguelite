@@ -74,7 +74,8 @@ export class World extends Phaser.GameObjects.Container {
         const emitter = this.scene.getEmitter();
 
         emitter.on(Signals.DungeonComplete, () => {
-            this.startNewDungeon();
+            if (this.dungeonCount >= 8) this.goToEndScene();
+            else this.startNewDungeon();
         });
 
         emitter.on(Signals.Pause, (deepLink: string, data) => {
@@ -148,6 +149,11 @@ export class World extends Phaser.GameObjects.Container {
             if (!this.roomConfigs[i].isComplete) return false;
         }
         return true;
+    }
+
+    private goToEndScene() {
+        this.scene.scene.stop('HudScene');
+        this.scene.scene.start('OutroScene');
     }
 
     private startNewDungeon(config: { skipFadeOut?: boolean } = {}) {

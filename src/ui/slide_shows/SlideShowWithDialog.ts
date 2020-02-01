@@ -4,6 +4,7 @@ import { CameraUtils } from "../../utils/CameraUtils";
 import { Interval } from "../../utils/interval";
 import { intro } from "./Intro";
 import { introLoop } from "./IntroLoop";
+import { outro } from "./Outro";
 
 export type SlideShowWithDialogConfig = {
     backgroundImage: string,
@@ -31,6 +32,10 @@ export class SlideShowWithDialog {
 
     public async startIntroLoopSlideShow() {
         return this.startSlideShow(introLoop);
+    }
+
+    public async startOutroSlideShow() {
+        return this.startSlideShow(outro);
     }
 
     private async startSlideShow(slideShows: SlideShowWithDialogConfig[]) {
