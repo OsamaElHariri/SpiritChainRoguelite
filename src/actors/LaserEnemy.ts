@@ -7,14 +7,15 @@ export class LaserEnemy extends Actor {
     private laser: SpiritLaser;
 
     constructor(world: World, x: number, y: number) {
-        super(world, x, y, 'topdownenemy');
+        super(world, x, y, 'laser_enemy');
         this.laser = new SpiritLaser(this, world.player);
+        this.laser.rotation = Math.random() * Math.PI * 2;
         this.actorType = ActorType.Enemy;
     }
 
     update(time: number, delta: number) {
         super.update(time, delta);
-
+        this.mainSprite.rotation = this.laser.rotation;
     }
 
     destroy() {

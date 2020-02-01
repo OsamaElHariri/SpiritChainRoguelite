@@ -76,6 +76,8 @@ export class LoadingScene extends Scene {
         this.load.image('topdownplayer', '../assets/sprites/actor/topdownplayer.png');
         this.load.image('topdownenemy', '../assets/sprites/actor/topdownenemy.png');
         this.load.image('ninja_enemy', '../assets/sprites/actor/ninja_enemy.png');
+        this.load.image('laser_enemy', '../assets/sprites/actor/laser_enemy.png');
+        this.load.image('nullify_enemy', '../assets/sprites/actor/nullify_enemy.png');
         this.load.image('reaper_enemy', '../assets/sprites/actor/reaper_enemy.png');
         this.load.image('puddle_enemy', '../assets/sprites/actor/puddle_enemy.png');
         this.load.image('charge_enemy', '../assets/sprites/actor/charge_enemy.png');

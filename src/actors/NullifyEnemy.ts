@@ -8,7 +8,7 @@ import { Projectile } from "../weapons/projectile/Projectile";
 export class NullifyEnemy extends Actor {
 
     constructor(world: World, x: number, y: number) {
-        super(world, x, y, 'topdownenemy');
+        super(world, x, y, 'nullify_enemy');
         this.speed = 200;
         this.setMaxHealth(500);
         this.actorType = ActorType.Enemy;

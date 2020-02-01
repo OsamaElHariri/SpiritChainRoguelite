@@ -25,7 +25,7 @@ export class SpiritLaser extends Phaser.GameObjects.Container implements Weapon 
         this.add(this.laserImpact);
 
         const colliderSize = 32;
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 14; i++) {
             const collider = this.scene.add.ellipse(0, -i * colliderSize - colliderSize / 2, colliderSize, colliderSize);
             this.world.scene.physics.world.enable(collider);
             const colliderBody = collider.body as Phaser.Physics.Arcade.Body;
