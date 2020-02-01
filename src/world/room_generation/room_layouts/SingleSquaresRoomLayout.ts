@@ -47,23 +47,12 @@ export class SingleSquaresRoomLayout extends RoomLayout {
             minFloor: 0,
             maxFloor: 100,
             chance: 1,
-            enemies: [
+            enemies: RoomLayout.generalEnemyConfig.concat([
                 {
-                    minFloor: 0,
-                    maxFloor: 100,
-                    generator: (world: World, x: number, y: number) => new Enemy(world, x, y)
-                },
-                {
-                    minFloor: 2,
-                    maxFloor: 100,
+                    minFloor: 4,
+                    maxFloor: 5,
                     generator: (world: World, x: number, y: number) => new LaserEnemy(world, x, y)
-                },
-                {
-                    minFloor: 6,
-                    maxFloor: 100,
-                    generator: (world: World, x: number, y: number) => new NullifyEnemy(world, x, y)
-                },
-            ],
+                }]),
             canApply: (grid: Grid) => {
                 return true;
             },
@@ -80,23 +69,7 @@ export class SingleSquaresRoomLayout extends RoomLayout {
             minFloor: 2,
             maxFloor: 100,
             chance: 0.7,
-            enemies: [
-                {
-                    minFloor: 0,
-                    maxFloor: 100,
-                    generator: (world: World, x: number, y: number) => new Enemy(world, x, y)
-                },
-                {
-                    minFloor: 2,
-                    maxFloor: 100,
-                    generator: (world: World, x: number, y: number) => new PuddleEnemy(world, x, y)
-                },
-                {
-                    minFloor: 6,
-                    maxFloor: 100,
-                    generator: (world: World, x: number, y: number) => new ChargeEnemy(world, x, y)
-                },
-            ],
+            enemies: RoomLayout.generalEnemyConfig,
             canApply: (grid: Grid) => {
                 return true;
             },

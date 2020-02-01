@@ -296,12 +296,12 @@ export class World extends Phaser.GameObjects.Container {
             },
             {
                 factory: MobsRoom,
-                count: Math.random() < 0.6 ? 4 : 5,
+                count: this.dungeonCount <= 2 ? 3 : Math.random() < 0.6 ? 4 : 5,
                 options: { hasEnemies: true },
             },
             {
                 factory: BossRoom,
-                count: this.dungeonCount % 3 == 0 ? 1 : 0,
+                count: [3, 5, 8].includes(this.dungeonCount) ? 1 : 0,
                 options: { hasEnemies: true, icon: 'boss_location_icon' },
             },
         ];

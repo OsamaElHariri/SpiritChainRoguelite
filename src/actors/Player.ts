@@ -23,9 +23,9 @@ export class Player extends Actor {
 
     maxNumberOfWeapons: number = 1;
     cloneDuration: number = 3000;
-    dashTime = 90;
+    dashTime = 60;
     dashCooldown = 200;
-    dashSpeed = 9;
+    dashSpeed = 7;
 
     canDash = false;
     maxCloneCount = 0;
@@ -53,6 +53,7 @@ export class Player extends Actor {
     constructor(world: World, x: number, y: number) {
         super(world, x, y, 'topdownplayer');
         this.actorType = ActorType.Friendly;
+        this.setMaxHealth(6000)
         world.scene.getEmitter().emit(Signals.PlayerSpawn, this);
         this.moveWith(new InputsMoveEngine());
         this.phoneAndHands = world.scene.add.sprite(0, 0, 'holdingphone').setOrigin(0.5, 1).setScale(0.03);
@@ -205,6 +206,7 @@ export class Player extends Actor {
 
     clone(x: number, y: number) {
         const newPlayer = new Player(this.world, x, y);
+        newPlayer.setMaxHealth(this.maxHealthPoints);
         newPlayer.setHealth(this.healthPoints);
         this.upgradesHistory.forEach(upgrade => newPlayer.handleUpgradeRequest(upgrade));
         newPlayer.chatFlags = this.chatFlags;

@@ -10,6 +10,7 @@ export class NullifyEnemy extends Actor {
     constructor(world: World, x: number, y: number) {
         super(world, x, y, 'topdownenemy');
         this.speed = 200;
+        this.setMaxHealth(500);
         this.actorType = ActorType.Enemy;
         this.moveWith(new CowardlyMoveEngine(world, this));
     }

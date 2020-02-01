@@ -31,10 +31,10 @@ export class BossRoom extends Room {
                 spawn: () => {
                     this.actors.push(new PuddleBoss(this.world, this.grid.xWorld + 2 * this.grid.xLocalMax / 3,
                         this.grid.yWorld + this.grid.yLocalMax / 2,
-                        { isCrazy: false, initialDelay: 2000 }));
+                        { isCrazy: false, initialDelay: 1000 }));
                     this.actors.push(new PuddleBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 3,
                         this.grid.yWorld + this.grid.yLocalMax / 2,
-                        { isCrazy: true, initialDelay: 4500 }));
+                        { isCrazy: true, initialDelay: 2500 }));
                 }
             }
         } else if (!this.world.bossesEncountered.includes('evil_rabbit_intro')) {
@@ -49,6 +49,11 @@ export class BossRoom extends Room {
                 spawn: () =>
                     this.actors.push(new HandsBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2))
             }
+        }
+        bossChoice = {
+            introSpriteKey: 'hands_boss_intro',
+            spawn: () =>
+                this.actors.push(new HandsBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2))
         }
         this.world.bossesEncountered.push(bossChoice.introSpriteKey);
         this.scene.scene.get("HudScene").events.emit(Signals.BossRoomStart, bossChoice.introSpriteKey);

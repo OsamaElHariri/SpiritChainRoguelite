@@ -30,7 +30,7 @@ export class VideosScreen extends Phaser.GameObjects.Container {
     }
 
     private getMaxBandwidth(upgrades: Upgrade[]) {
-        return Math.ceil(this.world.dungeonCount / 3) * 2;
+        return Math.ceil(this.world.dungeonCount / 2) * 2;
     }
 
     private addAlertDisclaimer() {

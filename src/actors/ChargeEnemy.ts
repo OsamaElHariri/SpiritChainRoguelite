@@ -18,7 +18,7 @@ export class ChargeEnemy extends Actor implements Weapon {
     constructor(world: World, x: number, y: number) {
         super(world, x, y, 'charge_enemy');
         this.speed = this.normalSpeed;
-        this.maxHealthPoints = 1500;
+        this.setMaxHealth(2000)
         this.mainSprite.setOrigin(0.5, 0.7);
         this.actorType = ActorType.Enemy;
         this.moveWith(new PlayerFollowMoveEngine(world, this));
@@ -32,14 +32,14 @@ export class ChargeEnemy extends Actor implements Weapon {
 
     update(time: number, delta: number) {
         super.update(time, delta);
-        if (this.isCharging) {
+        if (this.isCharging && this.active) {
             this.speed = Math.min(this.chargingSpeed, this.speed + this.chargingAcceleration);
             this.scene.physics.overlap(this, this.world.player,
                 (_, player: Actor) => player.takeDamage(this, this));
             if (this.isCollidingWithTerrain) this.stopCharging();
         }
 
-        if (!this.canCharge || this.isCharging) return;
+        if (!this.canCharge || this.isCharging || !this.active) return;
         const direction = new Phaser.Math.Vector2(this.world.player.x - this.x, this.world.player.y - this.y);
         if (direction.length() <= 280) {
             this.canCharge = false;

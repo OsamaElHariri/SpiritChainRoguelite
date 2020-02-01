@@ -4,6 +4,12 @@ import { World } from "../../World";
 import { ArrayUtils } from "../../../utils/ArrayUtils";
 import { Actor } from "../../../actors/Actor";
 import { GridNode } from "../../../grid/GridNode";
+import { Enemy } from "../../../actors/Enemy";
+import { NullifyEnemy } from "../../../actors/NullifyEnemy";
+import { ChargeEnemy } from "../../../actors/ChargeEnemy";
+import { PuddleEnemy } from "../../../actors/PuddleEnemy";
+import { NinjaEnemy } from "../../../actors/NinjaEnemy";
+import { ReaperEnemy } from "../../../actors/ReaperEnemy";
 
 export type LayoutConfig = {
     desc: string,
@@ -30,6 +36,39 @@ export type EnemyConfig = {
 };
 
 export class RoomLayout {
+
+    static generalEnemyConfig: EnemyConfig[] = [
+        {
+            minFloor: 0,
+            maxFloor: 3,
+            generator: (world: World, x: number, y: number) => new Enemy(world, x, y)
+        },
+        {
+            minFloor: 3,
+            maxFloor: 4,
+            generator: (world: World, x: number, y: number) => new PuddleEnemy(world, x, y)
+        },
+        {
+            minFloor: 5,
+            maxFloor: 6,
+            generator: (world: World, x: number, y: number) => new NullifyEnemy(world, x, y)
+        },
+        {
+            minFloor: 6,
+            maxFloor: 7,
+            generator: (world: World, x: number, y: number) => new ChargeEnemy(world, x, y)
+        },
+        {
+            minFloor: 7,
+            maxFloor: 8,
+            generator: (world: World, x: number, y: number) => new NinjaEnemy(world, x, y)
+        },
+        {
+            minFloor: 8,
+            maxFloor: 9,
+            generator: (world: World, x: number, y: number) => new ReaperEnemy(world, x, y)
+        },
+    ];
 
     layout: LayoutConfig[] = [];
     spawnPoints: SpawnPointConfig[] = [];

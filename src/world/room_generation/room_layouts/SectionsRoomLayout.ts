@@ -43,26 +43,10 @@ export class SectionsRoomLayout extends RoomLayout {
     spawnPoints: SpawnPointConfig[] = [
         {
             desc: 'far corners',
-            minFloor: 0,
+            minFloor: 5,
             maxFloor: 100,
-            chance: 0.6,
-            enemies: [
-                {
-                    minFloor: 0,
-                    maxFloor: 100,
-                    generator: (world: World, x: number, y: number) => new Enemy(world, x, y)
-                },
-                {
-                    minFloor: 3,
-                    maxFloor: 100,
-                    generator: (world: World, x: number, y: number) => new NullifyEnemy(world, x, y)
-                },
-                {
-                    minFloor: 6,
-                    maxFloor: 100,
-                    generator: (world: World, x: number, y: number) => new ChargeEnemy(world, x, y)
-                },
-            ],
+            chance: 0.7,
+            enemies: RoomLayout.generalEnemyConfig,
             canApply: (grid: Grid) => {
                 return true;
             },
@@ -81,24 +65,8 @@ export class SectionsRoomLayout extends RoomLayout {
             desc: 'nearer corners',
             minFloor: 0,
             maxFloor: 100,
-            chance: 1,
-            enemies: [
-                {
-                    minFloor: 0,
-                    maxFloor: 100,
-                    generator: (world: World, x: number, y: number) => new Enemy(world, x, y)
-                },
-                {
-                    minFloor: 3,
-                    maxFloor: 100,
-                    generator: (world: World, x: number, y: number) => new NullifyEnemy(world, x, y)
-                },
-                {
-                    minFloor: 6,
-                    maxFloor: 100,
-                    generator: (world: World, x: number, y: number) => new ChargeEnemy(world, x, y)
-                },
-            ],
+            chance: 0.7,
+            enemies: RoomLayout.generalEnemyConfig,
             canApply: (grid: Grid) => {
                 return true;
             },
@@ -110,6 +78,28 @@ export class SectionsRoomLayout extends RoomLayout {
                     grid.at(2, gridHeight - 2),
                     grid.at(gridWidth - 2, 2),
                     grid.at(gridWidth - 2, gridHeight - 2),
+                ]
+            },
+        },
+        {
+            desc: 'center enemy',
+            minFloor: 0,
+            maxFloor: 100,
+            chance: 0.7,
+            enemies: RoomLayout.generalEnemyConfig.concat([
+                {
+                    minFloor: 4,
+                    maxFloor: 5,
+                    generator: (world: World, x: number, y: number) => new LaserEnemy(world, x, y)
+                }]),
+            canApply: (grid: Grid) => {
+                return true;
+            },
+            getSpawnPoints: (grid: Grid) => {
+                const gridWidth = grid.width - 1;
+                const gridHeight = grid.height - 1;
+                return [
+                    grid.at(Math.floor(gridWidth / 2), Math.floor(gridHeight / 2)),
                 ]
             },
         },

@@ -8,7 +8,7 @@ export class PowerUp {
     }
 
     static doubleStrength(weapon: SpiritWeapon) {
-        weapon.strength *= 2;
+        weapon.strength += 40;
     }
 
     static doubleHoldTime(weapon: SpiritWeapon) {

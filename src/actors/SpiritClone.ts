@@ -96,6 +96,8 @@ export class SpiritClone extends Actor {
         return this.weapons.filter(weapon => weapon.active);
     }
 
+    protected poof() { }
+
     private fireSpiritFist(pointer) {
         const xTouch = pointer.worldX;
         const yTouch = pointer.worldY;

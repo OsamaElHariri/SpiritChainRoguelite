@@ -24,6 +24,7 @@ export class ReaperEnemy extends Actor {
         super(world, x, y, 'reaper_enemy');
         this.speed = this.initialSpeed;
         this.actorType = ActorType.Enemy;
+        this.setMaxHealth(1500);
         this.scytheContainer = this.scene.add.container(x, y);
         this.scythe1 = new Scythe(this, 0, 0).setRotation(this.scythe1Rotation);
         this.scythe2 = new Scythe(this, 0, 0).setRotation(this.scythe2Rotation);

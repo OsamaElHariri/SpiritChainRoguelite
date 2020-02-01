@@ -34,7 +34,8 @@ export class HandsBoss extends Actor {
     constructor(world: World, x: number, y: number) {
         super(world, x, y, 'magician_hat');
         this.speed = 40;
-        this.setMaxHealth(2000);
+        this.setMaxHealth(30000);
+        this.healthBar.y += 30;
         this.actorType = ActorType.Enemy;
         this.playerFollowMoveEngine = new PlayerFollowMoveEngine(world, this);
         this.moveWith(this.playerFollowMoveEngine);
@@ -55,7 +56,7 @@ export class HandsBoss extends Actor {
             this.moveWith(this.playerFollowMoveEngine);
             this.rotateHandsTowardsPlayer();
             if (Date.now() > this.nextAttackTime) {
-                this.nextAttackTime = Date.now() + 10000 + Math.random() * 4000;
+                this.nextAttackTime = Date.now() + 5000 + Math.random() * 2000;
                 this.handsAtRestCount = 0;
                 this.selectRandomAttack();
             }
@@ -91,7 +92,7 @@ export class HandsBoss extends Actor {
     startTwistAttack() {
         const direction = Math.random() < 0.5 ? -1 : 1;
         const delay = 500;
-        const duration = 6000;
+        const duration = 3000;
         for (let i = 0; i < this.hands.length; i++) {
             this.twistAttack({ handIndex: i, direction, delay, duration });
             this.twistHandsContainer({ direction, delay, duration, numberOfTurns: 1 });
@@ -284,7 +285,7 @@ export class HandsBoss extends Actor {
         const y = distanceFromActor * Math.sin(thetaAroundActor);
         this.scene.add.tween({
             targets: [hand],
-            duration: 1800,
+            duration: 1000,
             delay: 300 + 100 * Math.random(),
             ease: Phaser.Math.Easing.Quadratic.Out,
             x: {

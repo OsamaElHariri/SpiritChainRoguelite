@@ -7,7 +7,8 @@ import { Player } from "./Player";
 import { Interval } from "../utils/interval";
 import { GridNode } from "../grid/GridNode";
 import { ArrayUtils } from "../utils/ArrayUtils";
-import { NinjaEnemy } from "./NinjaEnemy";
+import { Enemy } from "./Enemy";
+import { PuddleEnemy } from "./PuddleEnemy";
 
 export class EvilRabbitBoss extends Actor {
 
@@ -19,13 +20,13 @@ export class EvilRabbitBoss extends Actor {
         this.spawnMobs.bind(this),
         this.rotatePawsAttack.bind(this)]);
 
-    private nextAttackTime: number = Date.now() + 4000 + Math.random() * 1000;
+    private nextAttackTime: number = Date.now() + 1500 + Math.random() * 1000;
 
     constructor(world: World, x: number, y: number) {
         super(world, x, y, 'evil_rabbit');
         this.healthBar.y += 30;
         this.speed = this.initialSpeed;
-        this.setMaxHealth(2000);
+        this.setMaxHealth(8000);
         this.actorType = ActorType.Enemy;
         this.moveWith(new PlayerFollowMoveEngine(world, this));
 
@@ -106,7 +107,7 @@ export class EvilRabbitBoss extends Actor {
         });
         this.speed = this.initialSpeed;
 
-        this.nextAttackTime = Date.now() + 1000 + Math.random() * 2000;
+        this.nextAttackTime = Date.now() + 500 + Math.random() * 1000;
     }
 
     private async rotatePawsAttack() {
@@ -134,7 +135,10 @@ export class EvilRabbitBoss extends Actor {
             },
         });
         await Interval.milliseconds(700);
-        if (!this.active) return;
+        if (!this.active) {
+            this.pawsContainer.removeAll(true);
+            return;
+        }
         this.speed = 100;
         const repeats = 5;
         const rotationDuration = 500;
@@ -149,7 +153,10 @@ export class EvilRabbitBoss extends Actor {
             },
         });
         await Interval.milliseconds(rotationDuration * repeats + 600);
-        if (!this.active) return;
+        if (!this.active) {
+            this.pawsContainer.removeAll(true);
+            return;
+        }
         this.scene.add.tween({
             targets: [rightPaw],
             duration: 100,
@@ -175,7 +182,7 @@ export class EvilRabbitBoss extends Actor {
             },
         });
         this.speed = this.initialSpeed;
-        this.nextAttackTime = Date.now() + 2000 + Math.random() * 3000;
+        this.nextAttackTime = Date.now() + 1000 + Math.random() * 1500;
     }
 
     private async spawnMobs() {
@@ -209,11 +216,15 @@ export class EvilRabbitBoss extends Actor {
         });
 
         const activeEnemies = room.getActiveEnemies();
-        for (let i = activeEnemies.length; i < 3; i++) {
+        for (let i = activeEnemies.length; i < 4; i++) {
             const node = ArrayUtils.random(traversableNodes);
-            room.actors.push(new NinjaEnemy(this.world, node.xCenterWorld, node.yCenterWorld));
+            if (Math.random() < 0.5) {
+                room.actors.push(new Enemy(this.world, node.xCenterWorld, node.yCenterWorld));
+            } else {
+                room.actors.push(new PuddleEnemy(this.world, node.xCenterWorld, node.yCenterWorld));
+            }
         }
-        this.nextAttackTime = Date.now() + 6000 + Math.random() * 4000;
+        this.nextAttackTime = Date.now() + 5000 + Math.random() * 3000;
     }
 
     destroy() {
