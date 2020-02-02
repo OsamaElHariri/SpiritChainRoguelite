@@ -14,7 +14,10 @@ export class MainScene extends Scene {
     }
 
     create(): void {
-        this.resetEmitter()
+        this.sound.play('ipsi', {
+            loop: true,
+        });
+        this.resetEmitter();
         InputKeys.setKeyboard(this.input.keyboard);
         this.setupListeners();
         this.world = new World(this);

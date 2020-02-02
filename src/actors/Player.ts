@@ -130,6 +130,7 @@ export class Player extends Actor {
     }
 
     private fireSpiritFist(pointer) {
+        this.scene.sound.play('punch_weapon');
         const xTouch = pointer.worldX;
         const yTouch = pointer.worldY;
         const clickPoint = new Phaser.Geom.Point(xTouch, yTouch);
@@ -141,6 +142,9 @@ export class Player extends Actor {
     }
 
     private fireSpiritWeapon(pointer) {
+        this.scene.sound.play('chain_weapon', {
+            rate: 1.2,
+        });
         const xTouch = pointer.worldX;
         const yTouch = pointer.worldY;
         const clickPoint = new Phaser.Geom.Point(xTouch, yTouch);

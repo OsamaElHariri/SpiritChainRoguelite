@@ -50,11 +50,6 @@ export class BossRoom extends Room {
                     this.actors.push(new HandsBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2))
             }
         }
-        bossChoice = {
-            introSpriteKey: 'hands_boss_intro',
-            spawn: () =>
-                this.actors.push(new HandsBoss(this.world, this.grid.xWorld + this.grid.xLocalMax / 2, this.grid.yWorld + this.grid.yLocalMax / 2))
-        }
         this.world.bossesEncountered.push(bossChoice.introSpriteKey);
         this.scene.scene.get("HudScene").events.emit(Signals.BossRoomStart, bossChoice.introSpriteKey);
         await Interval.milliseconds(3000);

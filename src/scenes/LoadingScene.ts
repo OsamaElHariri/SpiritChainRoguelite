@@ -31,6 +31,10 @@ export class LoadingScene extends Scene {
     }
 
     private loadAssets() {
+        this.load.audio('ipsi', '../assets/audio/Ipsi.mp3');
+        this.load.audio('chain_weapon', '../assets/audio/chain_weapon.mp3');
+        this.load.audio('punch_weapon', '../assets/audio/punch_weapon.mp3');
+
         this.load.image('chainLinks', '../assets/sprites/weapon/chain_links.png');
         this.load.image('chainSpirit1', '../assets/sprites/weapon/chain_spirit1.png');
         this.load.image('chainSpirit2', '../assets/sprites/weapon/chain_spirit2.png');
