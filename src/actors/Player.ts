@@ -54,7 +54,7 @@ export class Player extends Actor {
     constructor(world: World, x: number, y: number) {
         super(world, x, y, 'topdownplayer');
         this.actorType = ActorType.Friendly;
-        this.setMaxHealth(6000)
+        this.setMaxHealth(5000)
         world.scene.getEmitter().emit(Signals.PlayerSpawn, this);
         this.moveWith(new InputsMoveEngine());
         this.phoneAndHands = world.scene.add.sprite(0, 0, 'holdingphone').setOrigin(0.5, 1).setScale(0.03);

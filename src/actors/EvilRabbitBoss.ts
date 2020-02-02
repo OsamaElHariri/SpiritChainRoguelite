@@ -78,7 +78,10 @@ export class EvilRabbitBoss extends Actor {
         });
         this.speed = 0;
         await Interval.milliseconds(500);
-        if (!this.active) return;
+        if (!this.active) {
+            this.pawsContainer.removeAll(true);
+            return;
+        }
         const pawDistance = 200;
         const pawAttackDuration = 300;
         const yInitial = leftPaw.y;
@@ -92,7 +95,10 @@ export class EvilRabbitBoss extends Actor {
             },
         });
         await Interval.milliseconds(pawAttackDuration * 2);
-        if (!this.active) return;
+        if (!this.active) {
+            this.pawsContainer.removeAll(true);
+            return;
+        }
         this.scene.add.tween({
             targets: [leftPaw, rightPaw],
             duration: 100,

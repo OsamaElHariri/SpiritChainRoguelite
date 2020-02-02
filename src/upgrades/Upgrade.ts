@@ -20,7 +20,7 @@ type UpgradeTree = { [id: string]: UpgradeTree };
 export class UpgradeUtil {
 
     static readonly upgrades: Upgrade[] = [
-        { id: 'player_increase_speed', cost: 3, playerUpgrade: PlayerUpgrade.doubleSpeed, description: "Increase your movement speed" },
+        { id: 'player_increase_speed', cost: 2, playerUpgrade: PlayerUpgrade.doubleSpeed, description: "Increase your movement speed" },
         { id: 'player_increase_weapons', cost: 3, playerUpgrade: PlayerUpgrade.increaseMaxWeapons, description: "Increase number of weapons" },
         { id: 'player_dash', cost: 3, playerUpgrade: PlayerUpgrade.dash, description: "Double tap a direction to dash. You are invulnerable while dashing" },
         { id: 'player_increase_clone_count', cost: 5, playerUpgrade: PlayerUpgrade.increaseCloneCount, description: "Leave a spirit clone behind when you dash" },

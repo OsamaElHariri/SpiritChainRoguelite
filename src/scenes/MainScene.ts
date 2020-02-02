@@ -8,6 +8,7 @@ import { Interval } from "../utils/interval";
 export class MainScene extends Scene {
 
     world: World;
+    muted = false;
 
     constructor() {
         super('MainScene');
@@ -18,7 +19,6 @@ export class MainScene extends Scene {
         InputKeys.setKeyboard(this.input.keyboard);
         this.setupListeners();
         this.world = new World(this);
-        this.scene.launch('HudScene', { world: this.world }).moveAbove("MainScene");
     }
 
     private setupListeners() {
@@ -57,14 +57,5 @@ export class MainScene extends Scene {
         emitter.on(Signals.Resume, () => {
             this.scene.get("HudScene").events.emit(Signals.Resume);
         });
-
-        this.scene.get("HudScene").events.on(Signals.ToggleSound, () => {
-            this.getEmitter().emit(Signals.ToggleSound);
-        });
     }
-
-    update(time: number, delta: number): void {
-        super.update(time, delta);
-    }
-
 }

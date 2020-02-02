@@ -1,5 +1,5 @@
 import { Room } from "./Room";
-import { Scene } from "../scenes/Scene";
+import { MainScene } from "../scenes/MainScene";
 import { Player } from "../actors/Player";
 import { Signals } from "../Signals";
 import { Interval } from "../utils/interval";
@@ -45,8 +45,9 @@ export class World extends Phaser.GameObjects.Container {
         "MinimapScene": ["keydown-M"],
     }
 
-    constructor(public scene: Scene) {
+    constructor(public scene: MainScene) {
         super(scene);
+        this.muted = scene.muted;
         this.id = scene.addObject(this);
         World.worldCount += 1;
         this.setupMenuActions();
@@ -56,7 +57,8 @@ export class World extends Phaser.GameObjects.Container {
         this.sound = this.scene.sound.add('ipsi', {
             loop: true,
         });
-        this.sound.play();
+        if (!this.muted) this.sound.play();
+        this.scene.scene.launch('HudScene', { world: this }).moveAbove("MainScene");
     }
 
     private setupMenuActions() {
@@ -93,8 +95,9 @@ export class World extends Phaser.GameObjects.Container {
             this.onSceneResume();
         });
 
-        emitter.on(Signals.ToggleSound, () => {
+        this.scene.scene.get("HudScene").events.on(Signals.ToggleSound, () => {
             this.muted = !this.muted;
+            this.scene.muted = this.muted;
             if (this.muted) this.sound.stop();
             else this.sound.play();
         });
@@ -361,8 +364,11 @@ export class World extends Phaser.GameObjects.Container {
 
     destroy() {
         if (!this.active) return;
+        this.sound.destroy();
         this.currentRoom.destroy();
         this.scene.scene.get("MenuScene").events.removeListener(Signals.CloseMenu);
+        this.scene.scene.get("HudScene").events.removeListener(Signals.ToggleSound);
+        this.scene.scene.stop("HudScene");
         this.scene.getEmitter().removeAllListeners();
         this.scene.stopUpdating(this.id);
         this.leaves.destroy();

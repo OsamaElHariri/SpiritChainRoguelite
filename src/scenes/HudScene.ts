@@ -9,6 +9,8 @@ export class HudScene extends Scene {
     sceneData: { world: World };
     heart: Phaser.GameObjects.Sprite;
     muteIcon: Phaser.GameObjects.Sprite;
+    backToCartTextRect: Phaser.GameObjects.Rectangle;
+    backToCartText: Phaser.GameObjects.Text;
 
     private hud: Phaser.GameObjects.Container;
     private notificationDuration = 5000;
@@ -30,6 +32,13 @@ export class HudScene extends Scene {
         this.hud.add(this.heart);
         this.constructSoundIcon()
         this.pulseHeartIcon(this.heart);
+
+        this.backToCartTextRect = this.add.rectangle(400, 52, 250, 24, 0x4a4a4a, 0.95).setOrigin(0.5);
+        this.hud.add(this.backToCartTextRect);
+        this.backToCartText = this.add.text(400, 52, "Get back to the cart!", {
+            fontSize: '18px',
+        }).setOrigin(0.5);
+        this.hud.add(this.backToCartText);
 
         sceneData.world.on(Signals.NewChatMessage, (message: ChatMessage) => {
             this.showNotification(message);
@@ -274,4 +283,12 @@ export class HudScene extends Scene {
         });
     }
 
+    update(time: number, delta: number) {
+        super.update(time, delta);
+        if (this.sceneData && this.sceneData.world) {
+            const allClear = this.sceneData.world.allRoomsComplete();
+            if (this.backToCartText) this.backToCartText.setAlpha(allClear ? 1 : 0);
+            if (this.backToCartTextRect) this.backToCartTextRect.setAlpha(allClear ? 1 : 0);
+        }
+    }
 }

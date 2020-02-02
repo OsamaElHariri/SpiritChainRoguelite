@@ -62,7 +62,7 @@ export class MobsRoom extends Room {
         this.text = this.scene.add.text(
             this.grid.xWorld + 80,
             this.grid.yWorld + 80,
-            "LEFT mouse button to throw your chain\nRIGHT mouse button to punch", {
+            "LEFT mouse button to throw your chain\nRIGHT mouse button to punch\nGet back to the cart when all the rooms are clear", {
             fontSize: '18px',
         }).setOrigin(0).setAlpha(0);
 
