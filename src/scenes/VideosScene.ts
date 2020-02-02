@@ -17,7 +17,7 @@ export class VideosScene extends Scene {
 
     create(sceneData: { world: World }): void {
         this.sceneData = sceneData;
-        ['keydown-P', 'keydown-ESC', 'keydown-V', 'keydown-U'].forEach((key) => {
+        ['keydown-ESC', 'keydown-U'].forEach((key) => {
             this.input.keyboard.on(key, () => {
                 this.scene.stop('VideosScene');
             });

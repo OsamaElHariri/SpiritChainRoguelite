@@ -15,7 +15,6 @@ export class MenuScene extends Scene {
     sceneData: { world: World, deepLink: string };
 
     static readonly appConfig: PhoneSceneConfig[] = [
-        { name: 'Settings', icon: 'settingsicon', scene: 'SnakesScene' },
         { name: 'Videos', icon: 'videoicon', scene: 'VideosScene' },
         { name: 'Chat', icon: 'chaticon', scene: 'ChatScene' },
         { name: 'Map', icon: 'map_icon', scene: 'MinimapScene' },
@@ -38,7 +37,7 @@ export class MenuScene extends Scene {
         this.constructIcons();
 
         this.scene.get("PhoneLockScreenScene").events.emit(Signals.MenuInitialized);
-        ['keydown-P', 'keydown-ESC'].forEach((key) => {
+        ['keydown-ESC'].forEach((key) => {
             this.input.keyboard.on(key, () => {
                 MenuScene.closeMenu(this);
             });

@@ -8,6 +8,7 @@ import { ChatContacts } from "../ui/chat/ChatContacts";
 export class HudScene extends Scene {
     sceneData: { world: World };
     heart: Phaser.GameObjects.Sprite;
+    muteIcon: Phaser.GameObjects.Sprite;
 
     private hud: Phaser.GameObjects.Container;
     private notificationDuration = 5000;
@@ -27,11 +28,25 @@ export class HudScene extends Scene {
         this.hud = this.add.container(0, 0);
         this.heart = this.add.sprite(58, 52, 'heart');
         this.hud.add(this.heart);
+        this.constructSoundIcon()
         this.pulseHeartIcon(this.heart);
 
         sceneData.world.on(Signals.NewChatMessage, (message: ChatMessage) => {
             this.showNotification(message);
         });
+    }
+
+    private constructSoundIcon() {
+        const muteIcon = this.add.sprite(42, 116, this.sceneData.world.muted ? 'mute_sound' : 'active_sound');
+        muteIcon.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
+            if (muteIcon.active) {
+                this.events.emit(Signals.ToggleSound);
+                this.constructSoundIcon();
+            }
+        });
+        this.hud.add(muteIcon);
+        if (this.muteIcon && this.muteIcon.active) this.muteIcon.destroy();
+        this.muteIcon = muteIcon;
     }
 
     private setupListeners() {

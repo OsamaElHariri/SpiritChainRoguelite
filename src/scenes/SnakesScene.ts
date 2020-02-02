@@ -41,7 +41,7 @@ export class SnakesScene extends Scene {
         this.input.keyboard.on('keydown-A', event => this.currentDirection.x !== 1 ? this.direction = { x: -1, y: 0 } : null);
         this.input.keyboard.on('keydown-D', event => this.currentDirection.x !== -1 ? this.direction = { x: 1, y: 0 } : null);
         this.input.keyboard.on('keydown-R', event => this.gameIsRunning ? null : this.startGame());
-        this.input.keyboard.on('keydown-P', event => this.onSceneExit());
+        this.input.keyboard.on('keydown-ESC', event => this.onSceneExit());
         new PhoneHeaderBar(this)
         new PhoneActionBar(this);
     }

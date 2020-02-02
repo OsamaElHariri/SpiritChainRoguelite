@@ -14,9 +14,6 @@ export class MainScene extends Scene {
     }
 
     create(): void {
-        this.sound.play('ipsi', {
-            loop: true,
-        });
         this.resetEmitter();
         InputKeys.setKeyboard(this.input.keyboard);
         this.setupListeners();
@@ -61,6 +58,9 @@ export class MainScene extends Scene {
             this.scene.get("HudScene").events.emit(Signals.Resume);
         });
 
+        this.scene.get("HudScene").events.on(Signals.ToggleSound, () => {
+            this.getEmitter().emit(Signals.ToggleSound);
+        });
     }
 
     update(time: number, delta: number): void {

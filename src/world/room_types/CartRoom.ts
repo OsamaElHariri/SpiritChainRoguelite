@@ -7,6 +7,8 @@ import { Interval } from "../../utils/interval";
 export class CartRoom extends Room {
 
     private cart: Phaser.GameObjects.Sprite;
+    private text: Phaser.GameObjects.Text;
+
     constructor(world: World, x: number, y: number, config: RoomConfig) {
         super(world, x, y, config);
     }
@@ -18,6 +20,24 @@ export class CartRoom extends Room {
             this.grid.yWorld + this.grid.yLocalMax / 2,
             'cart').setDepth(15);
         this.scene.physics.world.enable(this.cart, Phaser.Physics.Arcade.STATIC_BODY);
+
+        this.text = this.scene.add.text(
+            this.grid.xWorld + this.grid.xLocalMax / 2 - 60,
+            this.grid.yWorld + this.grid.yLocalMax / 2,
+            "Press ESC to open the menu\n\nPress M to view the map", {
+            fontSize: '18px',
+            wordWrap: { width: 200 },
+        }).setOrigin(1, 0.5).setAlpha(0);
+
+        this.scene.add.tween({
+            targets: [this.text],
+            delay: 500,
+            duration: 300,
+            alpha: {
+                getStart: () => 0,
+                getEnd: () => 1,
+            },
+        });
 
         super.startRoom();
         if (this.config.creationCount == 1) this.playIntro();
@@ -163,6 +183,7 @@ export class CartRoom extends Room {
 
     destroy() {
         this.cart.destroy();
+        this.text.destroy();
         super.destroy();
     }
 }

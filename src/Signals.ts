@@ -16,4 +16,5 @@ export enum Signals {
     DungeonConstruct = 'dungeon_construct',
     DungeonComplete = 'dungeon_complete',
     NewChatMessage = 'new_chat_message',
+    ToggleSound = 'toggle_sound',
 }

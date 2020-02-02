@@ -26,18 +26,21 @@ export class World extends Phaser.GameObjects.Container {
 
     bossesEncountered: string[] = [];
 
+    muted = false;
+
     private id: number;
     private currentRoom: Room;
     private dungeon: Dungeon;
     private menuScene: Phaser.Scenes.ScenePlugin;
     private zoomOutCameraPosition: { x: number, y: number };
     private leaves: FallingLeaves;
+    private sound: Phaser.Sound.BaseSound;
 
     private upgradesHolder: Generator<Upgrade[], void, number>;
 
     private menuShortcuts: { [id: string]: string[] } = {
-        "MainMenu": ["keydown-P", "keydown-ESC"],
-        "VideosScene": ["keydown-U", "keydown-V"],
+        "MainMenu": ["keydown-ESC"],
+        "VideosScene": ["keydown-U"],
         "ChatScene": ["keydown-C"],
         "MinimapScene": ["keydown-M"],
     }
@@ -50,6 +53,10 @@ export class World extends Phaser.GameObjects.Container {
         this.registerListeners();
         this.startNewDungeon({ skipFadeOut: true });
         this.leaves = new FallingLeaves(scene);
+        this.sound = this.scene.sound.add('ipsi', {
+            loop: true,
+        });
+        this.sound.play();
     }
 
     private setupMenuActions() {
@@ -86,6 +93,12 @@ export class World extends Phaser.GameObjects.Container {
             this.onSceneResume();
         });
 
+        emitter.on(Signals.ToggleSound, () => {
+            this.muted = !this.muted;
+            if (this.muted) this.sound.stop();
+            else this.sound.play();
+        });
+
         this.scene.scene.get("MenuScene").events.on(Signals.CloseMenu, () => {
             this.scene.getEmitter().emit(Signals.Resume);
         });
@@ -115,27 +128,36 @@ export class World extends Phaser.GameObjects.Container {
             && this.dungeonCount == 1) {
             this.player.chatFlags.hasReceivedWeaponTutorial = true;
             const message1 = new ChatMessage(ChatContacts.Ismail,
-                "Hey, here's a quick reminder, just in case you need it.");
+                "Hey, are you alright in there?");
             const message2 = new ChatMessage(ChatContacts.Ismail,
-                "You can fire your spirit weapon with the LEFT MOUSE BUTTON");
-            const message3 = new ChatMessage(ChatContacts.Ismail,
-                "Also, you should be able to view the map on your phone by pressing the M KEY");
-            this.player.chats[ChatContacts.Ismail].push(message1, message2, message3);
+                "Slow and steady, you'll be alright");
+            this.player.chats[ChatContacts.Ismail].push(message1, message2);
             this.emit(Signals.NewChatMessage, message1);
-
         }
-        if (!this.player.chatFlags.hasReceivedUpgradeTutorial
-            && this.allRoomsComplete()) {
-            this.player.chatFlags.hasReceivedUpgradeTutorial = true;
+
+        if (!this.player.chatFlags.hasReceivedWifiTalk
+            && this.dungeonCount == 3) {
+            this.player.chatFlags.hasReceivedWifiTalk = true;
             const message1 = new ChatMessage(ChatContacts.CrazyGeorge,
                 "Heyoooo! It's George the park manager, I got your number from Ismail");
             const message2 = new ChatMessage(ChatContacts.CrazyGeorge,
-                "We have free WiFi, so you can work with your gadgets and doodads and watch your videos");
+                "We have free WiFi, so you can work on your gadgets and doodads and watch your videos");
             const message3 = new ChatMessage(ChatContacts.CrazyGeorge,
-                "Ismail tells me the videos help you improve. You can watch your videos by pressing the V KEY");
-            const message4 = new ChatMessage(ChatContacts.CrazyGeorge,
                 "We do have a limit on the bandwidth, though. Park budget has been pretty bad lately");
-            this.player.chats[ChatContacts.CrazyGeorge].push(message1, message2, message3, message4);
+            this.player.chats[ChatContacts.CrazyGeorge].push(message1, message2, message3);
+            this.emit(Signals.NewChatMessage, message1);
+        }
+
+        if (!this.player.chatFlags.hasReceivedGFPlayfulText
+            && this.dungeonCount == 6) {
+            this.player.chatFlags.hasReceivedGFPlayfulText = true;
+            const message1 = new ChatMessage(ChatContacts.Linette,
+                "UR NEVER GNA BELIEVE THIS!");
+            const message2 = new ChatMessage(ChatContacts.Linette,
+                "u kno that street magician we saw yesterday?");
+            const message3 = new ChatMessage(ChatContacts.Linette,
+                "he just passed by the shop and got a long coat XD");
+            this.player.chats[ChatContacts.Linette].push(message1, message2, message3);
             this.emit(Signals.NewChatMessage, message1);
         }
     }
@@ -152,6 +174,7 @@ export class World extends Phaser.GameObjects.Container {
     }
 
     private goToEndScene() {
+        this.sound.stop();
         this.scene.scene.stop('HudScene');
         this.scene.scene.start('OutroScene');
     }

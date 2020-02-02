@@ -13,7 +13,7 @@ export class MinimapScene extends Scene {
 
     create(sceneData: { world: World }) {
         this.sceneData = sceneData;
-        ['keydown-P', 'keydown-ESC', 'keydown-M'].forEach((key) => {
+        ['keydown-ESC', 'keydown-M'].forEach((key) => {
             this.input.keyboard.on(key, () => {
                 this.scene.stop('MinimapScene');
             });

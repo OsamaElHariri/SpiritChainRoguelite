@@ -20,6 +20,7 @@ export class MobsRoom extends Room {
         (world: World, x: number, y: number) => new NullifyEnemy(world, x, y),
     ];
 
+    private text: Phaser.GameObjects.Text;
     constructor(world: World, x: number, y: number, config: RoomConfig) {
         super(world, x, y, config);
     }
@@ -31,7 +32,10 @@ export class MobsRoom extends Room {
             () => new SectionsRoomLayout(this),
             () => new StairsRoomLayout(this),
         ];
-        if (this.world.dungeonCount <= 1) validLayoutGenerator = [() => new SingleSquaresRoomLayout(this)];
+        if (this.world.dungeonCount <= 1) {
+            validLayoutGenerator = [() => new SingleSquaresRoomLayout(this)];
+            this.spawnText();
+        }
         this.roomLayout = ArrayUtils.random(validLayoutGenerator)();
         this.roomLayout.apply();
     }
@@ -52,5 +56,29 @@ export class MobsRoom extends Room {
         this.hasSpawnedMobs = true;
 
         this.roomLayout.spawnEnemies();
+    }
+
+    private spawnText() {
+        this.text = this.scene.add.text(
+            this.grid.xWorld + 80,
+            this.grid.yWorld + 80,
+            "LEFT mouse button to throw your chain\nRIGHT mouse button to punch", {
+            fontSize: '18px',
+        }).setOrigin(0).setAlpha(0);
+
+        this.scene.add.tween({
+            targets: [this.text],
+            delay: 500,
+            duration: 300,
+            alpha: {
+                getStart: () => 0,
+                getEnd: () => 1,
+            },
+        });
+    }
+
+    destroy() {
+        if (this.text && this.text.active) this.text.destroy();
+        super.destroy();
     }
 }

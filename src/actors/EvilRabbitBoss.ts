@@ -26,7 +26,7 @@ export class EvilRabbitBoss extends Actor {
         super(world, x, y, 'evil_rabbit');
         this.healthBar.y += 30;
         this.speed = this.initialSpeed;
-        this.setMaxHealth(8000);
+        this.setMaxHealth(12000);
         this.actorType = ActorType.Enemy;
         this.moveWith(new PlayerFollowMoveEngine(world, this));
 

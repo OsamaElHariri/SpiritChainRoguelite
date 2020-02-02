@@ -34,7 +34,7 @@ export class HandsBoss extends Actor {
     constructor(world: World, x: number, y: number) {
         super(world, x, y, 'magician_hat');
         this.speed = 40;
-        this.setMaxHealth(30000);
+        this.setMaxHealth(36000);
         this.healthBar.y += 30;
         this.actorType = ActorType.Enemy;
         this.playerFollowMoveEngine = new PlayerFollowMoveEngine(world, this);
