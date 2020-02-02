@@ -4,29 +4,19 @@
     "description": "Awesome roguelite written in TypeScript using Phaser",
     "main": "index.html",
     "scripts": {
-        "test": "mocha -r ts-node/register tests/**/*.test.ts",
-        "testWithCoverage": "nyc -r lcov -e .ts -x \"*.test.ts\" mocha -r ts-node/register tests/**/*.test.ts && nyc report",
         "dev": "parcel index.html",
         "build": "parcel build index.html --out-dir build",
         "copyAssets": "cpx \"src/assets/**\" \"dist/assets\" && cpx \"src/dom_html/**\" \"dist/dom_html\"",
         "copyAssetsBuild": "cpx \"src/assets/**\" \"build/assets\" && cpx \"src/dom_html/**\" \"build/dom_html\""
     },
     "author": "Osama El Hariri",
-    "license": "ISC",
+    "license": "MIT",
     "dependencies": {
-        "dat.gui": "^0.7.6",
+        "parcel": "^1.12.4",
         "phaser": "^3.22.0"
     },
     "devDependencies": {
-        "@types/chai": "^4.2.7",
-        "@types/dat.gui": "^0.7.5",
-        "@types/mocha": "^5.2.6",
-        "chai": "^4.2.0",
         "cpx": "^1.5.0",
-        "cssnano": "^4.1.10",
-        "mocha": "^6.2.2",
-        "nyc": "^13.3.0",
-        "ts-mockito": "^2.5.0",
         "ts-node": "^8.6.2",
         "typescript": "^3.7.5"
     }
