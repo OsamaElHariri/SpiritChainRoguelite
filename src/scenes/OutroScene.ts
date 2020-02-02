@@ -15,6 +15,6 @@ export class OutroScene extends Scene {
         const slideShow = new SlideShowWithDialog(this);
         await slideShow.startOutroSlideShow();
         await CameraUtils.fadeOut(this.cameras.main, 500);
-        this.scene.start('LoadingScene');
+        this.scene.start('ThankYouScene');
     }
 }

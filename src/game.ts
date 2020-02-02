@@ -12,6 +12,7 @@ import { HudScene } from "./scenes/HudScene";
 import { PhoneLockScreenScene } from "./scenes/PhoneLockScreenScene";
 import { ChatScene } from "./scenes/ChatScene";
 import { OutroScene } from "./scenes/OutroScene";
+import { ThankYouScene } from "./scenes/ThankYouScene";
 
 const config: Phaser.Types.Core.GameConfig = {
   width: 800,
@@ -37,6 +38,7 @@ const config: Phaser.Types.Core.GameConfig = {
     ChatScene,
     PhoneLockScreenScene,
     OutroScene,
+    ThankYouScene,
   ],
   physics: {
     default: "arcade",

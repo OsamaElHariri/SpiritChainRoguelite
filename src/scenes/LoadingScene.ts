@@ -139,6 +139,7 @@ export class LoadingScene extends Scene {
         this.load.image('evil_rabbit_intro', '../assets/sprites/ui/boss_intro/evil_rabbit_intro.png');
         this.load.image('puddles_intro', '../assets/sprites/ui/boss_intro/puddles_intro.png');
         this.load.image('hands_boss_intro', '../assets/sprites/ui/boss_intro/hands_boss_intro.png');
+        this.load.image('outro_screen', '../assets/sprites/outro_screen/outro_screen.png');
     }
 
     private constructLoadingScrean(): void {
